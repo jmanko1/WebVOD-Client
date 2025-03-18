@@ -12,7 +12,13 @@ const Menu = () => {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
                         <form className="d-flex" role="search">
-                            <input className="form-control rounded-end-0" style={{width: "300px"}} type="search" placeholder="Wyszukaj..." aria-label="Search" />
+                            <input
+                                className="form-control rounded-end-0 border border-end-0 border-secondary"
+                                style={{width: "300px"}}
+                                type="search"
+                                placeholder="Wyszukaj..."
+                                aria-label="Search" 
+                            />
                             <button className="btn btn-outline-secondary rounded-start-0" type="submit">
                                 <i className="fas fa-search"></i>
                             </button>

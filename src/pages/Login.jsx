@@ -76,12 +76,20 @@ const Login = () => {
     }
 
     return (
-        <div className="mt-5 ms-auto me-auto border rounded-5 pt-5 pb-5 text-center" style={{maxWidth: "600px"}}>
+        <div className="mt-5 mx-auto border border-secondary rounded-5 pt-5 pb-5 text-center" style={{maxWidth: "475px"}}>
             <h1 style={{fontSize: "28px"}}>Zaloguj się</h1>
-            <form className="mt-3 mb-4" onSubmit={handleSubmit}>
+            <form className="mt-4 mb-3" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="login" className="form-label">Login</label>
-                    <input ref={loginInput} type="text" style={{maxWidth: "350px"}} value={login} onChange={(e) => setLogin(e.target.value)} className="form-control mx-auto d-block" id="login" />
+                    <input
+                        ref={loginInput}
+                        type="text"
+                        style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
+                        value={login}
+                        onChange={(e) => setLogin(e.target.value)}
+                        className="form-control mx-auto"
+                        id="login" 
+                    />
                 </div>
                 {loginError && (
                     <div className="mb-3" style={{color: "red"}}>
@@ -93,10 +101,10 @@ const Login = () => {
                     <input
                         ref={passwordInput}
                         type="password"
-                        style={{maxWidth: "350px"}}
+                        style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="form-control mx-auto d-block"
+                        className="form-control mx-auto"
                         id="password" 
                     />
                 </div>
@@ -107,11 +115,11 @@ const Login = () => {
                 )}
                 <button type="submit" className="btn btn-primary">Zaloguj się</button>
             </form>
-            <div className="mb-2">
-                Nie pamiętasz hasła? <a href="/reset-password">Zresetuj hasło</a>
+            <div className="mb-4">
+                <a href="/reset-password" className="text-decoration-none">Zresetuj hasło</a>
             </div>
             <div>
-                Nie masz jeszcze konta? <a href="/register">Zarejestruj się</a>
+                Nie masz jeszcze konta? <a href="/register" className="text-decoration-none">Zarejestruj się</a>
             </div>
         </div>
     );
