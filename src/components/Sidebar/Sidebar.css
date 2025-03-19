@@ -1,0 +1,20 @@
+/* Sidebar.css */
+
+.sidebar {
+    left: 0;
+    height: 100%;
+    position: fixed;
+    width: 100%;
+    max-width: 200px;
+    background-color: white;
+}
+
+.sidebar a {
+    color: black;
+    text-decoration: none;
+}
+
+.sidebar .brand {
+    font-size: 1.25rem;
+    padding-top: 0.3125rem;
+}
