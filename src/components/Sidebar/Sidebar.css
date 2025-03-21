@@ -18,3 +18,20 @@
     font-size: 1.25rem;
     padding-top: 0.3125rem;
 }
+
+.offcanvas {
+    width: 100%;
+    max-width: 300px;
+}
+
+@media(max-width: 991px) {
+    .navbar-toggler-left {
+        position: absolute;
+        top: 0;
+        transform: translateY(25%);
+    }
+
+    .navbar-brand {
+        margin-left: 3.5rem;
+    }
+}
