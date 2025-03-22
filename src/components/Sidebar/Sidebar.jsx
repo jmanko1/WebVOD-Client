@@ -21,7 +21,7 @@ const Sidebar = () => {
                     <span className="ms-2">Polubione filmy</span>
                 </a>
                 <a className="nav-link" href="#">
-                    <i class="fa-solid fa-bookmark"></i>
+                    <i className="fa-solid fa-bookmark"></i>
                     <span className="ms-2">Zapisane filmy</span>
                 </a>
                 <a className="nav-link" href="#">
@@ -52,7 +52,7 @@ const Sidebar = () => {
                             <span className="ms-2">Polubione filmy</span>
                         </a>
                         <a className="nav-link" href="#">
-                            <i class="fa-solid fa-bookmark"></i>
+                            <i className="fa-solid fa-bookmark"></i>
                             <span className="ms-2">Zapisane filmy</span>
                         </a>
                         <a className="nav-link" href="#">
