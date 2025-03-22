@@ -57,14 +57,26 @@ const Login = () => {
         return true;
     }
 
+    const handleLoginChange = (e) => {
+        setLogin(e.target.value);
+        loginInput.current.classList.remove("is-invalid");
+        setLoginError(null);
+    }
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+        passwordInput.current.classList.remove("is-invalid");
+        setPasswordError(null);
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        setLoginError(null);
-        setPasswordError(null);
+        // setLoginError(null);
+        // setPasswordError(null);
 
-        loginInput.current.classList.remove("is-invalid");
-        passwordInput.current.classList.remove("is-invalid");
+        // loginInput.current.classList.remove("is-invalid");
+        // passwordInput.current.classList.remove("is-invalid");
         
         const isLoginValid = validateLogin(login);
         const isPasswordValid = validatePassword(password);
@@ -86,7 +98,7 @@ const Login = () => {
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={login}
-                        onChange={(e) => setLogin(e.target.value)}
+                        onChange={(e) => handleLoginChange(e)}
                         className="form-control mx-auto"
                         id="login" 
                     />
@@ -103,7 +115,7 @@ const Login = () => {
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => handlePasswordChange(e)}
                         className="form-control mx-auto"
                         id="password" 
                     />

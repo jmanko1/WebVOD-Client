@@ -101,18 +101,42 @@ const Register = () => {
         return true;
     }
 
+    const handleLoginChange = (e) => {
+        setLogin(e.target.value);
+        loginInput.current.classList.remove("is-invalid");
+        setLoginError(null);
+    }
+
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+        emailInput.current.classList.remove("is-invalid");
+        setEmailError(null);
+    }
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+        passwordInput.current.classList.remove("is-invalid");
+        setPasswordError(null);
+    }
+
+    const handleConfirmPasswordChange = (e) => {
+        setConfirmPassword(e.target.value);
+        confirmPasswordInput.current.classList.remove("is-invalid");
+        setConfirmPasswordError(null);
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        setLoginError(null);
-        setPasswordError(null);
-        setConfirmPasswordError(null);
-        setEmailError(null);
+        // setLoginError(null);
+        // setPasswordError(null);
+        // setConfirmPasswordError(null);
+        // setEmailError(null);
 
-        loginInput.current.classList.remove("is-invalid");
-        passwordInput.current.classList.remove("is-invalid");
-        emailInput.current.classList.remove("is-invalid");
-        confirmPasswordInput.current.classList.remove("is-invalid");
+        // loginInput.current.classList.remove("is-invalid");
+        // passwordInput.current.classList.remove("is-invalid");
+        // emailInput.current.classList.remove("is-invalid");
+        // confirmPasswordInput.current.classList.remove("is-invalid");
         
         const isLoginValid = validateLogin(login);
         const isPasswordValid = validatePassword(password);
@@ -136,7 +160,7 @@ const Register = () => {
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={login}
-                        onChange={(e) => setLogin(e.target.value)}
+                        onChange={(e) => handleLoginChange(e)}
                         className="form-control mx-auto"
                         id="login" 
                     />
@@ -153,7 +177,7 @@ const Register = () => {
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => handleEmailChange(e)}
                         className="form-control mx-auto"
                         id="email"
                     />
@@ -170,7 +194,7 @@ const Register = () => {
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => handlePasswordChange(e)}
                         className="form-control mx-auto"
                         id="password" 
                     />
@@ -187,7 +211,7 @@ const Register = () => {
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        onChange={(e) => handleConfirmPasswordChange(e)}
                         className="form-control mx-auto"
                         id="confirm-password" 
                     />

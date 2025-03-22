@@ -37,7 +37,7 @@ const InitiateResetPassword = () => {
                 )}
             </form>
             <div>
-                <a href="/login" className="text-decoration-none">Zaloguj się</a>
+                <a href="/login" className="text-decoration-none">Powrót</a>
             </div>
         </div>
     );
