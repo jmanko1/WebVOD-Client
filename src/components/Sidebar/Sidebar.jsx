@@ -3,7 +3,7 @@ import './Sidebar.css';
 const Sidebar = () => {
     return (
         <>
-            <nav className="nav flex-column sidebar border-end d-none d-lg-inline">
+            <nav className="nav flex-column sidebar border-end d-none">
                 <a className="nav-link active" aria-current="page" href="/">
                     <i className="fa-solid fa-house"></i>
                     <span className="ms-2">Główna</span>
@@ -29,7 +29,7 @@ const Sidebar = () => {
                     <span className="ms-2">Wspólne oglądanie</span>
                 </a>
             </nav>
-            <div className="offcanvas offcanvas-start d-inline d-lg-none" tabIndex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+            <div className="offcanvas offcanvas-start" tabIndex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
                 <div className="offcanvas-header">
                     <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>

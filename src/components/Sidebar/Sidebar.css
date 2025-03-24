@@ -24,7 +24,17 @@
     max-width: 300px;
 }
 
-@media(max-width: 991px) {
+.navbar-toggler-left {
+    position: absolute;
+    top: 0;
+    transform: translateY(25%);
+}
+
+.navbar-brand {
+    margin-left: 2.5rem;
+}
+
+/* @media(max-width: 991px) {
     .navbar-toggler-left {
         position: absolute;
         top: 0;
@@ -34,4 +44,4 @@
     .navbar-brand {
         margin-left: 2.5rem;
     }
-}
+} */

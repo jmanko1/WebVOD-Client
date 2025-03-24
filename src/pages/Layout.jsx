@@ -6,7 +6,7 @@ const Layout = () => {
         <>
             <nav className="navbar bg-body sticky-top navbar-expand-lg border-bottom">
                 <div className="container-fluid">
-                    <button className="navbar-toggler navbar-toggler-left ps-0 pe-0 border-0 d-inline d-lg-none" style={{boxShadow: "none"}} type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                    <button className="navbar-toggler navbar-toggler-left ps-0 pe-0 border-0 d-inline" style={{boxShadow: "none"}} type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                         <span className="navbar-toggler-icon"></span>
                     </button>
                     <Link className="navbar-brand" to="/">WebVOD</Link>
