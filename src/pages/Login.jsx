@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { validateLogin, validatePassword } from "../utils/validator";
 
 const Login = () => {
     const [login, setLogin] = useState("");
@@ -10,52 +10,6 @@ const Login = () => {
 
     const loginInput = useRef();
     const passwordInput = useRef();
-
-    const validateLogin = (login) => {
-        if(login === "" || login == null) {
-            setLoginError("Podaj login.");
-            loginInput.current.classList.add("is-invalid");
-            return false;
-        }
-
-        if(login.length < 4) {
-            setLoginError("Login musi mieć co najmniej 4 znaki.");
-            loginInput.current.classList.add("is-invalid");
-            return false;
-        }
-
-        if(login.length > 30) {
-            setLoginError("Login może mieć maksymalnie 30 znaków.");
-            loginInput.current.classList.add("is-invalid");
-            return false;
-        }
-
-        const loginRegex = /^[a-zA-Z0-9]*$/;
-        if(typeof login !== "string" || !loginRegex.test(login)) {
-            setLoginError("Login może zawierać tylko znaki alfanumeryczne.");
-            loginInput.current.classList.add("is-invalid");
-            return false;
-        }
-
-        return true;
-    }
-
-    const validatePassword = (password) => {
-        if(password === "" || password == null) {
-            setPasswordError("Podaj hasło.");
-            passwordInput.current.classList.add("is-invalid");
-            return false;
-        }
-
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        if(typeof password !== "string" || !passwordRegex.test(password)) {
-            setPasswordError("Hasło musi zawierać co najmniej 8 znaków, jedną małą literę, jedną wielką literę, jedną cyfrę oraz jeden znak specjalny.");
-            passwordInput.current.classList.add("is-invalid");
-            return false;
-        }
-
-        return true;
-    }
 
     const handleLoginChange = (e) => {
         setLogin(e.target.value);
@@ -71,15 +25,9 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // setLoginError(null);
-        // setPasswordError(null);
-
-        // loginInput.current.classList.remove("is-invalid");
-        // passwordInput.current.classList.remove("is-invalid");
         
-        const isLoginValid = validateLogin(login);
-        const isPasswordValid = validatePassword(password);
+        const isLoginValid = validateLogin(login, setLoginError, loginInput);
+        const isPasswordValid = validatePassword(password, setPasswordError, passwordInput);
 
         if(!isLoginValid || !isPasswordValid)
             return;
@@ -98,16 +46,16 @@ const Login = () => {
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={login}
-                        onChange={(e) => handleLoginChange(e)}
+                        onChange={handleLoginChange}
                         className="form-control mx-auto"
                         id="login" 
                     />
+                    {loginError && (
+                        <div className="invalid-feedback">
+                            {loginError}
+                        </div>
+                    )}
                 </div>
-                {loginError && (
-                    <div className="mb-3" style={{color: "red"}}>
-                        {loginError}
-                    </div>
-                )}
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Hasło</label>
                     <input
@@ -115,16 +63,16 @@ const Login = () => {
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={password}
-                        onChange={(e) => handlePasswordChange(e)}
+                        onChange={handlePasswordChange}
                         className="form-control mx-auto"
                         id="password" 
                     />
+                    {passwordError && (
+                        <div className="invalid-feedback">
+                            {passwordError}
+                        </div>
+                    )}
                 </div>
-                {passwordError && (
-                    <div className="mb-3" style={{color: "red"}}>
-                        {passwordError}
-                    </div>
-                )}
                 <button type="submit" className="btn btn-primary">Zaloguj się</button>
             </form>
             <div className="mb-4">

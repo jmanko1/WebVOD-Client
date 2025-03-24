@@ -1,14 +1,26 @@
 import { useRef, useState } from "react";
+import { validateEmail } from "../utils/validator";
 
 const InitiateResetPassword = () => {
     const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState(null);
     const [error, setError] = useState(null);
 
     const emailInput = useRef();
 
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+        emailInput.current.classList.remove("is-invalid");
+        setEmailError(null);
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
+        const isEmailValid = validateEmail(email, setEmailError, emailInput);
+        if(!isEmailValid)
+            return;
+
         console.log(email);
     }
 
@@ -24,10 +36,15 @@ const InitiateResetPassword = () => {
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={handleEmailChange}
                         className="form-control mx-auto"
                         id="email" 
                     />
+                    {emailError && (
+                        <div className="invalid-feedback">
+                            {emailError}
+                        </div>
+                    )}
                 </div>
                 <button type="submit" className="btn btn-primary">Wyślij maila</button>
                 {error && (

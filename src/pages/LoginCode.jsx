@@ -1,14 +1,26 @@
 import { useRef, useState } from "react";
+import { validateCode } from "../utils/validator";
 
 const LoginCode = () => {
     const [code, setCode] = useState("");
+    const [codeError, setCodeError] = useState(null);
     const [error, setError] = useState(null);
 
     const codeInput = useRef();
 
+    const handleCodeChange = (e) => {
+        setCode(e.target.value);
+        codeInput.current.classList.remove("is-invalid");
+        setCodeError(null);
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
+        const isCodeValid = validateCode(code, setCodeError, codeInput);
+        if(!isCodeValid)
+            return;
+
         console.log(code);
     }
 
@@ -22,16 +34,21 @@ const LoginCode = () => {
                         ref={codeInput}
                         type="text"
                         maxLength={6}
-                        style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
+                        style={{maxWidth: "250px", backgroundColor: "#f4f1f7"}}
                         value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        className="form-control mx-auto text-center"
+                        onChange={handleCodeChange}
+                        className="form-control mx-auto"
                         id="code" 
                     />
+                    {codeError && (
+                        <div className="invalid-feedback">
+                            {codeError}
+                        </div>
+                    )}
                 </div>
                 <button type="submit" className="btn btn-primary">Zatwierdź</button>
                 {error && (
-                    <div style={{color: "red"}}>
+                    <div className="mt-3" style={{color: "red"}}>
                         {error}
                     </div>
                 )}
