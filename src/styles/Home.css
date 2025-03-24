@@ -1,0 +1,20 @@
+/* Home.css */
+
+.thumbnail {
+    max-width: 600px;
+    max-height: 315px;
+    width: 100%;
+    height: auto;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.author {
+    font-size: 15px;
+}
+
+.details {
+    font-size: 15px;
+}
