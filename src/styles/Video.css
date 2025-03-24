@@ -1,0 +1,40 @@
+/* Video.css */
+
+h1 {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+video {
+    width: 854px;
+    height: 480px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.thumbnail {
+    max-width: 600px;
+    max-height: 315px;
+    width: 100%;
+    height: auto;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.author {
+    font-size: 13px;
+}
+
+.details {
+    font-size: 13px;
+}
