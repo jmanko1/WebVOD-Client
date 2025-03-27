@@ -38,3 +38,18 @@ h3 {
 .details {
     font-size: 13px;
 }
+
+.thumbnail-container {
+    position: relative;
+    display: inline-block;
+}
+
+.thumbnail-duration {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 5px;
+    font-size: 13px;
+}
