@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { validateCode, validateConfirmPassword, validatePassword } from "../utils/validator";
 
 const ResetPassword = () => {
@@ -113,7 +113,7 @@ const ResetPassword = () => {
                 )}
             </form>
             <div>
-                <a href="/reset-password" className="text-decoration-none">Powrót</a>
+                <Link to="/reset-password" className="text-decoration-none">Powrót</Link>
             </div>
         </div>
     );

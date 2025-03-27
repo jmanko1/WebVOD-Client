@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { validateEmail } from "../utils/validator";
+import { Link } from "react-router-dom";
 
 const InitiateResetPassword = () => {
     const [email, setEmail] = useState("");
@@ -54,7 +55,7 @@ const InitiateResetPassword = () => {
                 )}
             </form>
             <div>
-                <a href="/login" className="text-decoration-none">Powrót</a>
+                <Link to="/login" className="text-decoration-none">Powrót</Link>
             </div>
         </div>
     );

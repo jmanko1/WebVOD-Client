@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { validateCode } from "../utils/validator";
+import { Link } from "react-router-dom";
 
 const LoginCode = () => {
     const [code, setCode] = useState("");
@@ -54,7 +55,7 @@ const LoginCode = () => {
                 )}
             </form>
             <div>
-                <a href="/login" className="text-decoration-none">Powrót</a>
+                <Link to="/login" className="text-decoration-none">Powrót</Link>
             </div>
         </div>
     );

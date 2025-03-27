@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { validateCode, validateConfirmPassword, validatePassword } from "../utils/validator";
+import { Link } from "react-router-dom";
 
 const ChangePassword = () => {
     const [oldPassword, setOldPassword] = useState("");
@@ -137,7 +138,7 @@ const ChangePassword = () => {
                 )}
             </form>
             <div>
-                <a href="#" className="text-decoration-none">Powrót</a>
+                <Link to="#" className="text-decoration-none">Powrót</Link>
             </div>
         </div>
     );

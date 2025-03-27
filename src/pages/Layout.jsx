@@ -27,7 +27,7 @@ const Layout = () => {
                                 <i className="fas fa-search"></i>
                             </button>
                         </form>
-                        <a role="button" href="/login" className="btn btn-primary mt-2 mt-lg-0 ms-lg-2">Zaloguj się</a>
+                        <Link role="button" to="/login" className="btn btn-primary mt-2 mt-lg-0 ms-lg-2">Zaloguj się</Link>
                     </div>
                 </div>
             </nav>

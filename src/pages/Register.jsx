@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { validateConfirmPassword, validateEmail, validateLogin, validatePassword } from "../utils/validator";
+import { Link } from "react-router-dom";
 
 const Register = () => {
     const [login, setLogin] = useState("");
@@ -130,7 +131,7 @@ const Register = () => {
                 <button type="submit" className="btn btn-primary">Zarejestruj się</button>
             </form>
             <div>
-                Masz już konto? <a href="/login" className="text-decoration-none">Zaloguj się</a>
+                Masz już konto? <Link to="/login" className="text-decoration-none">Zaloguj się</Link>
             </div>
         </div>
     );

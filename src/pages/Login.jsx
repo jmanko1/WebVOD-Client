@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { validateLogin, validatePassword } from "../utils/validator";
+import { Link } from "react-router-dom";
 
 const Login = () => {
     const [login, setLogin] = useState("");
@@ -76,10 +77,10 @@ const Login = () => {
                 <button type="submit" className="btn btn-primary">Zaloguj się</button>
             </form>
             <div className="mb-4">
-                <a href="/reset-password" className="text-decoration-none">Zresetuj hasło</a>
+                <Link to="/reset-password" className="text-decoration-none">Zresetuj hasło</Link>
             </div>
             <div>
-                Nie masz jeszcze konta? <a href="/register" className="text-decoration-none">Zarejestruj się</a>
+                Nie masz jeszcze konta? <Link to="/register" className="text-decoration-none">Zarejestruj się</Link>
             </div>
         </div>
     );
