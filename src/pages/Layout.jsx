@@ -27,6 +27,10 @@ const Layout = () => {
                                 <i className="fas fa-search"></i>
                             </button>
                         </form>
+                        <Link role="button" to="#" className="btn btn-success mt-2 mt-lg-0 ms-lg-2 me-2 me-lg-0">
+                            <i className="fa-solid fa-plus"></i>
+                            <span className="ms-1">Nowy film</span>
+                        </Link>
                         <Link role="button" to="/login" className="btn btn-primary mt-2 mt-lg-0 ms-lg-2">Zaloguj się</Link>
                     </div>
                 </div>
