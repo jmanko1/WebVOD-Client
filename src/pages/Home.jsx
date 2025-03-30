@@ -44,7 +44,7 @@ const Home = () => {
                                     <div className="thumbnail-container">
                                         <Link to={`/video/${video.id}`}>
                                             <img className="thumbnail" src={video.thumbnail} alt="Miniatura" />
-                                            <span className="thumbnail-duration">{video.duration}</span>
+                                            <span style={{fontSize: "14px"}} className="thumbnail-duration">{video.duration}</span>
                                         </Link>
                                     </div>
                                 </div>
