@@ -11,7 +11,7 @@ video {
 }
 
 h2 {
-    font-size: 20px;
+    font-size: 19px;
 }
 
 h3 {
@@ -39,6 +39,14 @@ h3 {
     font-size: 13px;
 }
 
+.description {
+    background: rgba(0, 0, 0, 0.07);
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    font-size: 15px;
+}
+
 .thumbnail-container {
     position: relative;
     display: inline-block;
@@ -52,4 +60,27 @@ h3 {
     color: white;
     padding: 2px 5px;
     font-size: 13px;
+}
+
+.comments-tab {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.quality-button {
+    margin-right: 7px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background: white;
+    font-size: 13px;
+}
+
+.quality-button-active {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
 }
