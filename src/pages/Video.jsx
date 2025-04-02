@@ -207,19 +207,6 @@ const Video = () => {
                 <div className="col-12 col-xxl">
                     {watchedVideo ? (
                         <>
-                            {/* <div>
-                                <video controls>
-                                    <source 
-                                        src={watchedVideo.src}
-                                        type="video/mp4" 
-                                    />
-                                </video>
-                            </div>
-                            <div className="mt-2">
-                                <button className="quality-button">360p</button>
-                                <button className="quality-button">720p</button>
-                                <button className="quality-button quality-button-active">Auto (720p)</button>
-                            </div> */}
                             <VideoPlayer url={watchedVideo.src} />
                             <div className="mt-3">
                                 <h1 className="mb-0">{watchedVideo.title}</h1>
@@ -255,7 +242,6 @@ const Video = () => {
                                             title={copied ? "Skopiowano" : "Skopiuj link"}
                                         >
                                             <i className={`bi bi-${copied ? 'check-lg' : 'clipboard'}`}></i>
-                                            {/* <span className="ms-1">{copied ? "Skopiowano" : "Skopiuj link"}</span> */}
                                         </button>
                                         <button
                                             type="button"
@@ -264,7 +250,6 @@ const Video = () => {
                                             title={saved ? "Anuluj zapisanie filmu" : "Zapisz film"}
                                         >
                                             <i className={`fa-${saved ? "solid" : "regular"} fa-bookmark`}></i>
-                                            {/* <span className="ms-1">{saved ? "Anuluj zapis" : "Zapisz film"}</span> */}
                                         </button>
                                     </div>
                                 </div>
@@ -278,13 +263,13 @@ const Video = () => {
                                         ? watchedVideo.description.slice(0, maxDescriptionLength) + "..."
                                         : watchedVideo.description}
                                 </div>
-                                <div>
-                                    {watchedVideo.description.length > maxDescriptionLength && (
+                                {watchedVideo.description.length > maxDescriptionLength && (
+                                    <div>
                                         <button className="btn btn-link p-0 text-decoration-none" style={{fontSize: "15px"}} onClick={handleDescriptionSlice}>
                                             {descriptionSliced ? "Pokaż więcej" : "Pokaż mniej"}
                                         </button>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
                             </div>
                         </>
                     ) : (
@@ -304,7 +289,8 @@ const Video = () => {
                                             <textarea
                                                 placeholder="Dodaj komentarz"
                                                 className="form-control"
-                                                maxLength={800}
+                                                maxLength={500}
+                                                style={{resize: "none"}}
                                                 rows={4}
                                                 value={newComment}
                                                 onChange={(e) => setNewComment(e.target.value)}
@@ -379,7 +365,7 @@ const Video = () => {
                     )}
                 </div>
             </div>
-            <div className={`toast position-fixed end-0 bottom-0 align-items-center${pressedLike && ' fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
+            <div className={`toast position-fixed end-0 bottom-0 align-items-center ${pressedLike && 'fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
                 <div className="d-flex">
                     <div className="toast-body">
                         {liked ?
@@ -391,7 +377,7 @@ const Video = () => {
                     <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
-            <div className={`toast position-fixed end-0 bottom-0 align-items-center${pressedSave && ' fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
+            <div className={`toast position-fixed end-0 bottom-0 align-items-center ${pressedSave && 'fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
                 <div className="d-flex">
                     <div className="toast-body">
                         {saved ?
@@ -403,7 +389,7 @@ const Video = () => {
                     <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
-            <div className={`toast position-fixed end-0 bottom-0 align-items-center${copied && ' fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
+            <div className={`toast position-fixed end-0 bottom-0 align-items-center ${copied && 'fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
                 <div className="d-flex">
                     <div className="toast-body">Skopiowano link do schowka.</div>
                     <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
