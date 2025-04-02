@@ -12,6 +12,7 @@ import LoginCode from './pages/LoginCode';
 import ResetPassword from './pages/ResetPassword';
 import ChangePassword from './pages/ChangePassword';
 import Video from './pages/Video';
+import VideoUpload from './pages/VideoUpload';
 
 const App = () => {
     return (
@@ -26,6 +27,7 @@ const App = () => {
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
                     <Route path="/change-password" element={<ChangePassword />} />
                     <Route path="/video/:id" element={<Video />} />
+                    <Route path="/upload" element={<VideoUpload />} />
                     <Route path="*" element={<NoPage />} />
                 </Route>
             </Routes>
