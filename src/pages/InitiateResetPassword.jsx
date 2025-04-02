@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { validateEmail } from "../utils/validator";
 import { Link } from "react-router-dom";
 
@@ -7,18 +7,15 @@ const InitiateResetPassword = () => {
     const [emailError, setEmailError] = useState(null);
     const [error, setError] = useState(null);
 
-    const emailInput = useRef();
-
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
-        emailInput.current.classList.remove("is-invalid");
         setEmailError(null);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        const isEmailValid = validateEmail(email, setEmailError, emailInput);
+        const isEmailValid = validateEmail(email, setEmailError);
         if(!isEmailValid)
             return;
 
@@ -33,12 +30,11 @@ const InitiateResetPassword = () => {
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Adres email</label>
                     <input
-                        ref={emailInput}
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={email}
                         onChange={handleEmailChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${emailError ? 'is-invalid' : ''}`}
                         id="email" 
                     />
                     {emailError && (

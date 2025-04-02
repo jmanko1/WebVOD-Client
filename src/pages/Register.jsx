@@ -13,42 +13,32 @@ const Register = () => {
     const [emailError, setEmailError] = useState(null);
     const [confirmPasswordError, setConfirmPasswordError] = useState(null);
 
-    const loginInput = useRef();
-    const passwordInput = useRef();
-    const confirmPasswordInput = useRef();
-    const emailInput = useRef();
-
     const handleLoginChange = (e) => {
         setLogin(e.target.value);
-        loginInput.current.classList.remove("is-invalid");
         setLoginError(null);
     }
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
-        emailInput.current.classList.remove("is-invalid");
         setEmailError(null);
     }
 
     const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-        passwordInput.current.classList.remove("is-invalid");
         setPasswordError(null);
     }
 
     const handleConfirmPasswordChange = (e) => {
         setConfirmPassword(e.target.value);
-        confirmPasswordInput.current.classList.remove("is-invalid");
         setConfirmPasswordError(null);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        const isLoginValid = validateLogin(login, setLoginError, loginInput);
-        const isPasswordValid = validatePassword(password, setPasswordError, passwordInput);
-        const isEmailValid = validateEmail(email, setEmailError, emailInput);
-        const isConfirmPasswordValid = validateConfirmPassword(password, confirmPassword, setConfirmPasswordError, confirmPasswordInput);
+        const isLoginValid = validateLogin(login, setLoginError);
+        const isPasswordValid = validatePassword(password, setPasswordError);
+        const isEmailValid = validateEmail(email, setEmailError);
+        const isConfirmPasswordValid = validateConfirmPassword(password, confirmPassword, setConfirmPasswordError);
 
         if(!isLoginValid || !isPasswordValid || !isEmailValid || !isConfirmPasswordValid)
             return;
@@ -63,12 +53,11 @@ const Register = () => {
                 <div className="mb-3">
                     <label htmlFor="login" className="form-label">Login</label>
                     <input
-                        ref={loginInput}
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={login}
                         onChange={handleLoginChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${loginError ? 'is-invalid' : ''}`}
                         id="login" 
                     />
                     {loginError && (
@@ -80,12 +69,11 @@ const Register = () => {
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Adres email</label>
                     <input
-                        ref={emailInput}
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={email}
                         onChange={handleEmailChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${emailError ? 'is-invalid' : ''}`}
                         id="email"
                     />
                     {emailError && (
@@ -97,12 +85,11 @@ const Register = () => {
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Hasło</label>
                     <input
-                        ref={passwordInput}
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={password}
                         onChange={handlePasswordChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${passwordError ? 'is-invalid' : ''}`}
                         id="password" 
                     />
                     {passwordError && (
@@ -114,12 +101,11 @@ const Register = () => {
                 <div className="mb-3">
                     <label htmlFor="confirm-password" className="form-label">Potwierdź hasło</label>
                     <input
-                        ref={confirmPasswordInput}
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={confirmPassword}
                         onChange={handleConfirmPasswordChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${confirmPasswordError ? 'is-invalid' : ''}`}
                         id="confirm-password" 
                     />
                     {confirmPasswordError && (

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { validateCode } from "../utils/validator";
 import { Link } from "react-router-dom";
 
@@ -7,18 +7,15 @@ const LoginCode = () => {
     const [codeError, setCodeError] = useState(null);
     const [error, setError] = useState(null);
 
-    const codeInput = useRef();
-
     const handleCodeChange = (e) => {
         setCode(e.target.value);
-        codeInput.current.classList.remove("is-invalid");
         setCodeError(null);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const isCodeValid = validateCode(code, setCodeError, codeInput);
+        const isCodeValid = validateCode(code, setCodeError);
         if(!isCodeValid)
             return;
 
@@ -32,13 +29,12 @@ const LoginCode = () => {
                 <div className="mb-3">
                     <label htmlFor="code" className="form-label">6-cyfrowy kod</label>
                     <input
-                        ref={codeInput}
                         type="text"
                         maxLength={6}
-                        style={{maxWidth: "250px", backgroundColor: "#f4f1f7"}}
+                        style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={code}
                         onChange={handleCodeChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${codeError ? 'is-invalid' : ''}`}
                         id="code" 
                     />
                     {codeError && (

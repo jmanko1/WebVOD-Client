@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { validateCode, validateConfirmPassword, validatePassword } from "../utils/validator";
 import { Link } from "react-router-dom";
 
@@ -14,42 +14,33 @@ const ChangePassword = () => {
     const [codeError, setCodeError] = useState(null);
     const [error, setError] = useState(null);
 
-    const oldPasswordInput = useRef();
-    const passwordInput = useRef();
-    const confirmPasswordInput = useRef();
-    const codeInput = useRef();
-
     const handleOldPasswordChange = (e) => {
         setOldPassword(e.target.value);
-        oldPasswordInput.current.classList.remove("is-invalid");
         setOldPasswordError(null);
     }
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
-        passwordInput.current.classList.remove("is-invalid");
         setPasswordError(null);
     }
 
     const handleConfirmPasswordChange = (e) => {
         setConfirmPassword(e.target.value);
-        confirmPasswordInput.current.classList.remove("is-invalid");
         setConfirmPasswordError(null);
     }
 
     const handleCodeChange = (e) => {
         setCode(e.target.value);
-        codeInput.current.classList.remove("is-invalid");
         setCodeError(null);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const isOldPasswordValid = validatePassword(oldPassword, setOldPasswordError, oldPasswordInput);
-        const isPasswordValid = validatePassword(password, setPasswordError, passwordInput);
-        const isConfirmPasswordValid = validateConfirmPassword(password, confirmPassword, setConfirmPasswordError, confirmPasswordInput);
-        const isCodeValid = validateCode(code, setCodeError, codeInput);
+        const isOldPasswordValid = validatePassword(oldPassword, setOldPasswordError);
+        const isPasswordValid = validatePassword(password, setPasswordError);
+        const isConfirmPasswordValid = validateConfirmPassword(password, confirmPassword, setConfirmPasswordError);
+        const isCodeValid = validateCode(code, setCodeError);
 
         if(!isOldPasswordValid || !isPasswordValid || !isConfirmPasswordValid || !isCodeValid)
             return;
@@ -64,12 +55,11 @@ const ChangePassword = () => {
                 <div className="mb-3">
                     <label htmlFor="old-password" className="form-label">Aktualne hasło</label>
                     <input
-                        ref={oldPasswordInput}
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={oldPassword}
                         onChange={handleOldPasswordChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${oldPasswordError ? 'is-invalid' : ''}`}
                         id="old-password" 
                     />
                     {oldPasswordError && (
@@ -81,12 +71,11 @@ const ChangePassword = () => {
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Nowe hasło</label>
                     <input
-                        ref={passwordInput}
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={password}
                         onChange={handlePasswordChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${passwordError ? 'is-invalid' : ''}`}
                         id="password" 
                     />
                     {passwordError && (
@@ -98,12 +87,11 @@ const ChangePassword = () => {
                 <div className="mb-3">
                     <label htmlFor="confirm-password" className="form-label">Potwierdź nowe hasło</label>
                     <input
-                        ref={confirmPasswordInput}
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={confirmPassword}
                         onChange={handleConfirmPasswordChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${confirmPasswordError ? 'is-invalid' : ''}`}
                         id="confirm-password" 
                     />
                     {confirmPasswordError && (
@@ -115,13 +103,12 @@ const ChangePassword = () => {
                 <div className="mb-3">
                     <label htmlFor="code" className="form-label">Kod z aplikacji</label>
                     <input
-                        ref={codeInput}
                         type="text"
                         maxLength={6}
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={code}
                         onChange={handleCodeChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${codeError ? 'is-invalid' : ''}`}
                         id="code" 
                     />
                     {codeError && (

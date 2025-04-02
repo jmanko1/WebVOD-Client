@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { validateLogin, validatePassword } from "../utils/validator";
 import { Link } from "react-router-dom";
 
@@ -9,26 +9,21 @@ const Login = () => {
     const [loginError, setLoginError] = useState(null);
     const [passwordError, setPasswordError] = useState(null);
 
-    const loginInput = useRef();
-    const passwordInput = useRef();
-
     const handleLoginChange = (e) => {
         setLogin(e.target.value);
-        loginInput.current.classList.remove("is-invalid");
         setLoginError(null);
     }
 
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
-        passwordInput.current.classList.remove("is-invalid");
         setPasswordError(null);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        const isLoginValid = validateLogin(login, setLoginError, loginInput);
-        const isPasswordValid = validatePassword(password, setPasswordError, passwordInput);
+        const isLoginValid = validateLogin(login, setLoginError);
+        const isPasswordValid = validatePassword(password, setPasswordError);
 
         if(!isLoginValid || !isPasswordValid)
             return;
@@ -43,12 +38,11 @@ const Login = () => {
                 <div className="mb-3">
                     <label htmlFor="login" className="form-label">Login</label>
                     <input
-                        ref={loginInput}
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={login}
                         onChange={handleLoginChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${loginError ? 'is-invalid' : ''}`}
                         id="login" 
                     />
                     {loginError && (
@@ -60,12 +54,11 @@ const Login = () => {
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Hasło</label>
                     <input
-                        ref={passwordInput}
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={password}
                         onChange={handlePasswordChange}
-                        className="form-control mx-auto"
+                        className={`form-control mx-auto ${passwordError ? 'is-invalid' : ''}`}
                         id="password" 
                     />
                     {passwordError && (
