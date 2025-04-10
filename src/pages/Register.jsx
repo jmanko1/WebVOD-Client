@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { validateConfirmPassword, validateEmail, validateLogin, validatePassword } from "../utils/validator";
 import { Link } from "react-router-dom";
 
@@ -24,6 +24,7 @@ const Register = () => {
     }
 
     const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
         setPasswordError(null);
     }
 

@@ -1,238 +1,365 @@
 import { useEffect, useRef, useState } from "react";
+import { WithContext as ReactTags } from "react-tag-input";
+
 import "../styles/VideoUpload.css";
 
+// Stałe
+const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500 MB
+const MAX_THUMBNAIL_SIZE = 2 * 1024 * 1024; // 2 MB
+const ALLOWED_VIDEO_EXT = ["mp4"];
+const ALLOWED_VIDEO_MIME = ["video/mp4"];
+const ALLOWED_THUMBNAIL_EXT = ["jpg", "jpeg", "png"];
+const ALLOWED_THUMBNAIL_MIME = ["image/jpeg", "image/png"];
+
+const KeyCodes = {
+    comma: 188,
+    enter: 13,
+};
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
+
 const VideoUpload = () => {
+    // Stany
     const [video, setVideo] = useState(null);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [thumbnail, setThumbnail] = useState(null);
     const [category, setCategory] = useState("");
     const [tags, setTags] = useState([]);
 
-    const [errors, setErrors] = useState({});
-
     const [categories, setCategories] = useState([]);
 
+    const [thumbnail, setThumbnail] = useState(null);
+    const [userThumbnailSrc, setUserThumbnailSrc] = useState(null);
+    const [autoThumbnailSrc, setAutoThumbnailSrc] = useState(null);
+
+    const [errors, setErrors] = useState({});
     const thumbnailInputRef = useRef();
 
+    // Init categories (jeśli byłyby z API)
     useEffect(() => {
-        const options = ["Blog", "Komedia", "Gry", "Horror"];
-        setCategories(options);
-        setCategory(options[0]);
+        const fetchedCategories = [
+            "Edukacja", "Film", "Gry", "Blog", "Muzyka", "Nauka", 
+            "Rozrywka", "Sport", "Poradnik", "Podróże"
+        ];
+
+        setCategory(fetchedCategories[0]);
+        setCategories(fetchedCategories);
     }, []);
 
-    const getFileExtension = (file) => {
-        return file.name.split('.').pop().toLowerCase();
-    }
+    useEffect(() => {
+        return () => {
+          if (userThumbnailSrc) {
+            URL.revokeObjectURL(userThumbnailSrc);
+          }
+        };
+      }, [userThumbnailSrc]);
 
-    const getMimeType = (file) => {
-        return file.type;
-    }
+    // Pomocnicze
+    const getFileExtension = (file) => file.name.split('.').pop().toLowerCase();
+    const getMimeType = (file) => file.type;
 
-    const validateVideo = () => {
-        setErrors((prev) => ({...prev, ["videoError"]: null,}));
+    const clearError = (key) => setErrors(prev => ({ ...prev, [key]: null }));
+    const setError = (key, message) => setErrors(prev => ({ ...prev, [key]: message }));
 
-        if(video == null) {
-            setErrors((prev) => ({...prev, ["videoError"]: "Wybierz plik wideo.",}));    
-            return false;
-        }
+    // =========================
+    // ✅ Walidacje
+    // =========================
 
-        const allowedExtensions = ["mp4"];
-        const allowedMimeTypes = ["video/mp4"];
+    const validateVideo = (file) => {
+        clearError("videoError");
+        if (!file) return setError("videoError", "Wybierz plik wideo.") && false;
 
-        const ext = getFileExtension(video);
-        if (!allowedExtensions.includes(ext)) {
-            setErrors((prev) => ({...prev, ["videoError"]: "Plik wideo musi być z roszerzeniem .mp4.",}));    
-            return false;
-        }
+        const ext = getFileExtension(file);
+        if (!ALLOWED_VIDEO_EXT.includes(ext))
+            return setError("videoError", "Plik wideo musi być MP4.") && false;
 
-        const mimeType = getMimeType(video);
-        if(!allowedMimeTypes.includes(mimeType)) {
-            setErrors((prev) => ({...prev, ["videoError"]: "Podaj prawidłowy plik mp4.",}));
-            return false;
-        }
+        const mime = getMimeType(file);
+        if (!ALLOWED_VIDEO_MIME.includes(mime))
+            return setError("videoError", "Nieprawidłowy typ pliku.") && false;
 
-        const maxSize = 500 * 1024 * 1024 // 500 MB
-        if(video.size > maxSize) {
-            setErrors((prev) => ({...prev, ["videoError"]: "Rozmiar pliku wideo nie może przekraczać 500 MB.",}));
-            return false;
-        }
+        if (file.size > MAX_VIDEO_SIZE)
+            return setError("videoError", "Rozmiar wideo nie może przekraczać 500 MB.") && false;
 
         return true;
-    }
+    };
 
     const validateTitle = () => {
-        setErrors((prev) => ({...prev, ["titleError"]: null,}));
+        clearError("titleError");
 
-        if(title == null || title.trim() == "") {
-            setErrors((prev) => ({...prev, ["titleError"]: "Podaj tytuł filmu.",}));    
-            return false;
-        }
+        if (!title.trim()) return setError("titleError", "Podaj tytuł filmu.") && false;
 
-        if(title.length < 5 || title.length > 100) {
-            setErrors((prev) => ({...prev, ["titleError"]: "Tytuł filmu może mieć od 5 do 100 znaków.",}));    
-            return false;
-        }
+        if (title.length < 5 || title.length > 100)
+            return setError("titleError", "Tytuł musi mieć od 5 do 100 znaków.") && false;
 
         return true;
-    }
+    };
 
     const validateDescription = () => {
-        setErrors((prev) => ({...prev, ["descriptionError"]: null,}));
-
-        if(description != null && description.length > 500) {
-            setErrors((prev) => ({...prev, ["descriptionError"]: "Opis filmu może mieć maksymalnie 500 znaków.",}));
-            return false;  
-        }
+        clearError("descriptionError");
+        if (description && description.length > 500)
+            return setError("descriptionError", "Opis może mieć maksymalnie 500 znaków.") && false;
 
         return true;
-    }
+    };
 
     const validateThumbnail = () => {
-        setErrors((prev) => ({...prev, ["thumbnailError"]: null,}));
-
-        if(thumbnail == null) return true;
-
-        const allowedExtensions = ["jpg", "jpeg", "png"];
-        const allowedMimeTypes = ["image/jpeg", "image/png"];
+        clearError("thumbnailError");
+        if (!thumbnail) return true;
 
         const ext = getFileExtension(thumbnail);
-        if (!allowedExtensions.includes(ext)) {
-            setErrors((prev) => ({...prev, ["thumbnailError"]: "Miniatura musi być z rozszerzeniem .jpg/.jpeg/.png.",}));    
-            return false;
-        }
+        if (!ALLOWED_THUMBNAIL_EXT.includes(ext))
+            return setError("thumbnailError", "Miniatura musi być JPG/PNG.") && false;
 
-        const mimeType = getMimeType(thumbnail);
-        if(!allowedMimeTypes.includes(mimeType)) {
-            setErrors((prev) => ({...prev, ["thumbnailError"]: "Podaj prawidłowy plik graficzny.",}));
-            return false;
-        }
+        const mime = getMimeType(thumbnail);
+        if (!ALLOWED_THUMBNAIL_MIME.includes(mime))
+            return setError("thumbnailError", "Nieprawidłowy typ pliku.") && false;
 
-        const maxSize = 5 * 1024 * 1024; // 5 MB
-        if(thumbnail.size > maxSize) {
-            setErrors((prev) => ({...prev, ["thumbnailError"]: "Rozmiar miniatury nie może przekraczać 5 MB.",}));
-            return false;
-        }
+        if (thumbnail.size > MAX_THUMBNAIL_SIZE)
+            return setError("thumbnailError", "Rozmiar miniatury nie może przekraczać 2 MB.") && false;
 
         return true;
-    }
+    };
 
     const validateCategory = () => {
-        setErrors((prev) => ({...prev, ["categoryError"]: null,}));
+        clearError("categoryError");
+        if (!categories.includes(category))
+            return setError("categoryError", "Wybierz poprawną kategorię.") && false;
 
-        if(!categories.includes(category)) {
-            setErrors((prev) => ({...prev, ["categoryError"]: "Wybierz prawidłową kategorię filmu.",}));
-            return false;
-        }
-        
         return true;
-    }
+    };
 
-    const handleCancelThumbnail = () => {
-        setThumbnail(null);
+    // =========================
+    // ✅ Generowanie miniatur
+    // =========================
+
+    const generateAutoThumbnail = (file) => {
+        if (!file || !ALLOWED_VIDEO_MIME.includes(file.type)) return;
+
+        const videoEl = document.createElement("video");
+        const url = URL.createObjectURL(file);
+        videoEl.src = url;
+        videoEl.preload = "metadata";
+        videoEl.muted = true;
+        videoEl.playsInline = true;
+
+        videoEl.addEventListener("loadedmetadata", () => {
+            const randomTime = Math.random() * videoEl.duration;
+            videoEl.currentTime = randomTime;
+        });
+
+        videoEl.addEventListener("seeked", async () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = videoEl.videoWidth;
+            canvas.height = videoEl.videoHeight;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+
+            const src = canvas.toDataURL("image/jpeg")
+            setAutoThumbnailSrc(src);
+
+            const blob = await (await fetch(src)).blob();
+            const file = new File([blob], 'thumbnail.jpg', { type: 'image/jpeg' });
+            console.log(file);
+            setThumbnail(file);
+
+            URL.revokeObjectURL(url);
+        });
+    };
+
+    const generateUserThumbnail = (file) => {
+        if (!ALLOWED_THUMBNAIL_MIME.includes(file?.type)) return;
+        const imageUrl = URL.createObjectURL(file);
+        setUserThumbnailSrc(imageUrl);
+    };
+
+    // =========================
+    // ✅ Obsługa zdarzeń
+    // =========================
+
+    const handleVideoChange = (e) => {
+        const file = e.target.files[0];
+        setVideo(file);
+        if (!userThumbnailSrc) generateAutoThumbnail(file);
+    };
+
+    const handleUserThumbnailChange = (e) => {
+        const file = e.target.files[0];
+        setThumbnail(file);
+        setAutoThumbnailSrc(null);
+        generateUserThumbnail(file);
+    };
+
+    const handleCancelThumbnail = (e) => {
+        e.preventDefault();
         thumbnailInputRef.current.value = "";
-    }
+        setUserThumbnailSrc(null);
+        generateAutoThumbnail(video);
+    };
+
+    const handleTagAddition = (tag) => {
+        clearError("tagError");
+
+        if (tags.length >= 10)
+            return setError("tagError", "Możesz dodać maksymalnie 10 tagów.");
+
+        if (tag.text.includes(" "))
+            return setError("tagError", "Tag nie może zawierać spacji.");
+
+        if (tag.text.length > 20)
+            return setError("tagError", "Tag może mieć maks. 20 znaków.");
+
+        setTags([...tags, tag]);
+    };
+
+    const handleTagDelete = (i) => {
+        clearError("tagError");
+        setTags(tags.filter((_, index) => index !== i));
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        validateVideo();
-        validateTitle();
-        validateDescription();
-        validateThumbnail();
-        validateCategory();
-    }
+        console.log(video, title, description, thumbnail, category, tags);
+
+        const isValid =
+            validateVideo(video) &
+            validateTitle() &
+            validateDescription() &
+            validateThumbnail() &
+            validateCategory();
+
+        if (!isValid) return;
+
+        console.log("✅ Przesyłanie...");
+        // Można tu dodać API call (np. axios/fetch)
+    };
+
+    // =========================
+    // ✅ JSX (UI)
+    // =========================
 
     return (
-        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "650px"}}>
-            <h1 style={{fontSize: "28px"}}>Nowy film</h1>
+        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{ maxWidth: "700px" }}>
+            <h1 style={{ fontSize: "28px" }}>Nowy film</h1>
             <form className="mt-4 mb-3" onSubmit={handleSubmit}>
+
+                {/* Wideo */}
                 <div className="mb-3">
-                    <label htmlFor="video" className="form-label">Plik wideo (*)</label>
+                    <label htmlFor="video" className="form-label">Plik wideo (wymagane)</label>
                     <input
                         type="file"
-                        style={{maxWidth: "500px"}}
-                        onChange={(e) => setVideo(e.target.files[0])}
-                        className={`form-control mx-auto ${errors.videoError ? "is-invalid" : ""}`}
                         id="video"
+                        accept="video/mp4"
+                        onChange={handleVideoChange}
+                        className={`form-control mx-auto ${errors.videoError ? "is-invalid" : ""}`}
+                        style={{ maxWidth: "500px" }}
                     />
-                    {errors.videoError &&
-                        <div className="invalid-feedback">{errors.videoError}</div>                
-                    }
+                    <div className="form-text">Dopuszczalne typy: mp4. Zalecany format 16:9.</div>
+                    {errors.videoError && <div className="invalid-feedback">{errors.videoError}</div>}
                 </div>
+
+                {/* Tytuł */}
                 <div className="mb-3">
-                    <label htmlFor="title" className="form-label">Tytuł (*)</label>
+                    <label htmlFor="title" className="form-label">Tytuł</label>
                     <input
                         type="text"
-                        style={{maxWidth: "500px", backgroundColor: "#f4f1f7"}}
+                        id="title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         className={`form-control mx-auto ${errors.titleError ? "is-invalid" : ""}`}
-                        id="title" 
+                        style={{ maxWidth: "500px", backgroundColor: "#f4f1f7" }}
                     />
-                    {errors.titleError &&
-                        <div className="invalid-feedback">{errors.titleError}</div>                
-                    }
+                    {errors.titleError && <div className="invalid-feedback">{errors.titleError}</div>}
                 </div>
+
+                {/* Opis */}
                 <div className="mb-3" id="description-div">
                     <label htmlFor="description" className="form-label">Opis</label>
                     <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         className={`form-control mx-auto ${errors.descriptionError ? "is-invalid" : ""}`}
-                        id="description"
                         rows={5}
                         cols={60}
                         maxLength={500}
-                    >
-                    </textarea>
-                    <div id="description-counter">{description?.length || 0}/500</div>
-                    {errors.descriptionError &&
-                        <div className="invalid-feedback">{errors.descriptionError}</div>                
-                    }
+                        style={{ maxWidth: "500px" }}
+                        id="description"
+                    />
+                    <div className="form-text" id="description-counter">{description.length}/500</div>
+                    {errors.descriptionError && <div className="invalid-feedback">{errors.descriptionError}</div>}
                 </div>
+
+                {/* Miniatura */}
                 <div className="mb-3">
                     <label htmlFor="thumbnail" className="form-label">Miniatura</label>
                     <input
                         type="file"
+                        accept="image/png, image/jpeg"
+                        id="thumbnail"
                         ref={thumbnailInputRef}
-                        style={{maxWidth: "500px"}}
-                        onChange={(e) => setThumbnail(e.target.files[0])}
+                        onChange={handleUserThumbnailChange}
                         className={`form-control mx-auto ${errors.thumbnailError ? "is-invalid" : ""}`}
-                        id="thumbnail" 
+                        style={{ maxWidth: "500px" }}
                     />
-                    {thumbnail && (
-                        <button
-                            className="btn btn-danger mt-2"
-                            onClick={handleCancelThumbnail}
-                        >Anuluj
-                        </button>
+                    <div className="form-text">Dopuszczalne typy: jpg/jpeg/png. Zalecany format 16:9.</div>
+                    {userThumbnailSrc && (
+                        <>
+                            <div className="mt-2">
+                                <button className="btn btn-danger" onClick={handleCancelThumbnail}>Anuluj</button>
+                            </div>
+                            <div className="mt-2">
+                                <img src={userThumbnailSrc} alt="Miniatura" style={{ maxWidth: "450px" }} />
+                            </div>
+                        </>
                     )}
-                    {errors.thumbnailError &&
-                        <div className="invalid-feedback">{errors.thumbnailError}</div>                
-                    }
+                    {!userThumbnailSrc && autoThumbnailSrc && (
+                        <>
+                            <div className="mt-2">
+                                <img src={autoThumbnailSrc} alt="Auto miniatura" style={{ maxWidth: "450px" }} />
+                            </div>
+                            <div className="form-text">Automatyczna miniatura</div>
+                        </>
+                    )}
+                    {errors.thumbnailError && <div className="invalid-feedback">{errors.thumbnailError}</div>}
                 </div>
+
+                {/* Kategoria */}
                 <div className="mb-3">
-                    <label htmlFor="category" className="form-label">Kategoria (*)</label>
+                    <label className="form-label" htmlFor="category">Kategoria</label>
                     <select
-                        id="category"
                         value={category}
+                        id="category"
                         onChange={(e) => setCategory(e.target.value)}
                         className={`form-select mx-auto ${errors.categoryError ? "is-invalid" : ""}`}
-                        style={{maxWidth: "500px", backgroundColor: "#f4f1f7"}}
+                        style={{ maxWidth: "500px", backgroundColor: "#f4f1f7" }}
                     >
-                        {categories.map((option) => (
-                            <option key={option} value={option}>{option}</option>
-                        ))}
+                        {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                     </select>
-                    {errors.categoryError &&
-                        <div className="invalid-feedback">{errors.categoryError}</div>                
-                    }
+                    {errors.categoryError && <div className="invalid-feedback">{errors.categoryError}</div>}
                 </div>
+
+                {/* Tagi */}
+                <div className="mb-3" id="tags">
+                    <label className="form-label">Tagi</label>
+                    <ReactTags
+                        tags={tags}
+                        delimiters={delimiters}
+                        handleDelete={handleTagDelete}
+                        handleAddition={handleTagAddition}
+                        inputFieldPosition="bottom"
+                        autocomplete
+                        placeholder="Dodaj tag"
+                        allowDragDrop={false}
+                    />
+                    <div className="form-text">Umieść przecinek po każdym tagu.</div>
+                    {errors.tagError && <div className="invalid-feedback d-inline">{errors.tagError}</div>}
+                </div>
+
+                {/* Submit */}
                 <button type="submit" className="btn btn-primary">Prześlij</button>
             </form>
         </div>
     );
-}
+};
 
 export default VideoUpload;
