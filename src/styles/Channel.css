@@ -1,0 +1,41 @@
+/* Channel.css */
+
+h1 {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.channel-video-thumbnail {
+    max-width: 480;
+    max-height: 270px;
+    width: 100%;
+    height: auto;
+}
+
+.channel-video-title {
+    font-weight: bold;
+}
+
+.channel-video-title a {
+    text-decoration: none;
+    color: black;
+}
+
+.channel-video-details {
+    font-size: 15px;
+}
+
+.channel-video-thumbnail-container {
+    position: relative;
+    display: inline-block;
+}
+
+.channel-video-thumbnail-duration {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 5px;
+    font-size: 13px;
+}

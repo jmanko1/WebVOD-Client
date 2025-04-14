@@ -231,7 +231,6 @@ const VideoUpload = () => {
         if (!isValid) return;
 
         console.log("✅ Przesyłanie...");
-        // Można tu dodać API call (np. axios/fetch)
     };
 
     // =========================
@@ -350,6 +349,7 @@ const VideoUpload = () => {
                         autocomplete
                         placeholder="Dodaj tag"
                         allowDragDrop={false}
+                        autofocus={false}
                     />
                     <div className="form-text">Umieść przecinek po każdym tagu.</div>
                     {errors.tagError && <div className="invalid-feedback d-inline">{errors.tagError}</div>}

@@ -8,30 +8,50 @@ const Home = () => {
             id: 1,
             thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
             title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
-            author: "Szablo Mario",
-            views: "72 062 wyświetleń",
+            views: 72062,
             date: "24.06.2021",
-            duration: "19:23",
+            duration: 1162,
+            author: {
+                id: 1,
+                login: "Szablo Mario"
+            }
         },
         {
             id: 2,
             thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
             title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
-            author: "Szablo Mario",
-            views: "72 062 wyświetleń",
+            views: 72062,
             date: "24.06.2021",
-            duration: "19:23",
+            duration: 1162,
+            author: {
+                id: 1,
+                login: "Szablo Mario"
+            }
         },
         {
             id: 3,
             thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
             title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
-            author: "Szablo Mario",
-            views: "72 062 wyświetleń",
+            views: 72062,
             date: "24.06.2021",
-            duration: "19:23",
+            duration: 1162,
+            author: {
+                id: 1,
+                login: "Szablo Mario"
+            }
         }
     ];
+
+    const formatDuration = (seconds) => {
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+    
+        if (h > 0) 
+            return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+
+        return `${m}:${s.toString().padStart(2, "0")}`;
+    };
 
     return (
         <div className="container">
@@ -41,10 +61,10 @@ const Home = () => {
                         <div className="container">
                             <div className="row">
                                 <div className="col">
-                                    <div className="thumbnail-container">
-                                        <Link to={`/video/${video.id}`}>
-                                            <img className="thumbnail" src={video.thumbnail} alt="Miniatura" />
-                                            <span style={{fontSize: "14px"}} className="thumbnail-duration">{video.duration}</span>
+                                    <div className="home-video-thumbnail-container">
+                                        <Link to={`/videos/${video.id}`}>
+                                            <img className="home-video-thumbnail" src={video.thumbnail} alt="Miniatura" />
+                                            <span style={{fontSize: "13px"}} className="home-video-thumbnail-duration">{formatDuration(video.duration)}</span>
                                         </Link>
                                     </div>
                                 </div>
@@ -53,17 +73,19 @@ const Home = () => {
                                 <div className="col">
                                     <div className="container p-0">
                                         <div className="row">
-                                            <div className="col title">
-                                                <Link to={`/video/${video.id}`}>
+                                            <div className="col home-video-title">
+                                                <Link to={`/videos/${video.id}`}>
                                                     {video.title}
                                                 </Link>
                                             </div>
                                         </div>
-                                        <div className="row">
-                                            <div className="col author">{video.author}</div>
+                                        <div className="row mt-1">
+                                            <div className="col home-video-author">
+                                                <Link to={`/channels/${video.author.id}`}>{video.author.login}</Link>
+                                            </div>
                                         </div>
                                         <div className="row">
-                                            <div className="col details">{`${video.views}, ${video.date}`}</div>
+                                            <div className="col home-video-details">{`${video.views.toLocaleString("pl-PL")} wyświetleń, ${video.date}`}</div>
                                         </div>
                                     </div>
                                 </div>

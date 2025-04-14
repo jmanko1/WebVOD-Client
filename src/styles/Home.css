@@ -1,35 +1,40 @@
 /* Home.css */
 
-.thumbnail {
-    max-width: 600px;
+.home-video-thumbnail {
+    max-width: 560px;
     max-height: 315px;
     width: 100%;
     height: auto;
 }
 
-.title {
+.home-video-title {
     font-weight: bold;
 }
 
-.title a {
+.home-video-title a {
     text-decoration: none;
     color: black;
 }
 
-.author {
+.home-video-author {
     font-size: 15px;
 }
 
-.details {
+.home-video-author a {
+    text-decoration: none;
+    color: black;
+}
+
+.home-video-details {
     font-size: 15px;
 }
 
-.thumbnail-container {
+.home-video-thumbnail-container {
     position: relative;
     display: inline-block;
 }
 
-.thumbnail-duration {
+.home-video-thumbnail-duration {
     position: absolute;
     bottom: 0px;
     right: 0px;
