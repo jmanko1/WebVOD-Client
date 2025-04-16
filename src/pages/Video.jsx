@@ -392,7 +392,7 @@ const Video = () => {
                                             <div className="row">
                                                 <div className="col title">
                                                     <Link to={`/videos/${video.id}`}>
-                                                        {video.title.length > 75 ? video.title.slice(0, 75) + "..." : video.title}
+                                                        {video.title.length > 70 ? video.title.slice(0, 70) + "..." : video.title}
                                                     </Link>
                                                 </div>
                                             </div>

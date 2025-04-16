@@ -72,10 +72,10 @@ const Home = () => {
                             <div className="row mt-2">
                                 <div className="col">
                                     <div className="container p-0">
-                                        <div className="row">
+                                        <div className="row mt-1">
                                             <div className="col home-video-title">
                                                 <Link to={`/videos/${video.id}`}>
-                                                    {video.title}
+                                                    {video.title.length > 70 ? video.title.slice(0, 70) + "..." : video.title}
                                                 </Link>
                                             </div>
                                         </div>
