@@ -112,11 +112,11 @@ const Channel = () => {
                         <div className="col text-center">
                             <Link className="btn btn-primary" role="button" to="/channel-settings">
                                 <i className="fa-solid fa-gear"></i>
-                                <span className="ms-1">Zarządzanie kanałem</span>
+                                <span className="ms-1">Ustawienia kanału</span>
                             </Link>
-                            <Link className="btn btn-success ms-2" role="button" to="/video-manager">
-                                <i class="fa-solid fa-video"></i>
-                                <span className="ms-1">Zarządzanie filmami</span>
+                            <Link className="btn btn-success ms-2" role="button" to="/videos-manager">
+                                <i className="fa-solid fa-video"></i>
+                                <span className="ms-1">Menedżer filmów</span>
                             </Link>
                         </div>
                     </div> 
@@ -140,7 +140,7 @@ const Channel = () => {
                                         <div className="row">
                                             <div className="col channel-video-title">
                                                 <Link to={`/videos/${video.id}`}>
-                                                    {video.title}
+                                                    {video.title.length > 70 ? video.title.slice(0, 70) + "..." : video.title}
                                                 </Link>
                                             </div>
                                         </div>

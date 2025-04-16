@@ -1,0 +1,63 @@
+/* VideosManager.css */
+
+h1 {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+h2 {
+    font-size: 19px;
+}
+
+h3 {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.videos-manager-thumbnail {
+    max-width: 427px;
+    max-height: 240px;
+    width: 100%;
+    height: auto;
+}
+
+.videos-manager-title {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.videos-manager-title a {
+    text-decoration: none;
+    color: black;
+}
+
+.videos-manager-author {
+    font-size: 13px;
+}
+
+.videos-manager-details {
+    font-size: 13px;
+}
+
+.videos-manager-description {
+    background: rgba(0, 0, 0, 0.07);
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    font-size: 15px;
+}
+
+.videos-manager-thumbnail-container {
+    position: relative;
+    display: inline-block;
+}
+
+.videos-manager-thumbnail-duration {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 5px;
+    font-size: 13px;
+}
