@@ -9,7 +9,7 @@ const Home = () => {
             thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
             title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
             views: 72062,
-            date: "24.06.2021",
+            date: "2021-06-24",
             duration: 1162,
             author: {
                 id: 1,
@@ -21,7 +21,7 @@ const Home = () => {
             thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
             title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
             views: 72062,
-            date: "24.06.2021",
+            date: "2021-06-24",
             duration: 1162,
             author: {
                 id: 1,
@@ -33,7 +33,19 @@ const Home = () => {
             thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
             title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
             views: 72062,
-            date: "24.06.2021",
+            date: "2021-06-24",
+            duration: 1162,
+            author: {
+                id: 1,
+                login: "Szablo Mario"
+            }
+        },
+        {
+            id: 4,
+            thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
+            title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
+            views: 72062,
+            date: "2021-06-24",
             duration: 1162,
             author: {
                 id: 1,
@@ -51,6 +63,11 @@ const Home = () => {
             return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 
         return `${m}:${s.toString().padStart(2, "0")}`;
+    };
+
+    const formatDate = (dateString) => {
+        const [year, month, day] = dateString.split("-");
+        return `${day}.${month}.${year}`;
     };
 
     return (
@@ -85,7 +102,7 @@ const Home = () => {
                                             </div>
                                         </div>
                                         <div className="row">
-                                            <div className="col home-video-details">{`${video.views.toLocaleString("pl-PL")} wyświetleń, ${video.date}`}</div>
+                                            <div className="col home-video-details">{`${video.views.toLocaleString("pl-PL")} wyświetleń, ${formatDate(video.date)}`}</div>
                                         </div>
                                     </div>
                                 </div>

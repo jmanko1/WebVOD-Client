@@ -18,7 +18,8 @@ const Channel = () => {
             login: "tomek123",
             description: "Welcome to The Silent Strategist—the ultimate channel for mastering power, control, and influence through Stoicism and Dark Psychology. Power isn’t given—it’s taken. If you want to stay two steps ahead in relationships, command respect, and build an unshakable mindset, we provide proven psychological tactics to help you dominate every aspect of life. Inspired by Machiavelli, Sun Tzu, and Marcus Aurelius, we focus on No Contact, emotional detachment, power moves, and silent influence—helping you turn pain into power and make them regret underestimating you.",
             imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D",
-            signupDate: "05.04.2025"
+            signupDate: "2025-04-05",
+            videosCount: 24
         };
 
         const videos = [
@@ -27,7 +28,7 @@ const Channel = () => {
                 thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
                 title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1162
             },
             {
@@ -35,7 +36,7 @@ const Channel = () => {
                 thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
                 title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1162
             },
             {
@@ -43,7 +44,7 @@ const Channel = () => {
                 thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
                 title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1162
             },
             {
@@ -51,7 +52,7 @@ const Channel = () => {
                 thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
                 title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1162
             }
         ]
@@ -72,6 +73,11 @@ const Channel = () => {
         return `${m}:${s.toString().padStart(2, "0")}`;
     };
 
+    const formatDate = (dateString) => {
+        const [year, month, day] = dateString.split("-");
+        return `${day}.${month}.${year}`;
+    };
+
     return (
         <div className="container mt-4">
             {userData ? (
@@ -88,7 +94,7 @@ const Channel = () => {
                     </div>
                     <div className="row">
                         <div className="col text-center">
-                            Liczba filmów: {userVideos.length}, Data dołączenia: {userData.signupDate}
+                            Liczba filmów: {userData.videosCount}, Data dołączenia: {formatDate(userData.signupDate)}
                         </div>
                     </div>
                     <div className="row mt-2 justify-content-center">
@@ -145,7 +151,7 @@ const Channel = () => {
                                             </div>
                                         </div>
                                         <div className="row mt-1">
-                                            <div className="col channel-video-details">{`${video.views.toLocaleString("pl-PL")} wyświetleń, ${video.date}`}</div>
+                                            <div className="col channel-video-details">{`${video.views.toLocaleString("pl-PL")} wyświetleń, ${formatDate(video.date)}`}</div>
                                         </div>
                                     </div>
                                 </div>

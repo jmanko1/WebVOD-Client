@@ -13,7 +13,7 @@ const VideosManager = () => {
                 thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
                 title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1162
             },
             {
@@ -21,7 +21,7 @@ const VideosManager = () => {
                 thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
                 title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1162
             },
             {
@@ -29,7 +29,7 @@ const VideosManager = () => {
                 thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
                 title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1162
             },
             {
@@ -37,7 +37,7 @@ const VideosManager = () => {
                 thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
                 title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1162
             }
         ];
@@ -56,6 +56,11 @@ const VideosManager = () => {
             return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 
         return `${m}:${s.toString().padStart(2, "0")}`;
+    };
+
+    const formatDate = (dateString) => {
+        const [year, month, day] = dateString.split("-");
+        return `${day}.${month}.${year}`;
     };
 
     const handleVideoDelete = (idToRemove) => {
@@ -104,7 +109,7 @@ const VideosManager = () => {
                             {video.views.toLocaleString("pl-PL")} wyświetleń
                         </div>
                         <div className="col-12 col-xl-2 text-xl-center">
-                            {video.date}
+                            {formatDate(video.date)}
                         </div>
                         <div className="d-none d-xl-inline col-xl-2 text-xl-center mt-2 mt-xl-0">
                             <Link className="btn btn-success" role="button" to={`/videos-manager/${video.id}`}>

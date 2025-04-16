@@ -6,7 +6,7 @@ h1 {
 }
 
 .channel-video-thumbnail {
-    max-width: 480;
+    max-width: 480px;
     max-height: 270px;
     width: 100%;
     height: auto;

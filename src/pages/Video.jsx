@@ -33,7 +33,7 @@ const Video = () => {
             views: 105623,
             likes: 10942,
             comments: 1897,
-            date: "03.07.2022",
+            date: "2022-07-03",
             src: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
             // src: "https://static.videezy.com/system/resources/previews/000/008/452/original/Dark_Haired_Girl_Pensive_Looks_at_Camera.mp4",
             author: {
@@ -56,7 +56,7 @@ const Video = () => {
                     login: "tomek123"
                 },
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1163,
             },
             {
@@ -68,7 +68,7 @@ const Video = () => {
                     login: "tomek123"
                 },
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1163,
             },
             {
@@ -80,7 +80,7 @@ const Video = () => {
                     login: "tomek123"
                 },
                 views: 72062,
-                date: "24.06.2021",
+                date: "2021-06-24",
                 duration: 1163,
             }
         ]);
@@ -94,7 +94,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "21.03.2025 14:02"
+                date: "2025-03-21 14:02:00"
             },
             {
                 id: 2,
@@ -105,7 +105,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "21.03.2025 14:02"
+                date: "2025-03-21 14:02:00"
             },
             {
                 id: 3,
@@ -116,7 +116,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "21.03.2025 14:02"
+                date: "2025-03-21 14:02:00"
             },
             {
                 id: 4,
@@ -127,7 +127,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "21.03.2025 14:02"
+                date: "2025-03-21 14:02:00"
             },
             {
                 id: 5,
@@ -138,7 +138,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "21.03.2025 14:02"
+                date: "2025-03-21 14:02:00"
             },
             {
                 id: 6,
@@ -149,7 +149,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "21.03.2025 14:02"
+                date: "2025-03-21 14:02:00"
             },
             {
                 id: 7,
@@ -160,7 +160,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "21.03.2025 14:02"
+                date: "2025-03-21 14:02:00"
             },
             {
                 id: 8,
@@ -171,7 +171,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "21.03.2025 14:02"
+                date: "2025-03-21 14:02:00"
             }
         ]);
 
@@ -211,6 +211,20 @@ const Video = () => {
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
 
+        return `${year}-${month}-${day} ${hours}:${minutes}:00`;
+    }
+
+    const formatDate = (dateString) => {
+        const [year, month, day] = dateString.split("-");
+        return `${day}.${month}.${year}`;
+    };
+
+    const formatDatetime = (datetimeString) => {
+        const [date, time] = datetimeString.split(" ");
+
+        const [year, month, day] = date.split("-");
+        const [hours, minutes] = time.split(":");
+
         return `${day}.${month}.${year} ${hours}:${minutes}`;
     }
     
@@ -219,7 +233,17 @@ const Video = () => {
         
         if (!newComment.trim()) return;
 
-        setComments([{ id: Date.now(), author: "Anon", content: newComment, date: getFormattedDate() }, ...comments]);
+        setComments([
+            { 
+                id: Date.now(),
+                author: {
+                    id: 1,
+                    login: "tomek123",
+                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
+                }, 
+                content: newComment, 
+                date: getFormattedDate() 
+            }, ...comments]);
         setNewComment("");
         setCommentsCount((prev) => prev + 1);
     }
@@ -300,7 +324,7 @@ const Video = () => {
                                 </div>
                             </div>
                             <div className="mt-2">
-                                {watchedVideo.views.toLocaleString("pl-PL")} wyświetleń, {watchedVideo.date}
+                                {watchedVideo.views.toLocaleString("pl-PL")} wyświetleń, {formatDate(watchedVideo.date)}
                             </div>
                             <div className="description">
                                 <div>
@@ -356,7 +380,7 @@ const Video = () => {
                                                     <span className="fw-bold">
                                                         <Link className="text-decoration-none text-black" to={`/channels/${comment.author.id}`}>{comment.author.login}</Link>
                                                     </span>
-                                                    <span style={{fontSize: "14px"}}> ({comment.date})</span>
+                                                    <span style={{fontSize: "14px"}}> ({formatDatetime(comment.date)})</span>
                                                 </div>
                                                 <div>
                                                     {comment.content}
@@ -402,7 +426,7 @@ const Video = () => {
                                                 </div>
                                             </div>
                                             <div className="row">
-                                                <div className="col details">{video.views.toLocaleString("pl-PL")} wyświetleń, {video.date}</div>
+                                                <div className="col details">{video.views.toLocaleString("pl-PL")} wyświetleń, {formatDate(video.date)}</div>
                                             </div>
                                         </div>
                                     </div>
