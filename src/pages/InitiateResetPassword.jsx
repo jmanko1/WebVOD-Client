@@ -25,10 +25,11 @@ const InitiateResetPassword = () => {
     return (
         <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "475px"}}>
             <h1 style={{fontSize: "28px"}}>Zresetuj hasło</h1>
-            <p className="mt-4" style={{color: "#66676a", fontSize: "14px"}}>Na podany adres e-mail zostanie wysłana wiadomość z linkiem. Po kliknięciu w link, możliwe będzie ustawienie nowego hasła.</p>
-            <form className="mt-3 mb-4" onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Adres email</label>
+            {/* <p className="mt-4" style={{color: "#66676a", fontSize: "14px"}}>Na podany adres e-mail zostanie wysłana wiadomość z linkiem. Po kliknięciu w link, możliwe będzie ustawienie nowego hasła.</p> */}
+            <form className="mt-4 mb-4" onSubmit={handleSubmit}>
+                <div className="mb-4">
+                    <div className="form-text">Na podany adres e-mail zostanie wysłana wiadomość z linkiem. Po kliknięciu w link, możliwe będzie ustawienie nowego hasła.</div>
+                    <label htmlFor="email" className="form-label mt-3">Adres email</label>
                     <input
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}

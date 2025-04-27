@@ -71,7 +71,7 @@ const VideoPlayer = ({ url }) => {
     return (
         <>
             <div>
-                <video ref={videoRef} controls></video>
+                <video ref={videoRef} controls style={{backgroundColor: "black"}}></video>
             </div>
             <div className="mt-2">
                 {levels.map((level, index) => (

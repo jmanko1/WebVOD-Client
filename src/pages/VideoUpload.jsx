@@ -32,6 +32,7 @@ const VideoUpload = () => {
     const [autoThumbnailSrc, setAutoThumbnailSrc] = useState(null);
 
     const [errors, setErrors] = useState({});
+    const [mainError, setMainError] = useState(null);
     const thumbnailInputRef = useRef();
 
     // Init categories (jeśli byłyby z API)
@@ -168,6 +169,10 @@ const VideoUpload = () => {
 
     const generateUserThumbnail = (file) => {
         if (!ALLOWED_THUMBNAIL_MIME.includes(file?.type)) return;
+        // Clean up poprzedniego URL
+        // if (userThumbnailSrc && userThumbnailSrc.startsWith("blob:")) {
+        //     URL.revokeObjectURL(userThumbnailSrc);
+        // }
         const imageUrl = URL.createObjectURL(file);
         setUserThumbnailSrc(imageUrl);
     };
@@ -219,6 +224,7 @@ const VideoUpload = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        setMainError(null);
         console.log(video, title, description, thumbnail, category, tags);
 
         const isValid =
@@ -228,7 +234,10 @@ const VideoUpload = () => {
             validateThumbnail() &
             validateCategory();
 
-        if (!isValid) return;
+        if (!isValid) {
+            setMainError("Popraw błędy w danych.");
+            return;
+        }
 
         console.log("✅ Przesyłanie...");
     };
@@ -238,9 +247,9 @@ const VideoUpload = () => {
     // =========================
 
     return (
-        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{ maxWidth: "700px" }}>
+        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{ maxWidth: "800px" }}>
             <h1 style={{ fontSize: "28px" }}>Nowy film</h1>
-            <form className="mt-4 mb-3" onSubmit={handleSubmit}>
+            <form className="mt-4" onSubmit={handleSubmit}>
 
                 {/* Wideo */}
                 <div className="mb-3">
@@ -301,25 +310,23 @@ const VideoUpload = () => {
                         style={{ maxWidth: "500px" }}
                     />
                     <div className="form-text">Dopuszczalne typy: jpg/jpeg/png. Zalecany format 16:9.</div>
+                    {errors.thumbnailError && <div className="invalid-feedback">{errors.thumbnailError}</div>}
                     {userThumbnailSrc && (
                         <>
                             <div className="mt-2">
                                 <button className="btn btn-danger" onClick={handleCancelThumbnail}>Anuluj</button>
                             </div>
                             <div className="mt-2">
-                                <img src={userThumbnailSrc} alt="Miniatura" style={{ maxWidth: "450px" }} />
+                                <img src={userThumbnailSrc} alt="Miniatura" style={{ maxWidth: "450px", maxHeight: "254px", width: "100%", height:"auto" }} />
                             </div>
                         </>
                     )}
                     {!userThumbnailSrc && autoThumbnailSrc && (
-                        <>
-                            <div className="mt-2">
-                                <img src={autoThumbnailSrc} alt="Auto miniatura" style={{ maxWidth: "450px" }} />
-                            </div>
+                        <div className="mt-3">
+                            <img src={autoThumbnailSrc} alt="Auto miniatura" style={{ maxWidth: "450px", maxHeight: "254px", width: "100%", height:"auto" }} />
                             <div className="form-text">Automatyczna miniatura</div>
-                        </>
+                        </div>
                     )}
-                    {errors.thumbnailError && <div className="invalid-feedback">{errors.thumbnailError}</div>}
                 </div>
 
                 {/* Kategoria */}
@@ -349,7 +356,7 @@ const VideoUpload = () => {
                         autocomplete
                         placeholder="Dodaj tag"
                         allowDragDrop={false}
-                        autofocus={false}
+                        autoFocus={false}
                     />
                     <div className="form-text">Umieść przecinek po każdym tagu.</div>
                     {errors.tagError && <div className="invalid-feedback d-inline">{errors.tagError}</div>}
@@ -357,6 +364,10 @@ const VideoUpload = () => {
 
                 {/* Submit */}
                 <button type="submit" className="btn btn-primary">Prześlij</button>
+
+                {mainError && (
+                    <div className="text-danger mt-3">{mainError}</div>
+                )}
             </form>
         </div>
     );

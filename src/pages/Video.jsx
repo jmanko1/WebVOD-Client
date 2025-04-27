@@ -281,7 +281,7 @@ const Video = () => {
                             {/* Sekcja informacji o filmie */}
                             <div className="container mt-3">
                                 <div className="row align-items-center">
-                                    <div className="col-1 p-0">
+                                    <div className="col-1 p-0 d-none d-md-inline">
                                         <img 
                                             // className="rounded-5" 
                                             src={watchedVideo.author.imageURL}
@@ -397,7 +397,7 @@ const Video = () => {
                 </div>
 
                 {/* Sekcja polecanych filmów */}
-                <div className="col-12 mt-4 mt-xxl-0 col-xxl">
+                <div className="col-12 mt-4 mt-xxl-0 col-xxl-4">
                     <h2 className="fw-bold">Podobne filmy</h2>
                     {recommendedVideos ? (
                         <div className="container p-0">
@@ -426,7 +426,7 @@ const Video = () => {
                                                 </div>
                                             </div>
                                             <div className="row">
-                                                <div className="col details">{video.views.toLocaleString("pl-PL")} wyświetleń, {formatDate(video.date)}</div>
+                                                <div className="col details">{video.views.toLocaleString("pl-PL")}, {formatDate(video.date)}</div>
                                             </div>
                                         </div>
                                     </div>
