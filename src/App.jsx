@@ -15,6 +15,7 @@ import Video from './pages/Video';
 import VideoUpload from './pages/VideoUpload';
 import Channel from './pages/Channel';
 import VideosManager from './pages/VideosManager';
+import VideoEdit from './pages/VideoEdit';
 
 const App = () => {
     return (
@@ -32,6 +33,7 @@ const App = () => {
                     <Route path="/upload" element={<VideoUpload />} />
                     <Route path="/channels/:id" element={<Channel />} />
                     <Route path="/videos-manager" element={<VideosManager />} />
+                    <Route path="/videos-manager/:id" element={<VideoEdit />} />
                     <Route path="*" element={<NoPage />} />
                 </Route>
             </Routes>
