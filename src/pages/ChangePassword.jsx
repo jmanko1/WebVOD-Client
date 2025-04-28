@@ -49,7 +49,7 @@ const ChangePassword = () => {
     }
 
     return (
-        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "475px"}}>
+        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "600px"}}>
             <h1 style={{fontSize: "28px"}}>Zmiana hasło</h1>
             <form className="mt-4 mb-4" onSubmit={handleSubmit}>
                 <div className="mb-3">
@@ -125,7 +125,7 @@ const ChangePassword = () => {
                 )}
             </form>
             <div>
-                <Link to="#" className="text-decoration-none">Powrót</Link>
+                <Link to="/channel-settings" className="text-decoration-none">Powrót</Link>
             </div>
         </div>
     );
