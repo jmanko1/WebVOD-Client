@@ -1,0 +1,79 @@
+/* ChannelSettingsMenu.css */
+
+.account-settings-title h2 {
+    font-weight: bold;
+    font-size: 19px;
+}
+
+.account-settings {
+  width: 300px;
+  font-family: Arial, sans-serif;
+}
+
+.account-settings ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.account-settings ul a {
+  color: black;
+  text-decoration: none;
+}
+
+.account-settings li {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.account-settings li:hover {
+  background-color: #f0f2f5;
+}
+
+.account-settings li.active {
+  background-color: #1c1e21;
+  color: white;
+}
+
+.account-settings .label {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.box-description {
+  color: #666;
+  font-size: 15px;
+}
+
+.box-title h1 {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.box {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.item {
+  display: block;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  text-decoration: none;
+  color: #000;
+  transition: background-color 0.2s;
+}
+
+.item:hover {
+  background-color: #f0f0f0;
+}
+
+.item:last-child {
+  border-bottom: none;
+}
