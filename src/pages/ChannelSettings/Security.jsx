@@ -18,12 +18,15 @@ const Security = () => {
                     <div className="box mt-3">
                         <Link to="/channel-settings/password-security/change-password" className="item">
                             Zmień hasło
+                            <i className="arrow fa-solid fa-chevron-right"></i>
                         </Link>
                         <Link to="/channel-settings/password-security/tfa" className="item">
                             Uwierzytelnianie dwuskładnikowe
+                            <i className="arrow fa-solid fa-chevron-right"></i>
                         </Link>
                         <Link to="#" className="item">
                             Miejsca logowania
+                            <i className="arrow fa-solid fa-chevron-right"></i>
                         </Link>
                     </div>
                 </div>

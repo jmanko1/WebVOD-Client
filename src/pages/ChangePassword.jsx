@@ -125,7 +125,7 @@ const ChangePassword = () => {
                 )}
             </form>
             <div>
-                <Link to="/channel-settings" className="text-decoration-none">Powrót</Link>
+                <Link to="/channel-settings/password-security" className="text-decoration-none">Powrót</Link>
             </div>
         </div>
     );

@@ -78,7 +78,7 @@ const TFASettings = () => {
                 </form>
             </div>
             <div className="mt-4">
-                <Link to="/channel-settings" className="text-decoration-none">Powrót</Link>
+                <Link to="/channel-settings/password-security" className="text-decoration-none">Powrót</Link>
             </div>
         </div>
     )

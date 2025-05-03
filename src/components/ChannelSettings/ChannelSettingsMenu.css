@@ -62,7 +62,9 @@
 }
 
 .item {
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 15px 20px;
   border-bottom: 1px solid #eee;
   text-decoration: none;
@@ -76,4 +78,15 @@
 
 .item:last-child {
   border-bottom: none;
+}
+
+.arrow {
+  font-size: 16px;
+  color: #999;
+}
+
+.subtext {
+  font-size: 14px;
+  color: #666;
+  margin-top: 2px;
 }
