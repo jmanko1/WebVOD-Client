@@ -1,7 +1,14 @@
 import { Link, Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar/Sidebar";
+import { useEffect, useState } from "react";
 
 const Layout = () => {
+    const [isLogged, setIsLogged] = useState(false);
+
+    useEffect(() => {
+        setIsLogged(true);
+    }, []);
+
     return (
         <>
             <nav className="navbar bg-body sticky-top navbar-expand-lg border-bottom">
@@ -27,11 +34,54 @@ const Layout = () => {
                                 <i className="fas fa-search"></i>
                             </button>
                         </form>
-                        <Link role="button" to="/upload" className="btn btn-success mt-2 mt-lg-0 ms-lg-2 me-2 me-lg-0">
-                            <i className="fa-solid fa-plus"></i>
-                            <span className="ms-1">Nowy film</span>
-                        </Link>
-                        <Link role="button" to="/login" className="btn btn-primary mt-2 mt-lg-0 ms-lg-2">Zaloguj się</Link>
+                        {isLogged ? (
+                            <>
+                                <Link role="button" to="/upload" className="btn btn-success mt-2 mt-lg-0 ms-lg-2">
+                                    <i className="fa-solid fa-plus"></i>
+                                    <span className="ms-1">Nowy film</span>
+                                </Link>
+                                <div className="btn-group d-none d-lg-inline dropstart ms-1">
+                                    <button className="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Moje konto
+                                    </button>
+                                    <ul className="dropdown-menu">
+                                        <li>
+                                            <Link to="/channels/1" className="dropdown-item">Strona kanału</Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/videos-manager" className="dropdown-item">Menedżer filmów</Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/channel-settings" className="dropdown-item">Ustawienia</Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/logout" className="dropdown-item">Wyloguj się</Link>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="btn-group mt-2 d-lg-none dropdown ms-1">
+                                    <button className="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Moje konto
+                                    </button>
+                                    <ul className="dropdown-menu">
+                                        <li>
+                                            <Link to="/channels/1" className="dropdown-item">Strona kanału</Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/videos-manager" className="dropdown-item">Menedżer filmów</Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/channel-settings" className="dropdown-item">Ustawienia</Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/logout" className="dropdown-item">Wyloguj się</Link>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </>
+                        ) : (
+                            <Link role="button" to="/login" className="btn btn-primary mt-2 mt-lg-0 ms-lg-2">Zaloguj się</Link>  
+                        )}
                     </div>
                 </div>
             </nav>
