@@ -11,6 +11,11 @@
     font-weight: bold;
 }
 
+.home-video-card {
+    width: 100%;
+    max-width: 400px;
+}
+
 .home-video-title a {
     text-decoration: none;
     color: black;

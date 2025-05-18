@@ -6,50 +6,50 @@ const Home = () => {
     const recommendedVideos = [
         {
             id: 1,
-            thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
-            title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
+            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+            title: "Fajny film",
             views: 72062,
-            date: "2021-06-24",
+            date: "2024-06-24",
             duration: 1162,
             author: {
                 id: 1,
-                login: "Szablo Mario"
+                login: "tomek123"
             }
         },
         {
             id: 2,
-            thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
-            title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
+            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+            title: "Fajny film",
             views: 72062,
-            date: "2021-06-24",
+            date: "2024-06-24",
             duration: 1162,
             author: {
                 id: 1,
-                login: "Szablo Mario"
+                login: "tomek123"
             }
         },
         {
             id: 3,
-            thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
-            title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
+            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+            title: "Fajny film",
             views: 72062,
-            date: "2021-06-24",
+            date: "2024-06-24",
             duration: 1162,
             author: {
                 id: 1,
-                login: "Szablo Mario"
+                login: "tomek123"
             }
         },
         {
             id: 4,
-            thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
-            title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
+            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+            title: "Fajny film",
             views: 72062,
-            date: "2021-06-24",
+            date: "2024-06-24",
             duration: 1162,
             author: {
                 id: 1,
-                login: "Szablo Mario"
+                login: "tomek123"
             }
         }
     ];
@@ -74,8 +74,8 @@ const Home = () => {
         <div className="container">
             <div className="row">
                 {recommendedVideos.map(video => (
-                   <div className="col-12 col-md-6 col-xl-4 mt-4" key={video.id}>
-                        <div className="container">
+                   <div className="col-12 col-md-6 col-xl-4 mt-4 d-flex justify-content-center" key={video.id}>
+                        <div className="home-video-card">
                             <div className="row">
                                 <div className="col">
                                     <div className="home-video-thumbnail-container">

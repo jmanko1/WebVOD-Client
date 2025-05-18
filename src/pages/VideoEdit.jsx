@@ -45,11 +45,11 @@ const VideoEdit = () => {
         setCategories(fetchedCategories);
 
         const videoData = {
-            title: "Dark Haired Girl Pensive Looks at Camera",
-            description: 'Oto szesnasty odcinek mojej serii Zagrajmy w Wiedźmin 2: Edycja Rozszerzona (lub jak kto woli: Zagrajmy w Wiedźmin 2: Zabójcy Królów). Tym razem wykonujemy zadanie fabularne "Róża pamięci", a Geralt przeżywa ulotne chwile z Triss w łaźni;). Produkcja została stworzona przez polskie studio CD Projekt RED, a ja przechodzę wersję na PC.',
+            title: "Fajny film",
+            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
             category: "Film",
             tags: ["batman", "warner", "dceu", "superman", "dc"],
-            thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg"
+            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png"
         };
 
         // setVideo(videoData);

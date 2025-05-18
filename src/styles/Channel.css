@@ -6,8 +6,8 @@ h1 {
 }
 
 .channel-video-thumbnail {
-    max-width: 480px;
-    max-height: 270px;
+    max-width: 560px;
+    max-height: 315px;
     width: 100%;
     height: auto;
 }
@@ -28,6 +28,11 @@ h1 {
 .channel-video-thumbnail-container {
     position: relative;
     display: inline-block;
+}
+
+.channel-video-card {
+    width: 100%;
+    max-width: 400px;
 }
 
 .channel-video-thumbnail-duration {
