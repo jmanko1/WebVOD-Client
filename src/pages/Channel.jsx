@@ -17,7 +17,7 @@ const Channel = () => {
         const data = {
             login: "tomek123",
             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D",
+            imageURL: "https://marszalstudio.pl/wp-content/uploads/2024/01/fajne-zdjecia-profilowe-12.webp",
             signupDate: "2023-04-05",
             videosCount: 24
         };
@@ -82,9 +82,9 @@ const Channel = () => {
         <div className="container mt-4">
             {userData ? (
                 <>
-                    <div className="row">
-                        <div className="col text-center">
-                            <img src={userData.imageURL} alt="Zdjęcie kanału" style={{maxWidth: "160px", height: "auto", width: "100%"}} />
+                    <div className="row justify-content-center">
+                        <div className="col ratio ratio-1x1 p-0" style={{maxWidth: "160px"}}>
+                            <img className="img-fluid object-fit-cover w-100 h-100" src={userData.imageURL} alt="Zdjęcie kanału" />
                         </div>
                     </div>
                     <div className="row mt-2">
@@ -132,9 +132,9 @@ const Channel = () => {
                         <div className="channel-video-card">
                             <div className="row">
                                 <div className="col">
-                                    <div className="channel-video-thumbnail-container">
+                                    <div className="ratio ratio-16x9">
                                         <Link to={`/videos/${video.id}`}>
-                                            <img className="channel-video-thumbnail" src={video.thumbnail} alt="Miniatura" />
+                                            <img className="img-fluid object-fit-cover w-100 h-100" src={video.thumbnail} alt="Miniatura" />
                                             <span style={{fontSize: "13px"}} className="channel-video-thumbnail-duration">{formatDuration(video.duration)}</span>
                                         </Link>
                                     </div>

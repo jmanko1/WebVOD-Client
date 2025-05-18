@@ -93,9 +93,9 @@ const VideosManager = () => {
                 videos.map(video => (
                     <div className="row align-items-center mb-4 mb-xl-3" key={video.id}>
                         <div className="col-12 col-xl-2">
-                            <div className="videos-manager-thumbnail-container">
+                            <div className="ratio ratio-16x9">
                                 <Link to={`/videos/${video.id}`}>
-                                    <img className="videos-manager-thumbnail" src={video.thumbnail} alt="Miniatura" />
+                                    <img className="img-fluid object-fit-cover w-100 h-100" src={video.thumbnail} alt="Miniatura" />
                                     <span className="videos-manager-thumbnail-duration">{formatDuration(video.duration)}</span>
                                 </Link>
                             </div>

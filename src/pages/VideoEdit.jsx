@@ -259,8 +259,10 @@ const VideoEdit = () => {
                             <button className="btn btn-danger" onClick={handleCancelThumbnail}>Anuluj</button>
                         </div>
                     )}
-                    <div className="mt-3">
-                        <img src={userThumbnailSrc} alt="Miniatura" style={{ maxWidth: "450px", maxHeight: "254px", width: "100%", height:"auto" }} />
+                    <div className="mt-3 row justify-content-center">
+                        <div className="ratio ratio-16x9 p-0" style={{maxWidth: "350px"}}>
+                            <img src={userThumbnailSrc} alt="Miniatura" className="img-fluid object-fit-cover w-100 h-100" />
+                        </div>
                         <div className="form-text">
                             {thumbnail ? "Podgląd nowej miniatury" : "Obecna miniatura"}
                         </div>

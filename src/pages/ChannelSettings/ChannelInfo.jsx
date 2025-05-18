@@ -28,8 +28,8 @@ const ChannelInfo = () => {
             id: 1,
             login: "tomek123",
             email: "tomek123@gmail.com",
-            description: "Welcome to The Silent Strategist—the ultimate channel for mastering power, control, and influence through Stoicism and Dark Psychology. Power isn’t given—it’s taken. If you want to stay two steps ahead in relationships, command respect, and build an unshakable mindset, we provide proven psychological tactics to help you dominate every aspect of life. Inspired by Machiavelli, Sun Tzu, and Marcus Aurelius, we focus on No Contact, emotional detachment, power moves, and silent influence—helping you turn pain into power and make them regret underestimating you.",
-            imageURL: null,
+            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            imageURL: "https://marszalstudio.pl/wp-content/uploads/2024/01/fajne-zdjecia-profilowe-12.webp",
             signupDate: "2025-01-25"
         }
 
@@ -239,8 +239,10 @@ const ChannelInfo = () => {
                         </div>
                         <div className="modal-body mt-2 mb-2 text-center">
                             <form onSubmit={submitImage}>
-                                <div className="mb-2">
-                                    <img src={viewedImage} alt="Zdjęcie profilowe" style={{ maxWidth: "150px", maxHeight: "150px", width: "100%", height:"auto" }} />
+                                <div className="mb-2 row justify-content-center">
+                                    <div className="ratio ratio-1x1 p-0" style={{maxWidth: "150px"}}>
+                                        <img src={viewedImage} alt="Zdjęcie profilowe" className="img-fluid object-fit-cover w-100 h-100" />
+                                    </div>
                                     <div className="form-text">
                                         {newImage ? "Podgląd nowego zdjęcia profilowego" : "Obecne zdjęcie profilowe"}
                                     </div>

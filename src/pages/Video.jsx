@@ -28,8 +28,8 @@ const Video = () => {
     useEffect(() => {
         
         const videoData = {
-            title: "Dark Haired Girl Pensive Looks at Camera",
-            description: 'Oto szesnasty odcinek mojej serii Zagrajmy w Wiedźmin 2: Edycja Rozszerzona (lub jak kto woli: Zagrajmy w Wiedźmin 2: Zabójcy Królów). Tym razem wykonujemy zadanie fabularne "Róża pamięci", a Geralt przeżywa ulotne chwile z Triss w łaźni;). Produkcja została stworzona przez polskie studio CD Projekt RED, a ja przechodzę wersję na PC.',
+            title: "Fajny film",
+            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
             views: 105623,
             likes: 10942,
             comments: 1897,
@@ -49,8 +49,8 @@ const Video = () => {
         setRecommendedVideos([
             {
                 id: 1,
-                thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
-                title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
+                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+                title: "Fajny film",
                 author: {
                     id: 1,
                     login: "tomek123"
@@ -61,8 +61,8 @@ const Video = () => {
             },
             {
                 id: 2,
-                thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
-                title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
+                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+                title: "Fajny film",
                 author: {
                     id: 1,
                     login: "tomek123"
@@ -73,8 +73,8 @@ const Video = () => {
             },
             {
                 id: 3,
-                thumbnail: "https://i.ytimg.com/vi/_oedcuHCQwU/hq720.jpg",
-                title: "Wiedźmin 3: Dziki Gon - Jaskinia Snów - Droga ku zagładzie NG+",
+                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+                title: "Fajny film",
                 author: {
                     id: 1,
                     login: "tomek123"
@@ -82,21 +82,11 @@ const Video = () => {
                 views: 72062,
                 date: "2021-06-24",
                 duration: 1163,
-            }
+            },
         ]);
 
         setComments([
             {
-                id: 1,
-                author: {
-                    id: 1,
-                    login: "tomek123",
-                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
-                },
-                content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "2025-03-21 14:02:00"
-            },
-            {
                 id: 2,
                 authorImageSrc: "https://yt3.ggpht.com/Pk-75p67kN439_PkvOvIywqwXw4X8-3iBYP0KahdMliVznX5BNkti8Q4yEz7NcENMtEErjVJ=s88-c-k-c0x00ffffff-no-rj",
                 author: {
@@ -104,7 +94,7 @@ const Video = () => {
                     login: "tomek123",
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
-                content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
+                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 date: "2025-03-21 14:02:00"
             },
             {
@@ -115,7 +105,7 @@ const Video = () => {
                     login: "tomek123",
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
-                content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
+                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 date: "2025-03-21 14:02:00"
             },
             {
@@ -126,7 +116,7 @@ const Video = () => {
                     login: "tomek123",
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
-                content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
+                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 date: "2025-03-21 14:02:00"
             },
             {
@@ -137,40 +127,7 @@ const Video = () => {
                     login: "tomek123",
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
-                content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "2025-03-21 14:02:00"
-            },
-            {
-                id: 6,
-                authorImageSrc: "https://yt3.ggpht.com/Pk-75p67kN439_PkvOvIywqwXw4X8-3iBYP0KahdMliVznX5BNkti8Q4yEz7NcENMtEErjVJ=s88-c-k-c0x00ffffff-no-rj",
-                author: {
-                    id: 1,
-                    login: "tomek123",
-                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
-                },
-                content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "2025-03-21 14:02:00"
-            },
-            {
-                id: 7,
-                authorImageSrc: "https://yt3.ggpht.com/Pk-75p67kN439_PkvOvIywqwXw4X8-3iBYP0KahdMliVznX5BNkti8Q4yEz7NcENMtEErjVJ=s88-c-k-c0x00ffffff-no-rj",
-                author: {
-                    id: 1,
-                    login: "tomek123",
-                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
-                },
-                content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
-                date: "2025-03-21 14:02:00"
-            },
-            {
-                id: 8,
-                authorImageSrc: "https://yt3.ggpht.com/Pk-75p67kN439_PkvOvIywqwXw4X8-3iBYP0KahdMliVznX5BNkti8Q4yEz7NcENMtEErjVJ=s88-c-k-c0x00ffffff-no-rj",
-                author: {
-                    id: 1,
-                    login: "tomek123",
-                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
-                },
-                content: " Kiedy rozum śpi, budzą się demony. Na zakuty lewacki łeb jest tylko jeden sposób: bliskie spotkanie 3 stopnia. Niech ta pani zamieszka na jakiś czas w Paryżu w dzielnicy zdominowanej przez migrantów. Jest szansa, że to wróci jej rozum.",
+                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                 date: "2025-03-21 14:02:00"
             }
         ]);
@@ -281,15 +238,17 @@ const Video = () => {
                             {/* Sekcja informacji o filmie */}
                             <div className="container mt-3">
                                 <div className="row align-items-center">
-                                    <div className="col-1 p-0 d-none d-md-inline">
-                                        <img 
-                                            // className="rounded-5" 
-                                            src={watchedVideo.author.imageURL}
-                                            alt="Autor"
-                                            style={{ width: "50px", height: "50px" }} 
-                                        />
+                                    <div className="col-auto p-0 d-none d-md-block">
+                                        <Link to={`/channels/${watchedVideo.author.id}`}>
+                                            <img
+                                                src={watchedVideo.author.imageURL}
+                                                alt="Autor"
+                                                className="img-fluid"
+                                                style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                                            />
+                                        </Link>
                                     </div>
-                                    <div className="col p-0">
+                                    <div className="col p-0 ps-md-2">
                                         <h3>
                                             <Link className="text-decoration-none text-black" to={`/channels/${watchedVideo.author.id}`}>{watchedVideo.author.login}</Link>
                                         </h3>
@@ -372,8 +331,13 @@ const Video = () => {
                                 <div className="comments-tab container p-0">
                                     {comments.map(comment => (
                                         <div className="m-0 pt-2 pb-2 row mb-2" key={comment.id}>
-                                            <div className="col-1 d-none d-md-inline">
-                                                <img src={comment.author.imageURL} style={{width: "50px", height: "50px"}} />
+                                            <div className="col-auto d-none d-md-block">
+                                                <img
+                                                    src={comment.author.imageURL}
+                                                    alt="Autor"
+                                                    className="img-fluid"
+                                                    style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                                                />
                                             </div>
                                             <div className="col">
                                                 <div>
@@ -403,15 +367,15 @@ const Video = () => {
                         <div className="container p-0">
                             {recommendedVideos.map(video => (
                                 <div className="row mb-3" key={video.id}>
-                                    <div className="col">
-                                        <div className="thumbnail-container">
+                                    <div className="col pe-0">
+                                        <div className="thumbnail-container ratio ratio-16x9">
                                             <Link to={`/videos/${video.id}`}>
-                                                <img className="thumbnail" src={video.thumbnail} alt="Miniatura" />
+                                                <img className="img-fluid object-fit-cover w-100 h-100" src={video.thumbnail} alt="Miniatura" />
                                                 <span className="thumbnail-duration">{formatDuration(video.duration)}</span>
                                             </Link>
                                         </div>
                                     </div>
-                                    <div className="col">
+                                    <div className="col ps-0">
                                         <div className="container">
                                             <div className="row">
                                                 <div className="col title">

@@ -316,14 +316,18 @@ const VideoUpload = () => {
                             <div className="mt-2">
                                 <button className="btn btn-danger" onClick={handleCancelThumbnail}>Anuluj</button>
                             </div>
-                            <div className="mt-2">
-                                <img src={userThumbnailSrc} alt="Miniatura" style={{ maxWidth: "450px", maxHeight: "254px", width: "100%", height:"auto" }} />
+                            <div className="mt-2 row justify-content-center">
+                                <div className="ratio ratio-16x9 p-0" style={{maxWidth: "350px"}}>
+                                    <img src={userThumbnailSrc} alt="Miniatura" className="img-fluid object-fit-cover w-100 h-100" />
+                                </div>
                             </div>
                         </>
                     )}
                     {!userThumbnailSrc && autoThumbnailSrc && (
-                        <div className="mt-3">
-                            <img src={autoThumbnailSrc} alt="Auto miniatura" style={{ maxWidth: "450px", maxHeight: "254px", width: "100%", height:"auto" }} />
+                        <div className="mt-3 row justify-content-center">
+                            <div className="ratio ratio-16x9 p-0" style={{maxWidth: "350px"}}>
+                                <img src={autoThumbnailSrc} alt="Miniatura" className="img-fluid object-fit-cover w-100 h-100" />
+                            </div>
                             <div className="form-text">Automatyczna miniatura</div>
                         </div>
                     )}
