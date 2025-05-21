@@ -3,48 +3,92 @@ import { validateConfirmPassword, validateEmail, validateLogin, validatePassword
 import { Link } from "react-router-dom";
 
 const Register = () => {
-    const [login, setLogin] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const [form, setForm] = useState({
+        login: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    })
 
-    const [loginError, setLoginError] = useState(null);
-    const [passwordError, setPasswordError] = useState(null);
-    const [emailError, setEmailError] = useState(null);
-    const [confirmPasswordError, setConfirmPasswordError] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [mainError, setMainError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    const handleLoginChange = (e) => {
-        setLogin(e.target.value);
-        setLoginError(null);
-    }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: null }));
+    }; 
 
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value);
-        setEmailError(null);
-    }
+    const validateForm = () => {
+        const newErrors = {};
+        if (!validateLogin(form.login, (e) => (newErrors.login = e))) {}
+        if (!validateEmail(form.email, (e) => (newErrors.email = e))) {}
+        if (!validatePassword(form.password, (e) => (newErrors.password = e))) {}
+        if (!validateConfirmPassword(form.password, form.confirmPassword, (e) => (newErrors.confirmPassword = e))) {}
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-        setPasswordError(null);
-    }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
-    const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value);
-        setConfirmPasswordError(null);
-    }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        const isLoginValid = validateLogin(login, setLoginError);
-        const isPasswordValid = validatePassword(password, setPasswordError);
-        const isEmailValid = validateEmail(email, setEmailError);
-        const isConfirmPasswordValid = validateConfirmPassword(password, confirmPassword, setConfirmPasswordError);
 
-        if(!isLoginValid || !isPasswordValid || !isEmailValid || !isConfirmPasswordValid)
+        setSuccess(null);
+        setMainError(null);
+        setLoading(true);
+
+        if(!validateForm()) {
+            setLoading(false);
             return;
-        
-        console.log(login, email, password, confirmPassword);
+        }
+
+        const api = import.meta.env.VITE_API_URL;
+
+        try {
+            const response = await fetch(`${api}/auth/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(form),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                const newErrors = {};
+
+                if (errorData.message) {
+                    setMainError(errorData.message);
+                }
+                if (errorData.errors?.Login) {
+                    newErrors.login = errorData.errors.Login[0];
+                } 
+                if (errorData.errors?.Email) {
+                    newErrors.email = errorData.errors.Email[0];
+                } 
+                if (errorData.errors?.Password) {
+                    newErrors.password = errorData.errors.Password[0];
+                } 
+                if (errorData.errors?.ConfirmPassword) {
+                    newErrors.confirmPassword = errorData.errors.ConfirmPassword[0];
+                }
+
+                setErrors((prev) => ({ ...prev, ...newErrors }));
+                return;
+            }
+
+            if (response.ok) {
+                setSuccess("Rejestracja zakończona sukcesem. Możesz teraz się zalogować."); 
+                setForm({ login: "", email: "", password: "", confirmPassword: "" });
+            }
+        } catch {
+            setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -54,16 +98,17 @@ const Register = () => {
                 <div className="mb-3">
                     <label htmlFor="login" className="form-label">Login</label>
                     <input
+                        name="login"
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={login}
-                        onChange={handleLoginChange}
-                        className={`form-control mx-auto ${loginError ? 'is-invalid' : ''}`}
+                        value={form.login}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.login ? 'is-invalid' : ''}`}
                         id="login" 
                     />
-                    {loginError && (
+                    {errors.login && (
                         <div className="invalid-feedback">
-                            {loginError}
+                            {errors.login}
                         </div>
                     )}
                 </div>
@@ -71,51 +116,71 @@ const Register = () => {
                     <label htmlFor="email" className="form-label">Adres email</label>
                     <input
                         type="text"
+                        name="email"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={email}
-                        onChange={handleEmailChange}
-                        className={`form-control mx-auto ${emailError ? 'is-invalid' : ''}`}
+                        value={form.email}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.email ? 'is-invalid' : ''}`}
                         id="email"
                     />
-                    {emailError && (
+                    {errors.email && (
                         <div className="invalid-feedback">
-                            {emailError}
+                            {errors.email}
                         </div>
                     )}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Hasło</label>
                     <input
+                        name="password"
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={password}
-                        onChange={handlePasswordChange}
-                        className={`form-control mx-auto ${passwordError ? 'is-invalid' : ''}`}
+                        value={form.password}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.password ? 'is-invalid' : ''}`}
                         id="password" 
                     />
-                    {passwordError && (
+                    {errors.password && (
                         <div className="invalid-feedback">
-                            {passwordError}
+                            {errors.password}
                         </div>
                     )}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="confirm-password" className="form-label">Potwierdź hasło</label>
                     <input
+                        name="confirmPassword"
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={confirmPassword}
-                        onChange={handleConfirmPasswordChange}
-                        className={`form-control mx-auto ${confirmPasswordError ? 'is-invalid' : ''}`}
+                        value={form.confirmPassword}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.confirmPassword ? 'is-invalid' : ''}`}
                         id="confirm-password" 
                     />
-                    {confirmPasswordError && (
+                    {errors.confirmPassword && (
                         <div className="invalid-feedback">
-                            {confirmPasswordError}
+                            {errors.confirmPassword}
                         </div>
                     )}
                 </div>
-                <button type="submit" className="btn btn-primary">Zarejestruj się</button>
+                <div>
+                    <button type="submit" className="btn btn-primary" disabled={loading}>Zarejestruj się</button>
+                </div>
+                {loading && (
+                    <div className="spinner-border mt-3" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                )}
+                {mainError && (
+                    <div className="mt-3" style={{ color: "red" }}>
+                        {mainError}
+                    </div>
+                )}
+                {success && (
+                    <div className="mt-3" style={{color: "green"}}>
+                        {success}
+                    </div>
+                )}
             </form>
             <div>
                 Masz już konto? <Link to="/login" className="text-decoration-none">Zaloguj się</Link>

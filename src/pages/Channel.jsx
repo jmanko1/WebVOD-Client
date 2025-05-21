@@ -54,6 +54,22 @@ const Channel = () => {
                 views: 72062,
                 date: "2024-06-24",
                 duration: 1162
+            },
+            {
+                id: 5,
+                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+                title: "Fajny film",
+                views: 72062,
+                date: "2024-06-24",
+                duration: 1162
+            },
+            {
+                id: 6,
+                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+                title: "Fajny film",
+                views: 72062,
+                date: "2024-06-24",
+                duration: 1162
             }
         ]
 
@@ -128,7 +144,7 @@ const Channel = () => {
                     </div> 
                     <div className="row mt-4 border-top border-2">
                     {userVideos.map(video => (
-                   <div className="col-12 col-md-6 col-xl-4 mt-4 d-flex justify-content-center" key={video.id}>
+                   <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mt-4 d-flex justify-content-center" key={video.id}>
                         <div className="channel-video-card">
                             <div className="row">
                                 <div className="col">

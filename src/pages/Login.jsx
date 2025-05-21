@@ -1,34 +1,91 @@
 import { useState } from "react";
 import { validateLogin, validatePassword } from "../utils/validator";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
-    const [login, setLogin] = useState("");
-    const [password, setPassword] = useState("");
+    const [form, setForm] = useState({
+        login: "",
+        password: ""
+    })
 
-    const [loginError, setLoginError] = useState(null);
-    const [passwordError, setPasswordError] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [mainError, setMainError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    const handleLoginChange = (e) => {
-        setLogin(e.target.value);
-        setLoginError(null);
-    }
+    const navigate = useNavigate();
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-        setPasswordError(null);
-    }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: null }));
+    };
 
-    const handleSubmit = (e) => {
+    const validateForm = () => {
+        const newErrors = {};
+        if (!validateLogin(form.login, (e) => (newErrors.login = e))) {}
+        if (!validatePassword(form.password, (e) => (newErrors.password = e))) {}
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        const isLoginValid = validateLogin(login, setLoginError);
-        const isPasswordValid = validatePassword(password, setPasswordError);
 
-        if(!isLoginValid || !isPasswordValid)
+        setMainError(null);
+        setLoading(true);
+
+        if(!validateForm()) {
+            setLoading(false);
             return;
-        
-        console.log(login, password);
+        }
+
+        const api = import.meta.env.VITE_API_URL;
+
+        try {
+            const response = await fetch(`${api}/auth/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(form),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                const newErrors = {};
+
+                if (errorData.message) {
+                    setMainError(errorData.message);
+                }
+                if (errorData.errors?.Login) {
+                    newErrors.login = errorData.errors.Login[0];
+                } 
+                if (errorData.errors?.Password) {
+                    newErrors.password = errorData.errors.Password[0];
+                } 
+
+                setErrors((prev) => ({ ...prev, ...newErrors }));
+                return;
+            }
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+
+                if(data.tfaRequired) {
+                    navigate("/login/code");
+                    return;
+                }
+
+                navigate("/");
+            }
+        } catch {
+            setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -38,36 +95,50 @@ const Login = () => {
                 <div className="mb-3">
                     <label htmlFor="login" className="form-label">Login</label>
                     <input
+                        name="login"
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={login}
-                        onChange={handleLoginChange}
-                        className={`form-control mx-auto ${loginError ? 'is-invalid' : ''}`}
+                        value={form.login}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.login ? 'is-invalid' : ''}`}
                         id="login" 
                     />
-                    {loginError && (
+                    {errors.login && (
                         <div className="invalid-feedback">
-                            {loginError}
+                            {errors.login}
                         </div>
                     )}
                 </div>
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Hasło</label>
                     <input
+                        name="password"
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={password}
-                        onChange={handlePasswordChange}
-                        className={`form-control mx-auto ${passwordError ? 'is-invalid' : ''}`}
+                        value={form.password}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.password ? 'is-invalid' : ''}`}
                         id="password" 
                     />
-                    {passwordError && (
+                    {errors.password && (
                         <div className="invalid-feedback">
-                            {passwordError}
+                            {errors.password}
                         </div>
                     )}
                 </div>
-                <button type="submit" className="btn btn-primary">Zaloguj się</button>
+                <div>
+                    <button type="submit" className="btn btn-primary" disabled={loading}>Zaloguj się</button>
+                </div>
+                {loading && (
+                    <div className="spinner-border mt-3" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                )}
+                {mainError && (
+                    <div className="mt-3" style={{ color: "red" }}>
+                        {mainError}
+                    </div>
+                )}
             </form>
             <div className="mb-4">
                 <Link to="/reset-password" className="text-decoration-none">Zresetuj hasło</Link>

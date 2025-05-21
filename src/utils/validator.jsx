@@ -9,8 +9,8 @@ export const validateLogin = (login, setLoginError) => {
         return false;
     }
 
-    if(login.length > 30) {
-        setLoginError("Login może mieć maksymalnie 30 znaków.");
+    if(login.length > 50) {
+        setLoginError("Login może mieć maksymalnie 50 znaków.");
         return false;
     }
 
@@ -29,9 +29,9 @@ export const validatePassword = (password, setPasswordError) => {
         return false;
     }
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
     if(typeof password !== "string" || !passwordRegex.test(password)) {
-        setPasswordError("Hasło musi zawierać co najmniej 8 znaków, jedną małą literę, jedną wielką literę, jedną cyfrę oraz jeden znak specjalny.");
+        setPasswordError("Hasło musi zawierać co najmniej 10 znaków, jedną małą literę, jedną wielką literę, jedną cyfrę oraz jeden znak specjalny.");
         return false;
     }
 
@@ -58,8 +58,8 @@ export const validateEmail = (email, setEmailError) => {
         return false;
     }
 
-    if(email.length > 30) {
-        setEmailError("Adres email może mieć maksymalnie 30 znaków.");
+    if(email.length > 80) {
+        setEmailError("Adres email może mieć maksymalnie 80 znaków.");
         return false;
     }
 

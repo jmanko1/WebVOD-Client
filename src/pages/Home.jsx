@@ -51,6 +51,30 @@ const Home = () => {
                 id: 1,
                 login: "tomek123"
             }
+        },
+        {
+            id: 5,
+            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+            title: "Fajny film",
+            views: 72062,
+            date: "2024-06-24",
+            duration: 1162,
+            author: {
+                id: 1,
+                login: "tomek123"
+            }
+        },
+        {
+            id: 6,
+            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+            title: "Fajny film",
+            views: 72062,
+            date: "2024-06-24",
+            duration: 1162,
+            author: {
+                id: 1,
+                login: "tomek123"
+            }
         }
     ];
 
@@ -74,7 +98,7 @@ const Home = () => {
         <div className="container">
             <div className="row">
                 {recommendedVideos.map(video => (
-                   <div className="col-12 col-md-6 col-xl-4 mt-4 d-flex justify-content-center" key={video.id}>
+                   <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mt-4 d-flex justify-content-center" key={video.id}>
                         <div className="home-video-card">
                             <div className="row">
                                 <div className="col">

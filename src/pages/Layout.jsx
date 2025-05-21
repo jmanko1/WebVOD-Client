@@ -3,10 +3,16 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
 
 const Layout = () => {
-    const [isLogged, setIsLogged] = useState(false);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
-        setIsLogged(true);
+        const data = {
+            id: 1,
+            login: "tomek123",
+            imageURL: "https://marszalstudio.pl/wp-content/uploads/2024/01/fajne-zdjecia-profilowe-12.webp"
+        };
+
+        setUser(data);
     }, []);
 
     return (
@@ -34,19 +40,19 @@ const Layout = () => {
                                 <i className="fas fa-search"></i>
                             </button>
                         </form>
-                        {isLogged ? (
+                        {user ? (
                             <>
                                 <Link role="button" to="/upload" className="btn btn-success mt-2 mt-lg-0 ms-lg-2">
                                     <i className="fa-solid fa-plus"></i>
                                     <span className="ms-1">Nowy film</span>
                                 </Link>
                                 <div className="btn-group d-none d-lg-inline dropstart ms-1">
-                                    <button className="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        Moje konto
+                                    <button className="btn p-0 border-0 bg-transparent dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src={user.imageURL} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
-                                            <Link to="/channels/1" className="dropdown-item">Strona kanału</Link>
+                                            <Link to={`/channels/${user.id}`} className="dropdown-item">Strona kanału</Link>
                                         </li>
                                         <li>
                                             <Link to="/videos-manager" className="dropdown-item">Menedżer filmów</Link>
@@ -60,8 +66,8 @@ const Layout = () => {
                                     </ul>
                                 </div>
                                 <div className="btn-group mt-2 d-lg-none dropdown ms-1">
-                                    <button className="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                        Moje konto
+                                    <button className="btn p-0 border-0 bg-transparent dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <img src={user.imageURL} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
