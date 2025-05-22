@@ -79,7 +79,8 @@ const Login = () => {
                     return;
                 }
 
-                navigate("/");
+                localStorage.setItem("jwt", data.token);
+                location.href = "/";
             }
         } catch {
             setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");

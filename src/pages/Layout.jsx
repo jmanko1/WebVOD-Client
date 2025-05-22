@@ -6,13 +6,16 @@ const Layout = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const data = {
-            id: 1,
-            login: "tomek123",
-            imageURL: "https://marszalstudio.pl/wp-content/uploads/2024/01/fajne-zdjecia-profilowe-12.webp"
-        };
+        const token = localStorage.getItem("jwt");
+        if(token) {
+            const data = {
+                id: 1,
+                login: "tomek123",
+                imageURL: "https://marszalstudio.pl/wp-content/uploads/2024/01/fajne-zdjecia-profilowe-12.webp"
+            };
 
-        setUser(data);
+            setUser(data);
+        }
     }, []);
 
     return (
@@ -71,7 +74,7 @@ const Layout = () => {
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
-                                            <Link to="/channels/1" className="dropdown-item">Strona kanału</Link>
+                                            <Link to={`/channels/${user.id}`} className="dropdown-item">Strona kanału</Link>
                                         </li>
                                         <li>
                                             <Link to="/videos-manager" className="dropdown-item">Menedżer filmów</Link>

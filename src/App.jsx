@@ -19,6 +19,7 @@ import VideoEdit from './pages/VideoEdit';
 import TFASettings from './pages/TFASettings';
 import ChannelInfo from './pages/ChannelSettings/ChannelInfo';
 import Security from './pages/ChannelSettings/Security';
+import Logout from './pages/Logout';
 
 const App = () => {
     return (
@@ -28,6 +29,7 @@ const App = () => {
                     <Route index element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/login/code" element={<LoginCode />} />
+                    <Route path="/logout" element={<Logout />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/reset-password" element={<InitiateResetPassword />} />
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
