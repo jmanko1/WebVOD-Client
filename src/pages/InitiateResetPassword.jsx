@@ -6,20 +6,62 @@ const InitiateResetPassword = () => {
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState(null);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(null);
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
         setEmailError(null);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         
-        const isEmailValid = validateEmail(email, setEmailError);
-        if(!isEmailValid)
-            return;
+        setEmailError(null);
+        setError(null);
+        setLoading(true);
+        setSuccess(null);
 
-        console.log(email);
+        const isEmailValid = validateEmail(email, setEmailError);
+        if(!isEmailValid) {
+            setLoading(false);
+            return;
+        }
+
+        const api = import.meta.env.VITE_API_URL;
+
+        try {
+            const response = await fetch(`${api}/auth/reset-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(email),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+
+                if (errorData.message) {
+                    setError(errorData.message);
+                }
+                else if (errorData.errors?.email) {
+                    setEmailError(errorData.errors.email[0]);
+                } 
+
+                return;
+            }
+
+            if (response.ok) {
+                const success = await response.text();
+                setSuccess(success);
+                setEmail("");
+            }
+        } catch {
+            setError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -44,10 +86,22 @@ const InitiateResetPassword = () => {
                         </div>
                     )}
                 </div>
-                <button type="submit" className="btn btn-primary">Wyślij maila</button>
+                <div>
+                    <button type="submit" className="btn btn-primary">Wyślij maila</button>
+                </div>
+                {loading && (
+                    <div className="spinner-border mt-3" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                )}
                 {error && (
-                    <div style={{color: "red"}}>
+                    <div className="mt-3" style={{color: "red"}}>
                         {error}
+                    </div>
+                )}
+                {success && (
+                    <div className="mt-3" style={{color: "green"}}>
+                        {success}
                     </div>
                 )}
             </form>

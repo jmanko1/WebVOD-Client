@@ -7,11 +7,11 @@ const ResetPassword = () => {
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [code, setCode] = useState("");
+    // const [code, setCode] = useState("");
 
     const [passwordError, setPasswordError] = useState(null);
     const [confirmPasswordError, setConfirmPasswordError] = useState(null);
-    const [codeError, setCodeError] = useState(null);
+    // const [codeError, setCodeError] = useState(null);
     const [error, setError] = useState(null);
 
     const handlePasswordChange = (e) => {
@@ -24,10 +24,10 @@ const ResetPassword = () => {
         setConfirmPasswordError(null);
     }
 
-    const handleCodeChange = (e) => {
-        setCode(e.target.value);
-        setCodeError(null);
-    }
+    // const handleCodeChange = (e) => {
+    //     setCode(e.target.value);
+    //     setCodeError(null);
+    // }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -78,7 +78,7 @@ const ResetPassword = () => {
                         </div>
                     )}
                 </div>
-                <div className="mb-3">
+                {/* <div className="mb-3">
                     <label htmlFor="code" className="form-label">Kod z aplikacji</label>
                     <input
                         type="text"
@@ -94,7 +94,7 @@ const ResetPassword = () => {
                             {codeError}
                         </div>
                     )}
-                </div>
+                </div> */}
                 <button type="submit" className="btn btn-primary">Zmień hasło</button>
                 {error && (
                     <div className="mt-3" style={{color: "red"}}>

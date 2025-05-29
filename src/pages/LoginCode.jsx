@@ -6,20 +6,61 @@ const LoginCode = () => {
     const [code, setCode] = useState("");
     const [codeError, setCodeError] = useState(null);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const handleCodeChange = (e) => {
         setCode(e.target.value);
-        setCodeError(null);
+        setError(null);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const isCodeValid = validateCode(code, setCodeError);
-        if(!isCodeValid)
-            return;
+        setError(null);
+        setCodeError(null);
+        setLoading(true);
 
-        console.log(code);
+        const isCodeValid = validateCode(code, setCodeError);
+        if(!isCodeValid) {
+            setLoading(false);
+            return;
+        }
+
+        const api = import.meta.env.VITE_API_URL;
+
+        try {
+            const response = await fetch(`${api}/auth/login/code`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(code),
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+
+                if (errorData.message) {
+                    setError(errorData.message);
+                }
+                else if (errorData.errors?.code) {
+                    setCodeError(errorData.errors.code[0]);
+                }
+
+                return;
+            }
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem("jwt", data.token);
+                location.href = "/";
+            }
+        } catch {
+            setError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -43,7 +84,14 @@ const LoginCode = () => {
                         </div>
                     )}
                 </div>
-                <button type="submit" className="btn btn-primary">Zatwierdź</button>
+                <div>
+                    <button type="submit" className="btn btn-primary" disabled={loading}>Zatwierdź</button>
+                </div>
+                {loading && (
+                    <div className="spinner-border mt-3" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                )}
                 {error && (
                     <div className="mt-3" style={{color: "red"}}>
                         {error}

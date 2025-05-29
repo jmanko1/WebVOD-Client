@@ -34,7 +34,8 @@ const Video = () => {
             likes: 10942,
             comments: 1897,
             date: "2022-07-03",
-            src: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            // src: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            src: "http://localhost:8080/uploads/videos/507f1f77bcf86cd799439011/master.m3u8",
             // src: "https://static.videezy.com/system/resources/previews/000/008/452/original/Dark_Haired_Girl_Pensive_Looks_at_Camera.mp4",
             author: {
                 id: 1,

@@ -20,6 +20,7 @@ import TFASettings from './pages/TFASettings';
 import ChannelInfo from './pages/ChannelSettings/ChannelInfo';
 import Security from './pages/ChannelSettings/Security';
 import Logout from './pages/Logout';
+import WatchTogether from './pages/WatchTogether';
 
 const App = () => {
     return (
@@ -43,6 +44,7 @@ const App = () => {
                     <Route path="/channel-settings/channel-info" element={<ChannelInfo />} />
                     <Route path="/channel-settings/password-security" element={<Security />} />
                     <Route path="/channel-settings/password-security/tfa" element={<TFASettings />} />
+                    <Route path="/watch-together" element={<WatchTogether />} />
                     <Route path="*" element={<NoPage />} />
                 </Route>
             </Routes>
