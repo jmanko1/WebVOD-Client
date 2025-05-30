@@ -121,13 +121,13 @@ const Channel = () => {
                                     : userData.description
                                 }
                             </div>
-                        {userData.description.length > maxDescriptionLength && (
-                            <div>
-                                <button className="btn btn-link p-0 text-decoration-none" style={{fontSize: "15px"}} onClick={() => {setDescriptionSliced(!descriptionSliced)}}>
-                                    {descriptionSliced ? "Pokaż więcej" : "Pokaż mniej"}
-                                </button>
-                            </div>
-                        )}
+                            {userData.description.length > maxDescriptionLength && (
+                                <div>
+                                    <button className="btn btn-link p-0 text-decoration-none" style={{fontSize: "15px"}} onClick={() => {setDescriptionSliced(!descriptionSliced)}}>
+                                        {descriptionSliced ? "Pokaż więcej" : "Pokaż mniej"}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="row mt-2">

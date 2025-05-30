@@ -5,41 +5,85 @@ import { validateCode, validateConfirmPassword, validatePassword } from "../util
 const ResetPassword = () => {
     const { token } = useParams();
 
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    // const [code, setCode] = useState("");
+    const [form, setForm] = useState({
+        token: token,
+        password: "",
+        confirmPassword: ""
+    })
 
-    const [passwordError, setPasswordError] = useState(null);
-    const [confirmPasswordError, setConfirmPasswordError] = useState(null);
-    // const [codeError, setCodeError] = useState(null);
-    const [error, setError] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [mainError, setMainError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-        setPasswordError(null);
-    }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: null }));
+    }; 
 
-    const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value);
-        setConfirmPasswordError(null);
-    }
+    const validateForm = () => {
+        const newErrors = {};
+        if (!validatePassword(form.password, (e) => (newErrors.password = e))) {}
+        if (!validateConfirmPassword(form.password, form.confirmPassword, (e) => (newErrors.confirmPassword = e))) {}
 
-    // const handleCodeChange = (e) => {
-    //     setCode(e.target.value);
-    //     setCodeError(null);
-    // }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const isPasswordValid = validatePassword(password, setPasswordError);
-        const isConfirmPasswordValid = validateConfirmPassword(password, confirmPassword, setConfirmPasswordError);
-        const isCodeValid = validateCode(code, setCodeError);
+        setSuccess(null);
+        setMainError(null);
+        setLoading(true);
 
-        if(!isPasswordValid || !isConfirmPasswordValid || !isCodeValid)
+        if(!validateForm()) {
+            setLoading(false);
             return;
-        
-        console.log(password, confirmPassword, code);
+        }
+
+        const api = import.meta.env.VITE_API_URL;
+
+        try {
+            const response = await fetch(`${api}/auth/reset-password/complete`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(form),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                const newErrors = {};
+
+                if (errorData.message) {
+                    setMainError(errorData.message);
+                }
+                if (errorData.errors?.Token) {
+                    newErrors.token = errorData.errors.Token[0];
+                } 
+                if (errorData.errors?.Password) {
+                    newErrors.password = errorData.errors.Password[0];
+                } 
+                if (errorData.errors?.ConfirmPassword) {
+                    newErrors.confirmPassword = errorData.errors.ConfirmPassword[0];
+                }
+
+                setErrors((prev) => ({ ...prev, ...newErrors }));
+                return;
+            }
+
+            if (response.ok) {
+                setSuccess("Hasło zostało zresetowane."); 
+                setForm({ token: token, password: "", confirmPassword: "" });
+            }
+        } catch {
+            setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -50,15 +94,16 @@ const ResetPassword = () => {
                     <label htmlFor="password" className="form-label">Nowe hasło</label>
                     <input
                         type="password"
+                        name="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={password}
-                        onChange={handlePasswordChange}
-                        className={`form-control mx-auto ${passwordError ? 'is-invalid' : ''}`}
+                        value={form.password}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.password ? 'is-invalid' : ''}`}
                         id="password" 
                     />
-                    {passwordError && (
+                    {errors.password && (
                         <div className="invalid-feedback">
-                            {passwordError}
+                            {errors.password}
                         </div>
                     )}
                 </div>
@@ -66,39 +111,40 @@ const ResetPassword = () => {
                     <label htmlFor="confirm-password" className="form-label">Potwierdź nowe hasło</label>
                     <input
                         type="password"
+                        name="confirmPassword"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={confirmPassword}
-                        onChange={handleConfirmPasswordChange}
-                        className={`form-control mx-auto ${confirmPasswordError ? 'is-invalid' : ''}`}
+                        value={form.confirmPassword}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.confirmPassword ? 'is-invalid' : ''}`}
                         id="confirm-password" 
                     />
-                    {confirmPasswordError && (
+                    {errors.confirmPassword && (
                         <div className="invalid-feedback">
-                            {confirmPasswordError}
+                            {errors.confirmPassword}
                         </div>
                     )}
                 </div>
-                {/* <div className="mb-3">
-                    <label htmlFor="code" className="form-label">Kod z aplikacji</label>
-                    <input
-                        type="text"
-                        maxLength={6}
-                        style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={code}
-                        onChange={handleCodeChange}
-                        className={`form-control mx-auto ${codeError ? 'is-invalid' : ''}`}
-                        id="code" 
-                    />
-                    {codeError && (
-                        <div className="invalid-feedback">
-                            {codeError}
-                        </div>
-                    )}
-                </div> */}
-                <button type="submit" className="btn btn-primary">Zmień hasło</button>
-                {error && (
-                    <div className="mt-3" style={{color: "red"}}>
-                        {error}
+                <div>
+                    <button type="submit" className="btn btn-primary">Zresetuj hasło</button>
+                </div>
+                {loading && (
+                    <div className="spinner-border mt-3" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                )}
+                {errors.token && (
+                    <div className="mt-3" style={{ color: "red" }}>
+                        {errors.token}
+                    </div>
+                )}
+                {mainError && (
+                    <div className="mt-3" style={{ color: "red" }}>
+                        {mainError}
+                    </div>
+                )}
+                {success && (
+                    <div className="mt-3" style={{color: "green"}}>
+                        {success}
                     </div>
                 )}
             </form>
