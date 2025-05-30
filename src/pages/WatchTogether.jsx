@@ -7,6 +7,8 @@ const WatchTogether = () => {
     const [videoUrl, setVideoUrl] = useState("");
     const [isPlaying, setIsPlaying] = useState(false);
     const [participants, setParticipants] = useState(0);
+    const [initialTime, setInitialTime] = useState(null);
+
     const playerRef = useRef(null);
     const lastSeekTime = useRef(0);
 
@@ -21,9 +23,7 @@ const WatchTogether = () => {
         connection.on("Initialize", (url, playing, time) => {
             setVideoUrl(url);
             setIsPlaying(playing);
-            if (playerRef.current) {
-                playerRef.current.seekTo(time);
-            }
+            setInitialTime(time);
         })
 
         connection.on("VideoChanged", (url) => {
@@ -90,6 +90,12 @@ const WatchTogether = () => {
                 onPlay={() => handlePlayPause(true)}
                 onPause={() => handlePlayPause(false)}
                 onSeek={handleSeek}
+                onReady={() => {
+                    if (initialTime && playerRef.current) {
+                        playerRef.current.seekTo(initialTime, 'seconds');
+                        setInitialTime(null);
+                    }
+                }}
             />
             <p className="mt-2">Liczba uczestników: {participants}</p>
         </div>
