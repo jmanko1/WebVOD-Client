@@ -104,7 +104,8 @@ const Register = () => {
                         value={form.login}
                         onChange={handleChange}
                         className={`form-control mx-auto ${errors.login ? 'is-invalid' : ''}`}
-                        id="login" 
+                        id="login"
+                        autoFocus
                     />
                     {errors.login && (
                         <div className="invalid-feedback">

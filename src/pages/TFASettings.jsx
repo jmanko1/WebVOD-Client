@@ -67,7 +67,8 @@ const TFASettings = () => {
                             className="form-control text-center mx-auto"
                             placeholder="6-cyfrowy kod"
                             required
-                            maxLength="6" 
+                            maxLength="6"
+                            autoFocus
                         />
                     </div>
                     <div className="mb-3">

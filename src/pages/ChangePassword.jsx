@@ -60,7 +60,8 @@ const ChangePassword = () => {
                         value={oldPassword}
                         onChange={handleOldPasswordChange}
                         className={`form-control mx-auto ${oldPasswordError ? 'is-invalid' : ''}`}
-                        id="old-password" 
+                        id="old-password"
+                        autoFocus
                     />
                     {oldPasswordError && (
                         <div className="invalid-feedback">

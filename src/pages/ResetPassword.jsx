@@ -99,7 +99,8 @@ const ResetPassword = () => {
                         value={form.password}
                         onChange={handleChange}
                         className={`form-control mx-auto ${errors.password ? 'is-invalid' : ''}`}
-                        id="password" 
+                        id="password"
+                        autoFocus
                     />
                     {errors.password && (
                         <div className="invalid-feedback">

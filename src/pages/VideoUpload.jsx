@@ -261,6 +261,7 @@ const VideoUpload = () => {
                         onChange={handleVideoChange}
                         className={`form-control mx-auto ${errors.videoError ? "is-invalid" : ""}`}
                         style={{ maxWidth: "500px" }}
+                        autoFocus
                     />
                     <div className="form-text">Dopuszczalne typy: mp4. Zalecany format 16:9.</div>
                     {errors.videoError && <div className="invalid-feedback">{errors.videoError}</div>}

@@ -78,7 +78,8 @@ const InitiateResetPassword = () => {
                         value={email}
                         onChange={handleEmailChange}
                         className={`form-control mx-auto ${emailError ? 'is-invalid' : ''}`}
-                        id="email" 
+                        id="email"
+                        autoFocus
                     />
                     {emailError && (
                         <div className="invalid-feedback">

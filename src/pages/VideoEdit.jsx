@@ -219,6 +219,7 @@ const VideoEdit = () => {
                         onChange={(e) => setTitle(e.target.value)}
                         className={`form-control mx-auto ${errors.titleError ? "is-invalid" : ""}`}
                         style={{ maxWidth: "500px", backgroundColor: "#f4f1f7" }}
+                        autoFocus
                     />
                     {errors.titleError && <div className="invalid-feedback">{errors.titleError}</div>}
                 </div>

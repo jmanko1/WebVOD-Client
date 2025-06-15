@@ -76,7 +76,8 @@ const LoginCode = () => {
                         value={code}
                         onChange={handleCodeChange}
                         className={`form-control mx-auto ${codeError ? 'is-invalid' : ''}`}
-                        id="code" 
+                        id="code"
+                        autoFocus
                     />
                     {codeError && (
                         <div className="invalid-feedback">
