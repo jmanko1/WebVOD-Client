@@ -5,17 +5,39 @@ import { useEffect, useState } from "react";
 const Layout = () => {
     const [user, setUser] = useState(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem("jwt");
-        if(token) {
-            const data = {
-                id: 1,
-                login: "tomek123",
-                imageURL: "https://marszalstudio.pl/wp-content/uploads/2024/01/fajne-zdjecia-profilowe-12.webp"
-            };
+    const api = import.meta.env.VITE_API_URL;
 
-            setUser(data);
+    useEffect(() => {
+        const getProfile = async () => {
+            const token = localStorage.getItem("jwt");
+            if(!token) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${api}/user/my-profile`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                if(!response.ok) {
+                    if(response.status == 401) {
+                        localStorage.removeItem("jwt");
+                        return;
+                    }
+                }
+
+                if(response.ok) {
+                    const data = await response.json();
+                    setUser(data);
+                }
+            } catch {
+                ;
+            }
         }
+
+        getProfile();
     }, []);
 
     return (
@@ -51,11 +73,11 @@ const Layout = () => {
                                 </Link>
                                 <div className="btn-group d-none d-lg-inline dropstart ms-1">
                                     <button className="btn p-0 border-0 bg-transparent dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src={user.imageURL} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
+                                        <img src={api + user.imageUrl} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
-                                            <Link to={`/channels/${user.id}`} className="dropdown-item">Strona kanału</Link>
+                                            <Link to={`/channels/${user.login}`} className="dropdown-item">Strona kanału</Link>
                                         </li>
                                         <li>
                                             <Link to="/videos-manager" className="dropdown-item">Menedżer filmów</Link>
@@ -70,7 +92,7 @@ const Layout = () => {
                                 </div>
                                 <div className="btn-group mt-2 d-lg-none dropdown ms-1">
                                     <button className="btn p-0 border-0 bg-transparent dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src={user.imageURL} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
+                                        <img src={api + user.imageUrl} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
