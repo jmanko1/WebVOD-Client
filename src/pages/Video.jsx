@@ -244,7 +244,7 @@ const Video = () => {
                                             <img
                                                 src={watchedVideo.author.imageURL}
                                                 alt="Autor"
-                                                className="img-fluid"
+                                                className="img-fluid rounded-circle"
                                                 style={{ width: "50px", height: "50px", objectFit: "cover" }}
                                             />
                                         </Link>
@@ -336,8 +336,9 @@ const Video = () => {
                                                 <img
                                                     src={comment.author.imageURL}
                                                     alt="Autor"
-                                                    className="img-fluid"
+                                                    className="img-fluid rounded-circle"
                                                     style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                                                    loading="lazy"
                                                 />
                                             </div>
                                             <div className="col">
@@ -371,7 +372,7 @@ const Video = () => {
                                     <div className="col pe-0">
                                         <div className="thumbnail-container ratio ratio-16x9">
                                             <Link to={`/videos/${video.id}`}>
-                                                <img className="img-fluid object-fit-cover w-100 h-100" src={video.thumbnail} alt="Miniatura" />
+                                                <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnail} alt="Miniatura" />
                                                 <span className="thumbnail-duration">{formatDuration(video.duration)}</span>
                                             </Link>
                                         </div>

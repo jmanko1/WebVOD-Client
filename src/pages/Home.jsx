@@ -104,7 +104,7 @@ const Home = () => {
                                 <div className="col">
                                     <div className="ratio ratio-16x9">
                                         <Link to={`/videos/${video.id}`}>
-                                            <img className="img-fluid object-fit-cover w-100 h-100" src={video.thumbnail} alt="Miniatura" />
+                                            <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnail} alt="Miniatura" />
                                             <span style={{fontSize: "13px"}} className="home-video-thumbnail-duration">{formatDuration(video.duration)}</span>
                                         </Link>
                                     </div>
