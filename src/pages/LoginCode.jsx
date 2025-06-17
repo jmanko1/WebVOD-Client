@@ -54,7 +54,8 @@ const LoginCode = () => {
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem("jwt", data.token);
-                location.href = "/";
+                sessionStorage.removeItem("refreshFailed");
+                window.location.href = "/";
             }
         } catch {
             setError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");

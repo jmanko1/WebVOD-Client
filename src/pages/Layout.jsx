@@ -1,6 +1,8 @@
 import { Link, Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { scheduleTokenRefresh } from "../utils/auth";
 
 const Layout = () => {
     const [user, setUser] = useState(null);
@@ -37,7 +39,52 @@ const Layout = () => {
             }
         }
 
-        getProfile();
+        const setRefreshTimeout = async () => {
+            const token = localStorage.getItem("jwt");
+
+            let tokenExpired = false;
+            if (token) {
+                try {
+                    const decoded = jwtDecode(token);
+                    const currentTime = Math.floor(Date.now() / 1000);
+                    const expiresIn = decoded.exp - currentTime;
+
+                    if (expiresIn > 0) {
+                        scheduleTokenRefresh(expiresIn);
+                    } else {
+                        tokenExpired = true;
+                        localStorage.removeItem("jwt");
+                    }
+                } catch {
+                    ;
+                }
+            }
+
+            if ((!token || tokenExpired) && !sessionStorage.getItem("refreshFailed")) {
+                try {
+                    const res = await fetch(`${api}/auth/refresh`, {
+                        method: "POST",
+                        credentials: "include",
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        localStorage.setItem("jwt", data.token);
+                        sessionStorage.removeItem("refreshFailed");
+                        // window.location.reload();
+                    } else {
+                        sessionStorage.setItem("refreshFailed", "1");
+                    }
+                } catch {
+                    sessionStorage.setItem("refreshFailed", "1");
+                }
+            }
+        }
+
+        (async () => {
+            await setRefreshTimeout();
+            getProfile();
+        })();
     }, []);
 
     return (
@@ -96,7 +143,7 @@ const Layout = () => {
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
-                                            <Link to={`/channels/${user.id}`} className="dropdown-item">Strona kanału</Link>
+                                            <Link to={`/channels/${user.login}`} className="dropdown-item">Strona kanału</Link>
                                         </li>
                                         <li>
                                             <Link to="/videos-manager" className="dropdown-item">Menedżer filmów</Link>

@@ -5,7 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 const Login = () => {
     const [form, setForm] = useState({
         login: "",
-        password: ""
+        password: "",
+        checkedSave: false
     })
 
     const [errors, setErrors] = useState({});
@@ -15,8 +16,13 @@ const Login = () => {
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
+        const { name, type, value, checked } = e.target;
+
+        setForm((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value
+        }));
+
         setErrors((prev) => ({ ...prev, [name]: null }));
     };
 
@@ -72,7 +78,6 @@ const Login = () => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log(data);
 
                 if(data.tfaRequired) {
                     navigate("/login/code");
@@ -80,7 +85,8 @@ const Login = () => {
                 }
 
                 localStorage.setItem("jwt", data.token);
-                location.href = "/";
+                sessionStorage.removeItem("refreshFailed");
+                window.location.href = "/";
             }
         } catch {
             setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
@@ -127,6 +133,17 @@ const Login = () => {
                             {errors.password}
                         </div>
                     )}
+                </div>
+                <div className="mb-3">
+                    <input
+                        name="checkedSave"
+                        type="checkbox"
+                        checked={form.checkedSave}
+                        onChange={handleChange}
+                        className="form-check-input text-dark"
+                        id="checkedSave"
+                    />
+                    <label htmlFor="checkedSave" className="form-check-label ms-2">Zapamiętaj konto</label>
                 </div>
                 <div>
                     <button type="submit" className="btn btn-primary" disabled={loading}>Zaloguj się</button>
