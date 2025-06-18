@@ -1,43 +1,58 @@
 import { Link, Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar/Sidebar";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { scheduleTokenRefresh } from "../utils/auth";
+import { useUser } from "../contexts/UserContext";
 
 const Layout = () => {
-    const [user, setUser] = useState(null);
+    const { user, setUser } = useUser();
 
     const api = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const getProfile = async () => {
             const token = localStorage.getItem("jwt");
-            if(!token) {
-                return;
-            }
+            if (!token) return;
 
             try {
-                const response = await fetch(`${api}/user/my-profile`, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
+                const headers = {
+                    Authorization: `Bearer ${token}`
+                };
 
-                if(!response.ok) {
-                    if(response.status == 401) {
-                        localStorage.removeItem("jwt");
-                        return;
-                    }
+                const [profileRes, emailRes] = await Promise.all([
+                    fetch(`${api}/user/my-profile`, { headers }),
+                    fetch(`${api}/user/my-profile/email`, { headers }),
+                ]);
+
+                if (profileRes.status === 401 || emailRes.status === 401) {
+                    localStorage.removeItem("jwt");
+                    setUser(null);
+                    return;
                 }
 
-                if(response.ok) {
-                    const data = await response.json();
-                    setUser(data);
+                if (!profileRes.ok || !emailRes.ok) {
+                    return;
                 }
-            } catch {
-                ;
+
+                const [profileData, emailData] = await Promise.all([
+                    profileRes.json(),
+                    emailRes.text(),
+                ]);
+
+                profileData.description = profileData.description || "Brak opisu.";
+                profileData.imageUrl = profileData.imageUrl ? api + profileData.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg";
+
+                const fullProfile = {
+                    ...profileData,
+                    email: emailData,
+                };
+
+                setUser(fullProfile);
+            } catch (e) {
+                console.error("Błąd podczas pobierania profilu:", e);
             }
-        }
+        };
 
         const setRefreshTimeout = async () => {
             const token = localStorage.getItem("jwt");
@@ -120,7 +135,7 @@ const Layout = () => {
                                 </Link>
                                 <div className="btn-group d-none d-lg-inline dropstart ms-1">
                                     <button className="btn p-0 border-0 bg-transparent dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src={api + user.imageUrl} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
+                                        <img src={user.imageUrl} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
@@ -139,7 +154,7 @@ const Layout = () => {
                                 </div>
                                 <div className="btn-group mt-2 d-lg-none dropdown ms-1">
                                     <button className="btn p-0 border-0 bg-transparent dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src={api + user.imageUrl} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
+                                        <img src={user.imageUrl} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>

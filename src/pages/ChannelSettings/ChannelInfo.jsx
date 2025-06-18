@@ -2,15 +2,18 @@ import ChannelSettingsMenu from "../../components/ChannelSettings/ChannelSetting
 import { useEffect, useRef, useState } from "react";
 
 import "../../styles/ChannelInfo.css";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../contexts/UserContext";
 
 const ChannelInfo = () => {
-    const [userData, setUserData] = useState(null);
+    const { user } = useUser();
 
     const [newDescription, setNewDescription] = useState("");
     const [newImage, setNewImage] = useState(null);
 
     const [viewedImage, setViewedImage] = useState(null);
     const imageRef = useRef();
+    
     const maxImageSize = 2 * 1024 * 1024; // 2 MB
     const allowedImageExts = ["jpg", "jpeg", "png"];
     const allowedImageMimes = ["image/jpeg", "image/png"];
@@ -23,22 +26,20 @@ const ChannelInfo = () => {
 
     const maxDescriptionLength = 60;
 
+    const navigate = useNavigate();
+
     useEffect(() => {
-        const data = {
-            id: 1,
-            login: "tomek123",
-            email: "tomek123@gmail.com",
-            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            imageURL: "https://marszalstudio.pl/wp-content/uploads/2024/01/fajne-zdjecia-profilowe-12.webp",
-            signupDate: "2025-01-25"
+        const token = localStorage.getItem("jwt");
+        if (!token) {
+            navigate("/login");
+            return;
         }
 
-        if(!data.description)
-            data.description = "Brak opisu";
+        if (user) {
+            setViewedImage(user.imageUrl);
+        }
+    }, [user]); // dodaj user do dependencies
 
-        setUserData(data);
-        setViewedImage(data.imageURL ? data.imageURL : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg");
-    }, []);
 
     const submitDescription = (e) => {
         e.preventDefault();
@@ -55,10 +56,10 @@ const ChannelInfo = () => {
             return;
         }
 
-        setUserData((prevData) => ({
-            ...prevData,
-            description: newDescription
-        }));
+        // setUserData((prevData) => ({
+        //     ...prevData,
+        //     description: newDescription
+        // }));
 
         setNewDescription("");
 
@@ -123,10 +124,10 @@ const ChannelInfo = () => {
         const modal = window.bootstrap.Modal.getInstance(modalElement) || window.bootstrap.Modal.getOrCreateInstance(modalElement);
         modal.hide();
 
-        setUserData((prevData) => ({
-            ...prevData,
-            imageURL: viewedImage
-        }));
+        // setUserData((prevData) => ({
+        //     ...prevData,
+        //     imageURL: viewedImage
+        // }));
 
         setNewImage(null);
         imageRef.current.value = "";
@@ -136,8 +137,8 @@ const ChannelInfo = () => {
         }, 2000);
     }
 
-    if(!userData) {
-        return <p>Ładowanie...</p>
+    if(!user) {
+        return;
     }
 
     return (
@@ -163,23 +164,23 @@ const ChannelInfo = () => {
                             <div className="item d-flex justify-content-between align-items-center">
                                 <div>
                                     <div className="label">Nazwa użytkownika</div>
-                                    <div className="subtext">{userData.login}</div>
+                                    <div className="subtext">{user.login}</div>
                                 </div>
                             </div>
                             <div className="item d-flex justify-content-between align-items-center">
                                 <div>
                                     <div className="label">Adres email</div>
-                                    <div className="subtext">{userData.email}</div>
+                                    <div className="subtext">{user.email}</div>
                                 </div>
                             </div>
                             <div style={{ cursor: "pointer" }} className="item d-flex justify-content-between align-items-center" data-bs-toggle="modal" data-bs-target="#descriptionModal">
                                 <div>
                                     <div className="label">Opis kanału</div>
                                     <div className="subtext">
-                                        {userData.description.length > maxDescriptionLength ? (
-                                            userData.description.slice(0, maxDescriptionLength) + "..."
+                                        {user.description.length > maxDescriptionLength ? (
+                                            user.description.slice(0, maxDescriptionLength) + "..."
                                         ) : (
-                                            userData.description
+                                            user.description
                                         )}
                                     </div>
                                 </div>
@@ -224,7 +225,7 @@ const ChannelInfo = () => {
                             </form>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
                             <button onClick={submitDescription} type="button" className="btn btn-primary">Zapisz</button>
                         </div>
                     </div>
@@ -263,7 +264,7 @@ const ChannelInfo = () => {
                             </form>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
                             <button onClick={submitImage} type="button" className="btn btn-primary">Zapisz</button>
                         </div>
                     </div>

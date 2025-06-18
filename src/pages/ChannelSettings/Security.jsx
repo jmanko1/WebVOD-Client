@@ -1,7 +1,24 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ChannelSettingsMenu from "../../components/ChannelSettings/ChannelSettingsMenu";
+import { useEffect } from "react";
+import { useUser } from "../../contexts/UserContext";
 
 const Security = () => {
+    const { user } = useUser();
+
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        const token = localStorage.getItem("jwt");
+        if(!token) {
+            navigate("/login");
+            return;
+        }
+    }, []);
+    
+    if(!user)
+        return;
+
     return (
         <div className="container mt-5">
             <div className="row">
