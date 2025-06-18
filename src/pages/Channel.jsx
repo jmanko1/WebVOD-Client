@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import "../styles/Channel.css";
-import { jwtDecode } from "jwt-decode";
+import { useUser } from "../contexts/UserContext";
 
 const Channel = () => {
     const { id } = useParams();
+
+    const { user } = useUser();
 
     const [userData, setUserData] = useState(null);
     const [userVideos, setUserVideos] = useState(null);
@@ -29,28 +31,32 @@ const Channel = () => {
 
                 if(!response.ok) {
                     const errorData = await response.json();
-                    setError(errorData.message);
+                    setError({
+                        status: response.status,
+                        message: errorData.message
+                    });
                     return;
                 }
 
-                if(response.ok) {
-                    const data = await response.json();
-                    data.videosCount = 25;
-                    setUserData(data);
+                const data = await response.json();
+                data.description = data.description || "";
+                data.imageUrl = data.imageUrl ? api + data.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg";
+                data.videosCount = 25;
 
-                    const token = localStorage.getItem("jwt");
-                    if(!token)
-                        return;
+                setUserData(data);
 
-                    const decoded = jwtDecode(token);
-                    setIsMyProfile(decoded.sub == id);
+                if(user && user.login && id) {
+                    setIsMyProfile(user.login.toLowerCase() === id.toLowerCase());
                 }
             } catch {
-                setError("Wystąpił niespodziewany błąd. Spróbuj ponownie później.");
+                setError({
+                    status: 500,
+                    message: "Wystąpił niespodziewany błąd. Spróbuj ponownie później."
+                });
             } finally {
                 setLoading(false);
             }
-        }
+        };
         
         const videos = [
             {
@@ -105,7 +111,7 @@ const Channel = () => {
 
         getProfile();
         setUserVideos(videos);
-    }, [id]);
+    }, [id, user]);
 
     const formatDuration = (seconds) => {
         const h = Math.floor(seconds / 3600);
@@ -123,6 +129,26 @@ const Channel = () => {
         return `${day}.${month}.${year}`;
     };
 
+    if (error) {
+        return (
+            <div className="mt-4 text-center">
+                {error.status === 404 ? (
+                    <figure className="inline-block w-full">
+                        <img
+                            src="https://img.freepik.com/free-vector/404-error-with-tired-person-concept-illustration_114360-7899.jpg"
+                            className="w-full h-auto"
+                            alt="404"
+                            style={{ maxWidth: "450px" }}
+                        />
+                        <figcaption className="mt-2">{error.message}</figcaption>
+                    </figure>
+                ) : (
+                    error.message
+                )}
+            </div>
+        );
+    }
+
     if(loading) {
         return (
             <div className="mt-4 text-center">
@@ -133,65 +159,59 @@ const Channel = () => {
         )
     }
 
-    if(error) {
-        return (
-            <div className="text-danger mt-4 text-center">{error}</div>
-        )
-    }
+    if(!userData) return null;
 
     return (
         <div className="container mt-4">
-            {userData ? (
-                <>
-                    <div className="row justify-content-center">
-                        <div className="col ratio ratio-1x1 p-0" style={{maxWidth: "160px"}}>
-                            <img className="img-fluid object-fit-cover w-100 h-100 rounded-circle" src={api + userData.imageUrl} alt="Zdjęcie kanału" />
-                        </div>
+            <div className="row justify-content-center">
+                <div className="col ratio ratio-1x1 p-0" style={{maxWidth: "160px"}}>
+                    <img className="img-fluid object-fit-cover w-100 h-100 rounded-circle" src={userData.imageUrl} alt="Zdjęcie kanału" />
+                </div>
+            </div>
+            <div className="row mt-2">
+                <div className="col text-center">
+                    <h1 className="mb-0">{userData.login}</h1>
+                </div>
+            </div>
+            <div className="row mt-2">
+                <div className="col text-center">
+                    Liczba filmów: {userData.videosCount}, Data dołączenia: {formatDate(userData.signupDate)}
+                </div>
+            </div>
+            <div className="row mt-2 justify-content-center">
+                <div className="col" style={{maxWidth: "700px"}}>
+                    <div>
+                        {descriptionSliced && userData.description.length > maxDescriptionLength
+                            ? userData.description.slice(0, maxDescriptionLength) + "..."
+                            : userData.description
+                        }
                     </div>
-                    <div className="row mt-2">
-                        <div className="col text-center">
-                            <h1 className="mb-0">{userData.login}</h1>
+                    {userData.description.length > maxDescriptionLength && (
+                        <div>
+                            <button className="btn btn-link p-0 text-decoration-none" style={{fontSize: "15px"}} onClick={() => {setDescriptionSliced(!descriptionSliced)}}>
+                                {descriptionSliced ? "Pokaż więcej" : "Pokaż mniej"}
+                            </button>
                         </div>
-                    </div>
-                    <div className="row mt-2">
-                        <div className="col text-center">
-                            Liczba filmów: {userData.videosCount}, Data dołączenia: {formatDate(userData.signupDate)}
-                        </div>
-                    </div>
-                    <div className="row mt-2 justify-content-center">
-                        <div className="col" style={{maxWidth: "700px"}}>
-                            <div>
-                                {descriptionSliced && userData.description.length > maxDescriptionLength
-                                    ? userData.description.slice(0, maxDescriptionLength) + "..."
-                                    : userData.description
-                                }
-                            </div>
-                            {userData.description.length > maxDescriptionLength && (
-                                <div>
-                                    <button className="btn btn-link p-0 text-decoration-none" style={{fontSize: "15px"}} onClick={() => {setDescriptionSliced(!descriptionSliced)}}>
-                                        {descriptionSliced ? "Pokaż więcej" : "Pokaż mniej"}
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                    {isMyProfile && (
-                        <div className="row mt-2">
-                            <div className="col text-center">
-                                <Link className="btn btn-primary" role="button" to="/channel-settings">
-                                    <i className="fa-solid fa-gear"></i>
-                                    <span className="ms-1">Ustawienia kanału</span>
-                                </Link>
-                                <Link className="btn btn-success ms-2" role="button" to="/videos-manager">
-                                    <i className="fa-solid fa-video"></i>
-                                    <span className="ms-1">Menedżer filmów</span>
-                                </Link>
-                            </div>
-                        </div> 
                     )}
-                    <div className="row mt-4 border-top border-2">
-                    {userVideos.map(video => (
-                   <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mt-4 d-flex justify-content-center" key={video.id}>
+                </div>
+            </div>
+            {isMyProfile && (
+                <div className="row mt-2">
+                    <div className="col text-center">
+                        <Link className="btn btn-primary" role="button" to="/channel-settings">
+                            <i className="fa-solid fa-gear"></i>
+                            <span className="ms-1">Ustawienia kanału</span>
+                        </Link>
+                        <Link className="btn btn-success ms-2" role="button" to="/videos-manager">
+                            <i className="fa-solid fa-video"></i>
+                            <span className="ms-1">Menedżer filmów</span>
+                        </Link>
+                    </div>
+                </div> 
+            )}
+            <div className="row mt-4 border-top border-2">
+                {userVideos.map(video => (
+                    <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mt-4 d-flex justify-content-center" key={video.id}>
                         <div className="channel-video-card">
                             <div className="row">
                                 <div className="col">
@@ -222,11 +242,7 @@ const Channel = () => {
                         </div>
                     </div> 
                 ))}
-                    </div>
-                </>
-            ) : (
-                <p>Ładowanie...</p>
-            )}
+            </div>
         </div>
     );
 }
