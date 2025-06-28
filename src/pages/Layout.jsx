@@ -75,7 +75,7 @@ const Layout = () => {
                 }
             }
 
-            if ((!token || tokenExpired) && !sessionStorage.getItem("refreshFailed")) {
+            if ((!token || tokenExpired) && !sessionStorage.getItem("dontRefresh")) {
                 try {
                     const res = await fetch(`${api}/auth/refresh`, {
                         method: "POST",
@@ -85,13 +85,13 @@ const Layout = () => {
                     if (res.ok) {
                         const data = await res.json();
                         localStorage.setItem("jwt", data.token);
-                        sessionStorage.removeItem("refreshFailed");
+                        sessionStorage.removeItem("dontRefresh");
                         // window.location.reload();
                     } else {
-                        sessionStorage.setItem("refreshFailed", "1");
+                        sessionStorage.setItem("dontRefresh", "1");
                     }
                 } catch {
-                    sessionStorage.setItem("refreshFailed", "1");
+                    sessionStorage.setItem("dontRefresh", "1");
                 }
             }
         }

@@ -54,7 +54,7 @@ const LoginCode = () => {
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem("jwt", data.token);
-                sessionStorage.removeItem("refreshFailed");
+                sessionStorage.removeItem("dontRefresh");
                 window.location.href = "/";
             }
         } catch {

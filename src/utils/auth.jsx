@@ -1,6 +1,7 @@
 let refreshTimeout;
 
 export const scheduleTokenRefresh = (expiresInSeconds) => {
+    
     if (refreshTimeout) clearTimeout(refreshTimeout);
 
     const refreshTime = (expiresInSeconds - 10) * 1000;
@@ -13,7 +14,7 @@ export const scheduleTokenRefresh = (expiresInSeconds) => {
             });
 
             if (!res.ok) {
-                sessionStorage.setItem("refreshFailed", "1");
+                sessionStorage.setItem("dontRefresh", "1");
                 clearTokenRefresh();
                 localStorage.removeItem("jwt");
                 window.location.reload();
@@ -24,7 +25,7 @@ export const scheduleTokenRefresh = (expiresInSeconds) => {
             localStorage.setItem("jwt", data.token);
             scheduleTokenRefresh(data.expiresIn * 60);
         } catch {
-            sessionStorage.setItem("refreshFailed", "1");
+            sessionStorage.setItem("dontRefresh", "1");
             clearTokenRefresh();
             localStorage.removeItem("jwt");
             window.location.reload();
