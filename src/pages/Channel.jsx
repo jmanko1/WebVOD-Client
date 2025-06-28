@@ -25,6 +25,7 @@ const Channel = () => {
             setError(null);
             setUserData(null);
             setUserVideos(null);
+            setDescriptionSliced(true);
 
             try {
                 const response = await fetch(`${api}/user/${id}`);
