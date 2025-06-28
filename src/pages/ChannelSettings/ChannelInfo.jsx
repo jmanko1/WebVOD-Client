@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 
 const ChannelInfo = () => {
-    const { user } = useUser();
+    const { user, setUser } = useUser();
 
     const [newDescription, setNewDescription] = useState("");
     const [newImage, setNewImage] = useState(null);
@@ -14,17 +14,21 @@ const ChannelInfo = () => {
     const [viewedImage, setViewedImage] = useState(null);
     const imageRef = useRef();
     
-    const maxImageSize = 2 * 1024 * 1024; // 2 MB
+    const maxNewDescriptionLength = 1500;
+    const maxImageSize = 1024 * 1024; // 1 MB
     const allowedImageExts = ["jpg", "jpeg", "png"];
     const allowedImageMimes = ["image/jpeg", "image/png"];
+    const api = import.meta.env.VITE_API_URL;
 
     const [errors, setErrors] = useState({});
     const clearError = (key) => setErrors(prev => ({ ...prev, [key]: null }));
     const setError = (key, message) => setErrors(prev => ({ ...prev, [key]: message }));
 
+    const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(null);
+    const [mainError, setMainError] = useState(null);
 
-    const maxDescriptionLength = 60;
+    const maxVisibleDescriptionLength = 60;
 
     const navigate = useNavigate();
 
@@ -38,12 +42,25 @@ const ChannelInfo = () => {
         if (user) {
             setViewedImage(user.imageUrl);
         }
-    }, [user]); // dodaj user do dependencies
+    }, [user]);
 
+    const hideDescriptionModal = () => {
+        const modalElement = document.getElementById("descriptionModal");
+        const modal = window.bootstrap.Modal.getInstance(modalElement) || window.bootstrap.Modal.getOrCreateInstance(modalElement);
+        modal.hide();
+    }
 
-    const submitDescription = (e) => {
+    const hideImageModal = () => {
+        const modalElement = document.getElementById("imageModal");
+        const modal = window.bootstrap.Modal.getInstance(modalElement) || window.bootstrap.Modal.getOrCreateInstance(modalElement);
+        modal.hide();
+    }
+
+    const submitDescription = async (e) => {
         e.preventDefault();
+
         setSuccess(null);
+        setMainError(null);
         clearError("descriptionError");
 
         if(!newDescription.trim()) {
@@ -51,26 +68,68 @@ const ChannelInfo = () => {
             return;
         }
 
-        if(newDescription.length > 500) {
-            setError("descriptionError", "Nowy opis może mieć maksymalnie 500 znaków.");
+        if(newDescription.length > maxNewDescriptionLength) {
+            setError("descriptionError", `Opis kanału może mieć maksymalnie ${maxNewDescriptionLength} znaków.`);
             return;
         }
 
-        // setUserData((prevData) => ({
-        //     ...prevData,
-        //     description: newDescription
-        // }));
+        const token = localStorage.getItem("jwt");
+        if(!token) {
+            hideDescriptionModal();
+            navigate("/logout");
+            return;
+        }
 
-        setNewDescription("");
+        setLoading(true);
 
-        const modalElement = document.getElementById("descriptionModal");
-        const modal = window.bootstrap.Modal.getInstance(modalElement) || window.bootstrap.Modal.getOrCreateInstance(modalElement);
-        modal.hide();
-        
-        setSuccess("Opis kanału został zaktualizowany.");
-        setTimeout(() => {
-            setSuccess(null);
-        }, 2000);
+        try {
+            const response = await fetch(`${api}/user/my-profile/description`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newDescription)
+            });
+
+            if(response.status == 401) {
+                hideDescriptionModal();
+                navigate("/logout");
+                return;
+            }
+
+            if(!response.ok) {
+                const errorData = await response.json();
+
+                if (errorData.message) {
+                    setMainError(errorData.message);
+                }
+                else if (errorData.errors?.description) {
+                    setError("descriptionError", errorData.errors.description[0]);
+                }
+
+                return;
+            }
+
+            if(response.ok) {
+                setUser((prev) => ({
+                    ...prev,
+                    "description": newDescription
+                }));
+
+                setNewDescription("");
+                hideDescriptionModal();
+                
+                setSuccess("Opis kanału został zaktualizowany.");
+                setTimeout(() => {
+                    setSuccess(null);
+                }, 4000);
+            }
+        } catch {
+            setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później.");
+        } finally {
+            setLoading(false);
+        }
     }
 
     const generateImageView = (file) => {
@@ -93,9 +152,11 @@ const ChannelInfo = () => {
     const getFileExtension = (file) => file.name.split('.').pop().toLowerCase();
     const getMimeType = (file) => file.type;
 
-    const submitImage = (e) => {
+    const submitImage = async (e) => {
         e.preventDefault();
 
+        setSuccess(null);
+        setMainError(null);
         clearError("imageError");
 
         if (!newImage) {
@@ -116,25 +177,104 @@ const ChannelInfo = () => {
         }
 
         if (newImage.size > maxImageSize) {
-            setError("imageError", "Rozmiar pliku nie może przekraczać 2 MB.");
+            setError("imageError", `Rozmiar pliku nie może przekraczać ${maxImageSize / 1024 / 1024} MB.`);
             return;
         }
 
-        const modalElement = document.getElementById("imageModal");
-        const modal = window.bootstrap.Modal.getInstance(modalElement) || window.bootstrap.Modal.getOrCreateInstance(modalElement);
-        modal.hide();
+        const token = localStorage.getItem("jwt");
+        if(!token) {
+            hideImageModal();
+            navigate("/logout");
+            return;
+        }
 
-        // setUserData((prevData) => ({
-        //     ...prevData,
-        //     imageURL: viewedImage
-        // }));
+        setLoading(true);
 
-        setNewImage(null);
-        imageRef.current.value = "";
-        setSuccess("Zdjęcie profilowe zostało zaktualizowane.");
-        setTimeout(() => {
-            setSuccess(null);
-        }, 2000);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const MAX_DIM = 512;
+
+                const size = Math.min(img.width, img.height);
+                const sx = (img.width - size) / 2;
+                const sy = (img.height - size) / 2;
+
+                const canvas = document.createElement("canvas");
+                canvas.width = MAX_DIM;
+                canvas.height = MAX_DIM;
+
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(
+                    img,
+                    sx, sy, size, size,
+                    0, 0, MAX_DIM, MAX_DIM
+                );
+
+                canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        setMainError("Nie udało się przekonwertować obrazu.");
+                        setLoading(false);
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append("image", blob, "image.webp");
+
+                    try {
+                        const response = await fetch(`${api}/user/my-profile/image`, {
+                            method: "PUT",
+                            headers: {
+                                "Authorization": `Bearer ${token}`
+                            },
+                            body: formData
+                        });
+
+                        if (response.status === 401) {
+                            hideImageModal();
+                            navigate("/logout");
+                            return;
+                        }
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            if (errorData.message) {
+                                setMainError(errorData.message);
+                            }
+                            return;
+                        }
+
+                        const newImageUrl = await response.text();
+                        setUser((prev) => ({
+                            ...prev,
+                            imageUrl: api + newImageUrl
+                        }));
+
+                        hideImageModal();
+                        setNewImage(null);
+                        imageRef.current.value = "";
+                        setSuccess("Zdjęcie profilowe zostało zaktualizowane.");
+                        setTimeout(() => {
+                            setSuccess(null);
+                        }, 4000);
+                    } catch {
+                        setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później.");
+                    } finally {
+                        setLoading(false);
+                    }
+
+                }, "image/webp", 0.8);
+            };
+
+            img.onerror = () => {
+                setMainError("Nie udało się wczytać obrazu.");
+                setLoading(false);
+            };
+
+            img.src = e.target.result;
+        };
+
+        reader.readAsDataURL(newImage);
     }
 
     if(!user) {
@@ -156,7 +296,7 @@ const ChannelInfo = () => {
                             Zarządzaj adresem email przypisanym do Twojego konta, opisem kanału i zdjęciem profilowym.
                         </div>
                         {success && (
-                            <div className="text-success">
+                            <div class="alert alert-success mt-3" role="alert">
                                 {success}
                             </div>
                         )}
@@ -177,8 +317,8 @@ const ChannelInfo = () => {
                                 <div>
                                     <div className="label">Opis kanału</div>
                                     <div className="subtext">
-                                        {user.description.length > maxDescriptionLength ? (
-                                            user.description.slice(0, maxDescriptionLength) + "..."
+                                        {user.description.length > maxVisibleDescriptionLength ? (
+                                            user.description.slice(0, maxVisibleDescriptionLength) + "..."
                                         ) : (
                                             user.description
                                         )}
@@ -212,21 +352,33 @@ const ChannelInfo = () => {
                                         onChange={(e) => setNewDescription(e.target.value)}
                                         className={`mx-auto new-description-textarea form-control ${errors.descriptionError ? "is-invalid" : ""}`}
                                         rows={7}
-                                        maxLength={500}
+                                        maxLength={maxNewDescriptionLength}
                                     />
                                     <div 
                                         className="form-text new-description-counter"
                                         style={errors.descriptionError ? { bottom: "30px" } : {}}
                                     >
-                                        {newDescription.length}/500
+                                        {newDescription.length}/{maxNewDescriptionLength}
                                     </div>
                                     {errors.descriptionError && <div className="invalid-feedback">{errors.descriptionError}</div>}
                                 </div>
+                                {loading && (
+                                    <div className="text-center">
+                                        <div className="spinner-border mt-2" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                )}
+                                {mainError && (
+                                    <div className="text-center text-danger mt-2">
+                                        {mainError}
+                                    </div>
+                                )}
                             </form>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
-                            <button onClick={submitDescription} type="button" className="btn btn-primary">Zapisz</button>
+                            <button onClick={submitDescription} disabled={loading} type="button" className="btn btn-primary">Zapisz</button>
                         </div>
                     </div>
                 </div>
@@ -242,7 +394,7 @@ const ChannelInfo = () => {
                             <form onSubmit={submitImage}>
                                 <div className="mb-2 row justify-content-center">
                                     <div className="ratio ratio-1x1 p-0" style={{maxWidth: "150px"}}>
-                                        <img src={viewedImage} alt="Zdjęcie profilowe" className="img-fluid object-fit-cover w-100 h-100" />
+                                        <img src={viewedImage} alt="Zdjęcie profilowe" className="img-fluid object-fit-cover w-100 h-100 rounded-circle" />
                                     </div>
                                     <div className="form-text">
                                         {newImage ? "Podgląd nowego zdjęcia profilowego" : "Obecne zdjęcie profilowe"}
@@ -261,11 +413,23 @@ const ChannelInfo = () => {
                                     <div className="form-text">Dopuszczalne typy: jpg/jpeg/png. Zalecany format 1:1.</div>
                                     {errors.imageError && <div className="invalid-feedback">{errors.imageError}</div>}
                                 </div>
+                                {loading && (
+                                    <div className="text-center">
+                                        <div className="spinner-border mt-2" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                )}
+                                {mainError && (
+                                    <div className="text-center text-danger mt-2">
+                                        {mainError}
+                                    </div>
+                                )}
                             </form>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
-                            <button onClick={submitImage} type="button" className="btn btn-primary">Zapisz</button>
+                            <button onClick={submitImage} disabled={loading} type="button" className="btn btn-primary">Zapisz</button>
                         </div>
                     </div>
                 </div>
