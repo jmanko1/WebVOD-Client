@@ -20,24 +20,26 @@ const Layout = () => {
                     Authorization: `Bearer ${token}`
                 };
 
-                const [profileRes, emailRes] = await Promise.all([
+                const [profileRes, emailRes, tfaRes] = await Promise.all([
                     fetch(`${api}/user/my-profile`, { headers }),
                     fetch(`${api}/user/my-profile/email`, { headers }),
+                    fetch(`${api}/user/my-profile/is-tfa-required`, { headers })
                 ]);
 
-                if (profileRes.status === 401 || emailRes.status === 401) {
+                if (profileRes.status === 401 || emailRes.status === 401 || tfaRes.status === 401) {
                     localStorage.removeItem("jwt");
                     setUser(null);
                     return;
                 }
 
-                if (!profileRes.ok || !emailRes.ok) {
+                if (!profileRes.ok || !emailRes.ok || !tfaRes.ok) {
                     return;
                 }
 
-                const [profileData, emailData] = await Promise.all([
+                const [profileData, emailData, tfaData] = await Promise.all([
                     profileRes.json(),
                     emailRes.text(),
+                    tfaRes.json()
                 ]);
 
                 profileData.description = profileData.description || "Brak opisu.";
@@ -46,6 +48,7 @@ const Layout = () => {
                 const fullProfile = {
                     ...profileData,
                     email: emailData,
+                    tfaEnabled: tfaData
                 };
 
                 setUser(fullProfile);
@@ -135,26 +138,38 @@ const Layout = () => {
                                 </Link>
                                 <div className="btn-group d-none d-lg-inline dropstart ms-1">
                                     <button className="btn p-0 border-0 bg-transparent dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src={user.imageUrl} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
+                                        <img src={user.imageUrl} alt="Zdjęcie profilowe" width="40" height="40" className="rounded-circle object-fit-cover" />
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
-                                            <Link to={`/channels/${user.login}`} className="dropdown-item">Strona kanału</Link>
+                                            <Link to={`/channels/${user.login}`} className="dropdown-item">
+                                                <i className="fa-solid fa-user"></i>
+                                                <span className="ms-2">Strona kanału</span>
+                                            </Link>
                                         </li>
                                         <li>
-                                            <Link to="/videos-manager" className="dropdown-item">Menedżer filmów</Link>
+                                            <Link to="/videos-manager" className="dropdown-item">
+                                                <i className="fa-solid fa-video"></i>
+                                                <span className="ms-2">Menedżer filmów</span>
+                                            </Link>
                                         </li>
                                         <li>
-                                            <Link to="/channel-settings" className="dropdown-item">Ustawienia</Link>
+                                            <Link to="/channel-settings" className="dropdown-item">
+                                                <i className="fa-solid fa-gear"></i>
+                                                <span className="ms-2">Ustawienia</span>
+                                            </Link>
                                         </li>
                                         <li>
-                                            <Link to="/logout" className="dropdown-item">Wyloguj się</Link>
+                                            <Link to="/logout" className="dropdown-item">
+                                                <i className="fa-solid fa-right-from-bracket"></i>
+                                                <span className="ms-2">Wyloguj się</span>
+                                            </Link>
                                         </li>
                                     </ul>
                                 </div>
                                 <div className="btn-group mt-2 d-lg-none dropdown ms-1">
                                     <button className="btn p-0 border-0 bg-transparent dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <img src={user.imageUrl} alt="Profil" width="40" height="40" className="rounded-circle object-fit-cover" />
+                                        <img src={user.imageUrl} alt="Zdjęcie profilowe" width="40" height="40" className="rounded-circle object-fit-cover" />
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
