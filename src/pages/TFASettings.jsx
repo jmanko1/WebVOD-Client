@@ -1,41 +1,159 @@
 import { QRCodeCanvas } from "qrcode.react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
+import { validateCode, validatePassword } from "../utils/validator";
 
 const TFASettings = () => {
-    const [isTfaEnabled, setIsTfaEnabled] = useState(false);
-    // const [isFormShown, setIsFormShown] = useState(false);
+    const { user, setUser } = useUser();
+    
     const [qrCodeText, setQrCodeText] = useState(null);
 
-    useEffect(() => {
-        const qrCodeText = "JBSWY3DPEHPK3PXPU3LS";
+    const [form, setForm] = useState({
+        password: "",
+        code: ""
+    })
 
-        setIsTfaEnabled(false);
-        // setIsFormShown(false);
-        setQrCodeText(qrCodeText);
+    const [errors, setErrors] = useState({});
+
+    const [loading, setLoading] = useState(false);
+    const [mainError, setMainError] = useState(null);
+    const [success, setSuccess] = useState(null);
+
+    const navigate = useNavigate();
+
+    const api = import.meta.env.VITE_API_URL;
+
+    useEffect(() => {
+        const getQrCode = async () => {
+            const token = localStorage.getItem("jwt");
+            if(!token) {
+                navigate("/login");
+                return;
+            }
+
+            setLoading(true);
+            
+            try {
+                const response = await fetch(`${api}/user/my-profile/tfa-qr-code`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                if(!response.status == 401) {
+                    navigate("/logout");
+                    return;
+                }
+
+                if(!response.ok)
+                    return;
+
+                const qrCode = await response.text();
+                setQrCodeText(qrCode);
+            } catch {
+                setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        getQrCode();
     }, []);
 
-    // const handleFormShow = () => {
-    //     setIsFormShown(!isFormShown);
-    // };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: null }));
+    };
 
-    const handleCodeSubmit = (e) => {
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!validatePassword(form.password, (e) => (newErrors.password = e))) {;}
+        if (!validateCode(form.code, (e) => (newErrors.code = e))) {;}
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        setSuccess(null);
+        setMainError(null);
+
+        if(!validateForm()) {
+            return;
+        }
+
+        const token = localStorage.getItem("jwt");
+        if(!token) {
+            navigate("/logout");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await fetch(`${api}/user/my-profile/toggle-tfa`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(form),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                const newErrors = {};
+
+                if (errorData.message) {
+                    setMainError(errorData.message);
+                }
+                if (errorData.errors?.Password) {
+                    newErrors.password = errorData.errors.Password[0];
+                } 
+                if (errorData.errors?.Code) {
+                    newErrors.code = errorData.errors.Code[0];
+                }
+
+                setErrors((prev) => ({ ...prev, ...newErrors }));
+                return;
+            }
+
+            if(qrCodeText) {
+                setQrCodeText(null);
+                setSuccess("Uwierzytelnianie dwuskładnikowe zostało włączone.");
+            }
+            else setSuccess("Uwierzytelnianie dwuskładnikowe zostało wyłączone.");
+            setForm({ password: "", code: "" });
+            setUser((prev) => ({
+                ...prev,
+                tfaEnabled: !user.tfaEnabled
+            }));
+        } catch {
+            setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
+        } finally {
+            setLoading(false);
+        }
     }
+
+    if(!user)
+        return;
 
     return (
         <div style={{maxWidth: "600px"}} className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center">
             <div className="mb-3">
-                {isTfaEnabled ? (
-                    <h1 className="fw-bold" style={{fontSize: "18px"}}>Uwierzytelnianie dwuskładnikowe (włączone)</h1>
+                {qrCodeText ? (
+                    <h1 className="fw-bold" style={{fontSize: "18px"}}>Uwierzytelnianie dwuskładnikowe <i className="fa-solid fa-xmark text-danger"></i></h1>
                 ) : (
-                    <h1 className="fw-bold" style={{fontSize: "18px"}}>Uwierzytelnianie dwuskładnikowe (wyłączone)</h1>
+                    <h1 className="fw-bold" style={{fontSize: "18px"}}>Uwierzytelnianie dwuskładnikowe <i className="fa-solid fa-check text-success"></i></h1>
                 )}
             </div>
-            {isTfaEnabled ? (
-                <div className="mb-3">Podaj kod z aplikacji, aby <strong>wyłączyć</strong> uwierzytelnianie dwuskładnikowe <strong>(niezalecane)</strong>:</div>
-            ) : (
+            {qrCodeText ? (
                 <>
                     <div className="mb-3">Pobierz aplikację uwierzytelniającą np. Google Authenticator.</div>
                     <div className="mb-3">Zeskanuj poniższy kod QR:</div>
@@ -50,32 +168,71 @@ const TFASettings = () => {
                             />
                         </div>
                     )}
-                    {/* <div className="alert alert-danger" id="error" style="display: none"></div> */}
                     <div className="mb-3">
                         <strong>Nikomu nie ujawniaj powyższego kodu QR.</strong>
                     </div>
-                    <div className="mb-3">Podaj kod z aplikacji, aby <strong>włączyć</strong> uwierzytelnianie dwuskładnikowe <strong>(zalecane)</strong>:</div>
+                    <div className="mb-3">Podaj hasło oraz kod z aplikacji, aby <strong>włączyć</strong> uwierzytelnianie dwuskładnikowe <strong>(zalecane)</strong>:</div>
                 </>
+            ) : (
+                <div className="mb-3">Podaj hasło oraz kod z aplikacji, aby <strong>wyłączyć</strong> uwierzytelnianie dwuskładnikowe <strong>(niezalecane)</strong>:</div>
            )}
-            <div className="mb-3" id="form">
-                <form onSubmit={handleCodeSubmit}>
+            <div id="form">
+                <form onSubmit={handleSubmit}>
                     <div className="mb-3">
+                        <label htmlFor="password" className="form-label">Hasło</label>
+                        <input
+                            type="password"
+                            style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
+                            className={`form-control mx-auto ${errors.password ? 'is-invalid' : ''}`}
+                            id="password"
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            autoFocus
+                        />
+                        {errors.password && (
+                            <div className="invalid-feedback">
+                                {errors.password}
+                            </div>
+                        )}
+                    </div>
+                    <div className="mb-3">
+                        <label htmlFor="code" className="form-label">Kod z aplikacji</label>
                         <input
                             type="text"
                             id="code"
+                            name="code"
                             style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                            className="form-control text-center mx-auto"
+                            className={`form-control mx-auto ${errors.code ? 'is-invalid' : ''}`}
                             placeholder="6-cyfrowy kod"
-                            required
+                            value={form.code}
+                            onChange={handleChange}
                             maxLength="6"
-                            autoFocus
                         />
+                        {errors.code && (
+                            <div className="invalid-feedback">
+                                {errors.code}
+                            </div>
+                        )}
                     </div>
-                    <div className="mb-3">
-                        <button className="btn btn-primary" type="submit" id="submit">Zatwierdź</button>
+                    <div>
+                        <button className="btn btn-primary" type="submit">Zatwierdź</button>
                     </div>
-                    <div id="tfaUpdateError" className="mb-3 text-danger"></div>
-                    <div className="mb-3 text-success" id="success"></div>
+                    {mainError && (
+                        <div className="mt-3" style={{color: "red"}}>
+                            {mainError}
+                        </div>
+                    )}
+                    {loading && (
+                        <div className="spinner-border mt-3" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    )}
+                    {success && (
+                        <div className="mt-3" style={{color: "green"}}>
+                            {success}
+                        </div>
+                    )}
                 </form>
             </div>
             <div className="mt-4">
