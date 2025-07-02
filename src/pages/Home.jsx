@@ -9,7 +9,7 @@ const Home = () => {
             thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
             title: "Fajny film",
             views: 72062,
-            date: "2024-06-24",
+            date: "2024-06-24T08:32:23Z",
             duration: 1162,
             author: {
                 id: 1,
@@ -21,7 +21,7 @@ const Home = () => {
             thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
             title: "Fajny film",
             views: 72062,
-            date: "2024-06-24",
+            date: "2024-06-24T08:32:23Z",
             duration: 1162,
             author: {
                 id: 1,
@@ -33,7 +33,7 @@ const Home = () => {
             thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
             title: "Fajny film",
             views: 72062,
-            date: "2024-06-24",
+            date: "2024-06-24T08:32:23Z",
             duration: 1162,
             author: {
                 id: 1,
@@ -45,7 +45,7 @@ const Home = () => {
             thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
             title: "Fajny film",
             views: 72062,
-            date: "2024-06-24",
+            date: "2024-06-24T08:32:23Z",
             duration: 1162,
             author: {
                 id: 1,
@@ -57,7 +57,7 @@ const Home = () => {
             thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
             title: "Fajny film",
             views: 72062,
-            date: "2024-06-24",
+            date: "2024-06-24T08:32:23Z",
             duration: 1162,
             author: {
                 id: 1,
@@ -69,7 +69,7 @@ const Home = () => {
             thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
             title: "Fajny film",
             views: 72062,
-            date: "2024-06-24",
+            date: "2024-06-24T08:32:23Z",
             duration: 1162,
             author: {
                 id: 1,
@@ -89,8 +89,13 @@ const Home = () => {
         return `${m}:${s.toString().padStart(2, "0")}`;
     };
 
-    const formatDate = (dateString) => {
-        const [year, month, day] = dateString.split("-");
+    const formatDate = (utcDateTimeString) => {
+        const localDateTime = new Date(utcDateTimeString);
+
+        const day = String(localDateTime.getDate()).padStart(2, '0');
+        const month = String(localDateTime.getMonth() + 1).padStart(2, '0');
+        const year = localDateTime.getFullYear();
+
         return `${day}.${month}.${year}`;
     };
 

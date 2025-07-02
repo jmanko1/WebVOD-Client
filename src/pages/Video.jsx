@@ -33,7 +33,7 @@ const Video = () => {
             views: 105623,
             likes: 10942,
             comments: 1897,
-            date: "2022-07-03",
+            date: "2022-07-03T16:03:26.961Z",
             // src: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
             src: "http://localhost:8080/uploads/videos/507f1f77bcf86cd799439011/master.m3u8",
             // src: "https://static.videezy.com/system/resources/previews/000/008/452/original/Dark_Haired_Girl_Pensive_Looks_at_Camera.mp4",
@@ -57,7 +57,7 @@ const Video = () => {
                     login: "tomek123"
                 },
                 views: 72062,
-                date: "2021-06-24",
+                date: "2021-06-24T09:05:06Z",
                 duration: 1163,
             },
             {
@@ -69,7 +69,7 @@ const Video = () => {
                     login: "tomek123"
                 },
                 views: 72062,
-                date: "2021-06-24",
+                date: "2021-06-24T09:05:06Z",
                 duration: 1163,
             },
             {
@@ -81,7 +81,7 @@ const Video = () => {
                     login: "tomek123"
                 },
                 views: 72062,
-                date: "2021-06-24",
+                date: "2021-06-24T09:05:06Z",
                 duration: 1163,
             },
         ]);
@@ -96,7 +96,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                date: "2025-03-21 14:02:00"
+                date: "2025-03-21T14:02:04Z"
             },
             {
                 id: 3,
@@ -107,7 +107,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                date: "2025-03-21 14:02:00"
+                date: "2025-03-21T14:02:04Z"
             },
             {
                 id: 4,
@@ -118,7 +118,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                date: "2025-03-21 14:02:00"
+                date: "2025-03-21T14:02:04Z"
             },
             {
                 id: 5,
@@ -129,7 +129,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 },
                 content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                date: "2025-03-21 14:02:00"
+                date: "2025-03-21T14:02:04Z"
             }
         ]);
 
@@ -159,29 +159,25 @@ const Video = () => {
         setTimeout(() => setCopied(false), 3000);
     };
 
-    const getFormattedDate = () => {
-        const now = new Date();
+    const formatDate = (utcDateTimeString) => {
+        const localDateTime = new Date(utcDateTimeString);
 
-        const day = String(now.getDate()).padStart(2, '0');
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const year = String(now.getFullYear());
+        const day = String(localDateTime.getDate()).padStart(2, '0');
+        const month = String(localDateTime.getMonth() + 1).padStart(2, '0');
+        const year = localDateTime.getFullYear();
 
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-
-        return `${year}-${month}-${day} ${hours}:${minutes}:00`;
-    }
-
-    const formatDate = (dateString) => {
-        const [year, month, day] = dateString.split("-");
         return `${day}.${month}.${year}`;
     };
 
-    const formatDatetime = (datetimeString) => {
-        const [date, time] = datetimeString.split(" ");
+    const formatDatetime = (utcDateTimeString) => {
+        const localDateTime = new Date(utcDateTimeString);
 
-        const [year, month, day] = date.split("-");
-        const [hours, minutes] = time.split(":");
+        const day = String(localDateTime.getDate()).padStart(2, '0');
+        const month = String(localDateTime.getMonth() + 1).padStart(2, '0');
+        const year = localDateTime.getFullYear();
+
+        const hours = String(localDateTime.getHours()).padStart(2, '0');
+        const minutes = String(localDateTime.getMinutes()).padStart(2, '0');
 
         return `${day}.${month}.${year} ${hours}:${minutes}`;
     }
@@ -200,7 +196,7 @@ const Video = () => {
                     imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
                 }, 
                 content: newComment, 
-                date: getFormattedDate() 
+                date: new Date().toISOString() 
             }, ...comments]);
         setNewComment("");
         setCommentsCount((prev) => prev + 1);

@@ -11,7 +11,6 @@ const Channel = () => {
 
     const [userData, setUserData] = useState(null);
     const [userVideos, setUserVideos] = useState(null);
-    const [isMyProfile, setIsMyProfile] = useState(false);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -45,10 +44,6 @@ const Channel = () => {
                 data.videosCount = 25;
 
                 setUserData(data);
-
-                if(user && user.login && id) {
-                    setIsMyProfile(user.login.toLowerCase() === id.toLowerCase());
-                }
             } catch {
                 setError({
                     status: 500,
@@ -65,7 +60,7 @@ const Channel = () => {
                 thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
                 title: "Fajny film",
                 views: 72062,
-                date: "2024-06-24",
+                date: "2024-06-24T12:32:25Z",
                 duration: 1162
             },
             {
@@ -73,7 +68,7 @@ const Channel = () => {
                 thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
                 title: "Fajny film",
                 views: 72062,
-                date: "2024-06-24",
+                date: "2024-06-24T12:32:25Z",
                 duration: 1162
             },
             {
@@ -81,7 +76,7 @@ const Channel = () => {
                 thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
                 title: "Fajny film",
                 views: 72062,
-                date: "2024-06-24",
+                date: "2024-06-24T12:32:25Z",
                 duration: 1162
             },
             {
@@ -89,7 +84,7 @@ const Channel = () => {
                 thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
                 title: "Fajny film",
                 views: 72062,
-                date: "2024-06-24",
+                date: "2024-06-24T12:32:25Z",
                 duration: 1162
             },
             {
@@ -97,7 +92,7 @@ const Channel = () => {
                 thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
                 title: "Fajny film",
                 views: 72062,
-                date: "2024-06-24",
+                date: "2024-06-24T12:32:25Z",
                 duration: 1162
             },
             {
@@ -105,14 +100,14 @@ const Channel = () => {
                 thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
                 title: "Fajny film",
                 views: 72062,
-                date: "2024-06-24",
+                date: "2024-06-24T12:32:25Z",
                 duration: 1162
             }
         ]
 
         getProfile();
         setUserVideos(videos);
-    }, [id, user]);
+    }, [id]);
 
     const formatDuration = (seconds) => {
         const h = Math.floor(seconds / 3600);
@@ -125,8 +120,13 @@ const Channel = () => {
         return `${m}:${s.toString().padStart(2, "0")}`;
     };
 
-    const formatDate = (dateString) => {
-        const [year, month, day] = dateString.split("-");
+    const formatDate = (utcDateTimeString) => {
+        const localDateTime = new Date(utcDateTimeString);
+
+        const day = String(localDateTime.getDate()).padStart(2, '0');
+        const month = String(localDateTime.getMonth() + 1).padStart(2, '0');
+        const year = localDateTime.getFullYear();
+
         return `${day}.${month}.${year}`;
     };
 
@@ -196,7 +196,7 @@ const Channel = () => {
                     )}
                 </div>
             </div>
-            {isMyProfile && (
+            {user && user.login.toLowerCase() === id.toLowerCase() && (
                 <div className="row mt-2">
                     <div className="col text-center">
                         <Link className="btn btn-primary" role="button" to="/channel-settings">
