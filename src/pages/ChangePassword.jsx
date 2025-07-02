@@ -1,127 +1,210 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateCode, validateConfirmPassword, validatePassword } from "../utils/validator";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
 
 const ChangePassword = () => {
-    const [oldPassword, setOldPassword] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [code, setCode] = useState("");
+    const { user } = useUser();
 
-    const [oldPasswordError, setOldPasswordError] = useState(null);
-    const [passwordError, setPasswordError] = useState(null);
-    const [confirmPasswordError, setConfirmPasswordError] = useState(null);
-    const [codeError, setCodeError] = useState(null);
-    const [error, setError] = useState(null);
+    const [form, setForm] = useState({
+        oldPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+        code: ""
+    });
 
-    const handleOldPasswordChange = (e) => {
-        setOldPassword(e.target.value);
-        setOldPasswordError(null);
-    }
+    const [errors, setErrors] = useState({});
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-        setPasswordError(null);
-    }
+    const [mainError, setMainError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(null);
 
-    const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value);
-        setConfirmPasswordError(null);
-    }
+    const navigate = useNavigate();
 
-    const handleCodeChange = (e) => {
-        setCode(e.target.value);
-        setCodeError(null);
-    }
+    useEffect(() => {
+        const token = localStorage.getItem("jwt");
+        if(!token) {
+            navigate("/login");
+            return;
+        }
+    }, []);
 
-    const handleSubmit = (e) => {
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: null }));
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!validatePassword(form.oldPassword, (e) => (newErrors.oldPassword = e))) {;}
+        if (!validatePassword(form.newPassword, (e) => (newErrors.newPassword = e))) {;}
+        if (!validateConfirmPassword(form.newPassword, form.confirmNewPassword, (e) => (newErrors.confirmNewPassword = e))) {;}
+        if (user.tfaEnabled && !validateCode(form.code, (e) => (newErrors.code = e))) {;}
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const isOldPasswordValid = validatePassword(oldPassword, setOldPasswordError);
-        const isPasswordValid = validatePassword(password, setPasswordError);
-        const isConfirmPasswordValid = validateConfirmPassword(password, confirmPassword, setConfirmPasswordError);
-        const isCodeValid = validateCode(code, setCodeError);
+        setSuccess(null);
+        setMainError(null);
 
-        if(!isOldPasswordValid || !isPasswordValid || !isConfirmPasswordValid || !isCodeValid)
+        if(!validateForm()) {
             return;
-        
-        console.log(oldPassword, password, confirmPassword, code);
+        }
+
+        const token = localStorage.getItem("jwt");
+        if(!token) {
+            navigate("/logout");
+            return;
+        }
+
+        setLoading(true);
+
+        const api = import.meta.env.VITE_API_URL;
+
+        try {
+            const response = await fetch(`${api}/user/my-profile/change-password`, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(form),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                const newErrors = {};
+
+                if (errorData.message) {
+                    setMainError(errorData.message);
+                }
+                if (errorData.errors?.OldPassword) {
+                    newErrors.oldPassword = errorData.errors.OldPassword[0];
+                } 
+                if (errorData.errors?.NewPassword) {
+                    newErrors.newPassword = errorData.errors.NewPassword[0];
+                } 
+                if (errorData.errors?.ConfirmNewPassword) {
+                    newErrors.confirmNewPassword = errorData.errors.ConfirmNewPassword[0];
+                } 
+                if (errorData.errors?.Code) {
+                    newErrors.code = errorData.errors.Code[0];
+                }
+
+                setErrors((prev) => ({ ...prev, ...newErrors }));
+                return;
+            }
+
+            setSuccess("Hasło zostało zmienione."); 
+            setForm({ oldPassword: "", newPassword: "", confirmNewPassword: "", code: "" });
+        } catch {
+            setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
+        } finally {
+            setLoading(false);
+        }
     }
+
+    if(!user)
+        return;
 
     return (
         <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "600px"}}>
             <h1 style={{fontSize: "28px"}}>Zmiana hasło</h1>
             <form className="mt-4 mb-4" onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="old-password" className="form-label">Aktualne hasło</label>
+                    <label htmlFor="oldPassword" className="form-label">Aktualne hasło</label>
                     <input
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={oldPassword}
-                        onChange={handleOldPasswordChange}
-                        className={`form-control mx-auto ${oldPasswordError ? 'is-invalid' : ''}`}
-                        id="old-password"
+                        value={form.oldPassword}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.oldPassword ? 'is-invalid' : ''}`}
+                        id="oldPassword"
+                        name="oldPassword"
                         autoFocus
                     />
-                    {oldPasswordError && (
+                    {errors.oldPassword && (
                         <div className="invalid-feedback">
-                            {oldPasswordError}
+                            {errors.oldPassword}
                         </div>
                     )}
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Nowe hasło</label>
+                    <label htmlFor="newPassword" className="form-label">Nowe hasło</label>
                     <input
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={password}
-                        onChange={handlePasswordChange}
-                        className={`form-control mx-auto ${passwordError ? 'is-invalid' : ''}`}
-                        id="password" 
+                        value={form.newPassword}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.newPassword ? 'is-invalid' : ''}`}
+                        id="newPassword"
+                        name="newPassword"
                     />
-                    {passwordError && (
+                    {errors.newPassword && (
                         <div className="invalid-feedback">
-                            {passwordError}
+                            {errors.newPassword}
                         </div>
                     )}
                 </div>
                 <div className="mb-3">
-                    <label htmlFor="confirm-password" className="form-label">Potwierdź nowe hasło</label>
+                    <label htmlFor="confirmNewPassword" className="form-label">Potwierdź nowe hasło</label>
                     <input
                         type="password"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={confirmPassword}
-                        onChange={handleConfirmPasswordChange}
-                        className={`form-control mx-auto ${confirmPasswordError ? 'is-invalid' : ''}`}
-                        id="confirm-password" 
+                        value={form.confirmNewPassword}
+                        onChange={handleChange}
+                        className={`form-control mx-auto ${errors.confirmNewPassword ? 'is-invalid' : ''}`}
+                        id="confirmNewPassword"
+                        name="confirmNewPassword"
                     />
-                    {confirmPasswordError && (
+                    {errors.confirmNewPassword && (
                         <div className="invalid-feedback">
-                            {confirmPasswordError}
+                            {errors.confirmNewPassword}
                         </div>
                     )}
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="code" className="form-label">Kod z aplikacji</label>
-                    <input
-                        type="text"
-                        maxLength={6}
-                        style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={code}
-                        onChange={handleCodeChange}
-                        className={`form-control mx-auto ${codeError ? 'is-invalid' : ''}`}
-                        id="code" 
-                    />
-                    {codeError && (
-                        <div className="invalid-feedback">
-                            {codeError}
-                        </div>
-                    )}
+                {user.tfaEnabled && (
+                    <div className="mb-3">
+                        <label htmlFor="code" className="form-label">Kod z aplikacji</label>
+                        <input
+                            type="text"
+                            maxLength={6}
+                            style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
+                            value={form.code}
+                            onChange={handleChange}
+                            className={`form-control mx-auto ${errors.code ? 'is-invalid' : ''}`}
+                            id="code"
+                            name="code"
+                            placeholder="6-cyfrowy kod"
+                        />
+                        {errors.code && (
+                            <div className="invalid-feedback">
+                                {errors.code}
+                            </div>
+                        )}
+                    </div>
+                )}
+                <div>
+                    <button type="submit" className="btn btn-primary" disabled={loading}>Zmień hasło</button>
                 </div>
-                <button type="submit" className="btn btn-primary">Zmień hasło</button>
-                {error && (
+                {mainError && (
                     <div className="mt-3" style={{color: "red"}}>
-                        {error}
+                        {mainError}
+                    </div>
+                )}
+                {loading && (
+                    <div className="spinner-border mt-3" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                )}
+                {success && (
+                    <div className="mt-3" style={{color: "green"}}>
+                        {success}
                     </div>
                 )}
             </form>
