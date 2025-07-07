@@ -79,6 +79,7 @@ const VideoPlayer = ({ url }) => {
                         key={index}
                         onClick={() => changeQuality(index)}
                         className={`quality-button ${!isAuto && currentLevel === index ? "quality-button-active" : ""}`}
+                        disabled={changedQuality}
                     >
                         {level.height}p
                     </button>
@@ -86,6 +87,7 @@ const VideoPlayer = ({ url }) => {
                 <button
                     onClick={() => changeQuality(-1)}
                     className={`quality-button ${isAuto ? "quality-button-active" : ""}`}
+                    disabled={changedQuality}
                 >
                     Auto{isAuto && currentQuality && ` (${currentQuality})`}
                 </button>
