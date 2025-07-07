@@ -1,16 +1,29 @@
-import { Link, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import "../styles/Video.css";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import VideoPlayer from "../components/VideoPlayer/VideoPlayer";
+import { useUser } from "../contexts/UserContext";
+import { formatDate, formatDatetime } from "../utils/datetime";
+
+import "../styles/Video.css";
 
 const Video = () => {
     const { id } = useParams();
+    const { user } = useUser();
 
     const [watchedVideo, setWatchedVideo] = useState(null);
+    
     const [recommendedVideos, setRecommendedVideos] = useState([]);
+
     const [comments, setComments] = useState([]);
+    const [page, setPage] = useState(1);
+    const size = 10;
+    const [commentsLoading, setCommentsLoading] = useState(false);
+    const [isScrollEnd, setIsScrollEnd] = useState(false);
+    const commentsRef = useRef();
 
     const [newComment, setNewComment] = useState("");
+    const [newCommentSubmitLoading, setNewCommentSubmitLoading] = useState(false);
+    const [newCommentSubmitSuccess, setNewCommentSubmitSuccess] = useState(null);
 
     const [liked, setLiked] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -19,132 +32,175 @@ const Video = () => {
     const [pressedLike, setPressedLike] = useState(false);
     const [pressedSave, setPressedSave] = useState(false);
 
-    const [likesCount, setLikesCount] = useState(0);
-    const [commentsCount, setCommentsCount] = useState(0);
     const [descriptionSliced, setDescriptionSliced] = useState(true);
 
+    const [videoLoading, setVideoLoading] = useState(false);
+    const [mainError, setMainError] = useState(null);
+
+    const [errors, setErrors] = useState({});
+
+    const navigate = useNavigate();
+
     const maxDescriptionLength = 150;
+    const api = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
-        
-        const videoData = {
-            title: "Fajny film",
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-            views: 105623,
-            likes: 10942,
-            comments: 1897,
-            date: "2022-07-03T16:03:26.961Z",
-            // src: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
-            src: "http://localhost:8080/uploads/videos/507f1f77bcf86cd799439011/master.m3u8",
-            // src: "https://static.videezy.com/system/resources/previews/000/008/452/original/Dark_Haired_Girl_Pensive_Looks_at_Camera.mp4",
-            author: {
-                id: 1,
-                login: "tomek123",
-                imageURL: "https://marszalstudio.pl/wp-content/uploads/2024/01/fajne-zdjecia-profilowe-12.webp"
-            },
-        };
-
-        setWatchedVideo(videoData);
-        setLikesCount(videoData.likes);
-
-        setRecommendedVideos([
-            {
-                id: 1,
-                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-                title: "Fajny film",
-                author: {
-                    id: 1,
-                    login: "tomek123"
-                },
-                views: 72062,
-                date: "2021-06-24T09:05:06Z",
-                duration: 1163,
-            },
-            {
-                id: 2,
-                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-                title: "Fajny film",
-                author: {
-                    id: 1,
-                    login: "tomek123"
-                },
-                views: 72062,
-                date: "2021-06-24T09:05:06Z",
-                duration: 1163,
-            },
-            {
-                id: 3,
-                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-                title: "Fajny film",
-                author: {
-                    id: 1,
-                    login: "tomek123"
-                },
-                views: 72062,
-                date: "2021-06-24T09:05:06Z",
-                duration: 1163,
-            },
-        ]);
-
-        setComments([
-            {
-                id: 2,
-                authorImageSrc: "https://yt3.ggpht.com/Pk-75p67kN439_PkvOvIywqwXw4X8-3iBYP0KahdMliVznX5BNkti8Q4yEz7NcENMtEErjVJ=s88-c-k-c0x00ffffff-no-rj",
-                author: {
-                    id: 1,
-                    login: "tomek123",
-                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
-                },
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                date: "2025-03-21T14:02:04Z"
-            },
-            {
-                id: 3,
-                authorImageSrc: "https://yt3.ggpht.com/Pk-75p67kN439_PkvOvIywqwXw4X8-3iBYP0KahdMliVznX5BNkti8Q4yEz7NcENMtEErjVJ=s88-c-k-c0x00ffffff-no-rj",
-                author: {
-                    id: 1,
-                    login: "tomek123",
-                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
-                },
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                date: "2025-03-21T14:02:04Z"
-            },
-            {
-                id: 4,
-                authorImageSrc: "https://yt3.ggpht.com/Pk-75p67kN439_PkvOvIywqwXw4X8-3iBYP0KahdMliVznX5BNkti8Q4yEz7NcENMtEErjVJ=s88-c-k-c0x00ffffff-no-rj",
-                author: {
-                    id: 1,
-                    login: "tomek123",
-                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
-                },
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                date: "2025-03-21T14:02:04Z"
-            },
-            {
-                id: 5,
-                authorImageSrc: "https://yt3.ggpht.com/Pk-75p67kN439_PkvOvIywqwXw4X8-3iBYP0KahdMliVznX5BNkti8Q4yEz7NcENMtEErjVJ=s88-c-k-c0x00ffffff-no-rj",
-                author: {
-                    id: 1,
-                    login: "tomek123",
-                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
-                },
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                date: "2025-03-21T14:02:04Z"
-            }
-        ]);
-
-        setCommentsCount(videoData.comments);
-
+        fetchVideoData();
+        isVideoLiked();
     }, [id]);
 
-    const handleLike = () => {
+    useEffect(() => {
+        const fetchComments = async () => {
+            if(isScrollEnd)
+                return;
+
+            setCommentsLoading(true);
+    
+            try {
+                const response = await fetch(`${api}/video/${id}/comments?page=${page}&size=${size}`);
+                if(response.ok) {
+                    const data = await response.json();
+
+                    if(data.length < size)
+                        setIsScrollEnd(true);
+                    
+                    setComments((prev) => [...prev, ...data]);
+                }
+            } catch {
+                setErrors((prev) => ({
+                    ...prev,
+                    comments: "Wystąpił niespodziewany błąd w trakcie pobierania komentarzy. Spróbuj ponownie później."
+                }));
+            } finally {
+                setCommentsLoading(false);
+            }
+        };
+
+        fetchComments();
+    }, [page, isScrollEnd]);
+
+    useEffect(() => {
+        const container = commentsRef.current;
+        if (!container) return;
+
+        const handleScroll = () => {
+            if (commentsLoading || isScrollEnd) return;
+
+            if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10)
+                setPage(prev => prev + 1);
+        };
+
+        container.addEventListener('scroll', handleScroll);
+
+        return () => container.removeEventListener('scroll', handleScroll);
+    }, [watchedVideo, commentsLoading, isScrollEnd]);
+
+    const fetchVideoData = async () => {
+        setVideoLoading(true);
+        setMainError(null);
+        setErrors({});
+        setWatchedVideo(null);
+        setComments([]);
+        setRecommendedVideos([]);
+        setDescriptionSliced(true);
+
+        try {
+            const response = await fetch(`${api}/video/${id}`);
+
+            if(!response.ok) {
+                const errorData = await response.json();
+                setMainError({
+                    status: response.status,
+                    message: errorData.message
+                });
+                document.title = "Brak filmu - WebVOD";
+
+                return;
+            }
+
+            const data = await response.json();
+            document.title = `${data.title} - WebVOD`;
+
+            setWatchedVideo(data);
+        } catch {
+            setMainError({
+                status: 500,
+                message: "Wystąpił niespodziewany błąd. Spróbuj ponownie później."
+            });
+            document.title = "Brak filmu - WebVOD";
+        } finally {
+            setVideoLoading(false);
+        }
+    }
+
+    const isVideoLiked = async () => {
+        const token = localStorage.getItem("jwt");
+        if(!token)
+            return;
+
+        try {
+            const response = await fetch(`${api}/video/${id}/like`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if(!response.ok)
+                return;
+
+            const data = await response.json();
+            setLiked(data);
+        } catch {
+            ;
+        }
+    };
+
+    const handleLike = async () => {
         if(pressedLike) return;
 
-        setLiked(!liked);
-        setLikesCount(prev => liked ? prev - 1 : prev + 1);
-        setPressedLike(true);
-        
-        setTimeout(() => {setPressedLike(false)}, 3000);
+        const token = localStorage.getItem("jwt");
+        if(!token || !user) {
+            navigate("/logout");
+            return;
+        }
+
+        try {
+            const method = liked ? "DELETE" : "POST";
+
+            const response = await fetch(`${api}/video/${id}/like`, {
+                method: method,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if(!response.ok) {
+                const errorData = await response.json();
+                setErrors((prev) => ({
+                    ...prev,
+                    like: errorData
+                }));
+                
+                return;
+            }
+
+            setWatchedVideo((prev) => liked ? ({
+                ...prev,
+                likesCount: prev.likesCount - 1
+            }) : ({
+                ...prev,
+                likesCount: prev.likesCount + 1
+            }));
+
+            setLiked(!liked);
+            setPressedLike(true);
+            setTimeout(() => {setPressedLike(false)}, 3000);
+        } catch {
+            setErrors((prev) => ({
+                ...prev,
+                like: `Wystąpił niespodziewany błąd w trakcie próby ${liked ? "anulowania " : ""}polubienia filmu. Spróbuj ponownie później.`
+            }));
+        }
     };
 
     const handleDescriptionSlice = () => {
@@ -159,47 +215,158 @@ const Video = () => {
         setTimeout(() => setCopied(false), 3000);
     };
 
-    const formatDate = (utcDateTimeString) => {
-        const localDateTime = new Date(utcDateTimeString);
-
-        const day = String(localDateTime.getDate()).padStart(2, '0');
-        const month = String(localDateTime.getMonth() + 1).padStart(2, '0');
-        const year = localDateTime.getFullYear();
-
-        return `${day}.${month}.${year}`;
-    };
-
-    const formatDatetime = (utcDateTimeString) => {
-        const localDateTime = new Date(utcDateTimeString);
-
-        const day = String(localDateTime.getDate()).padStart(2, '0');
-        const month = String(localDateTime.getMonth() + 1).padStart(2, '0');
-        const year = localDateTime.getFullYear();
-
-        const hours = String(localDateTime.getHours()).padStart(2, '0');
-        const minutes = String(localDateTime.getMinutes()).padStart(2, '0');
-
-        return `${day}.${month}.${year} ${hours}:${minutes}`;
+    const handleNewCommentChange = (e) => {
+        setNewComment(e.target.value);
+        setErrors((prev) => ({
+            ...prev,
+            newCommentSubmit: null
+        }));
     }
     
-    const handleCommentSubmit = (e) => {
+    const handleCommentSubmit = async (e) => {
         e.preventDefault();
         
-        if (!newComment.trim()) return;
+        if (!newComment.trim()) {
+            setErrors((prev) => ({
+                ...prev,
+                newCommentSubmit: "Podaj treść komentarza."
+            }));
+            return;
+        }
 
-        setComments([
-            { 
-                id: Date.now(),
-                author: {
-                    id: 1,
-                    login: "tomek123",
-                    imageURL: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D"
-                }, 
-                content: newComment, 
-                date: new Date().toISOString() 
-            }, ...comments]);
-        setNewComment("");
-        setCommentsCount((prev) => prev + 1);
+        if(newComment.length > 500) {
+            setErrors((prev) => ({
+                ...prev,
+                newCommentSubmit: "Komentarz może mieć maksymalnie 500 znaków."
+            }));
+            return;
+        }
+
+        const token = localStorage.getItem("jwt");
+        if(!token || !user) {
+            navigate("/logout");
+            return;
+        }
+
+        const form = {
+            videoId: id,
+            content: newComment
+        }
+
+        setNewCommentSubmitLoading(true);
+
+        try {
+            const response = await fetch(`${api}/comment`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(form)
+            });
+
+            if(!response.ok) {
+                const errorData = await response.json();
+
+                if (errorData.message) {
+                    setErrors((prev) => ({
+                        ...prev,
+                        newCommentSubmit: errorData.message
+                    }));
+                }
+                if (errorData.errors?.VideoId) {
+                    setErrors((prev) => ({
+                        ...prev,
+                        newCommentSubmit: errorData.errors.VideoId
+                    }));
+                } 
+                if (errorData.errors?.Content) {
+                    setErrors((prev) => ({
+                        ...prev,
+                        newCommentSubmit: errorData.errors.Content
+                    }));
+                } 
+
+                return;
+            }
+
+            const newCommentId = await response.text();
+            setComments([
+                { 
+                    id: newCommentId,
+                    author: {
+                        id: user.id,
+                        login: user.login,
+                        imageUrl: user.imageUrl.replace(api, "")
+                    }, 
+                    content: newComment, 
+                    uploadDate: new Date().toISOString() 
+                }, ...comments]);
+            setNewComment("");
+            setWatchedVideo((prev) => ({
+                ...prev,
+                commentsCount : prev.commentsCount + 1
+            }));
+            setNewCommentSubmitSuccess("Komentarz został dodany.");
+            setTimeout(() => setNewCommentSubmitSuccess(null), 4000)
+        } catch {
+            setErrors((prev) => ({
+                ...prev,
+                newCommentSubmit: "Wystąpił niespodziewany błąd w trakcie dodawania komentarza. Spróbuj ponownie później."
+            }));
+        } finally {
+            setNewCommentSubmitLoading(false);
+        }
+    }
+    
+    const handleCommentRemove = async (commentId) => {
+        const token = localStorage.getItem("jwt");
+        if(!token || !user) {
+            navigate("/logout");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${api}/comment/${commentId}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if(!response.ok) {
+                const errorData = await response.json();
+                setErrors((prev) => ({
+                    ...prev,
+                    commentRemove : errorData.message
+                }));
+                setTimeout(() => {
+                    setErrors((prev) => ({
+                        ...prev,
+                        commentRemove : null
+                    }));
+                }, 4000);
+
+                return;
+            }
+
+            setComments(prev => prev.filter(comment => comment.id !== commentId));
+            setWatchedVideo((prev) => ({
+                ...prev,
+                commentsCount : prev.commentsCount - 1
+            }));
+        } catch {
+            setErrors((prev) => ({
+                ...prev,
+                commentRemove : "Wystąpił niespodziewany błąd w trakcie usuwania komentarza. Spróbuj ponownie później."
+            }));
+            setTimeout(() => {
+                setErrors((prev) => ({
+                    ...prev,
+                    commentRemove : null
+                }));
+            }, 4000);
+        }
     }
 
     const handleSaveVideo = () => {
@@ -221,128 +388,225 @@ const Video = () => {
         return `${m}:${s.toString().padStart(2, "0")}`;
     };
 
+    if (mainError) {
+        return (
+            <div className="mt-4 text-center">
+                {mainError.status === 404 ? (
+                    <figure className="inline-block w-full">
+                        <img
+                            src="https://img.freepik.com/free-vector/404-error-with-tired-person-concept-illustration_114360-7899.jpg"
+                            className="w-full h-auto"
+                            alt="404"
+                            style={{ maxWidth: "450px" }}
+                        />
+                        <figcaption className="mt-2">{mainError.message}</figcaption>
+                    </figure>
+                ) : (
+                    mainError.message
+                )}
+            </div>
+        );
+    }
+
+    if(videoLoading) {
+        return (
+            <div className="mt-4 text-center">
+                <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        )
+    }
+
+    if(!watchedVideo) return null;
+
     return (
         <div className="container mt-4">
             <div className="row">
                 {/* Sekcja wideo */}
                 <div className="col-12 col-xxl">
-                    {watchedVideo ? (
-                        <>
-                            <VideoPlayer url={watchedVideo.src} />
-                            <div className="mt-3">
-                                <h1 className="mb-0">{watchedVideo.title}</h1>
-                            </div>
-                            {/* Sekcja informacji o filmie */}
-                            <div className="container mt-3">
-                                <div className="row align-items-center">
-                                    <div className="col-auto p-0 d-none d-md-block">
-                                        <Link to={`/channels/${watchedVideo.author.id}`}>
-                                            <img
-                                                src={watchedVideo.author.imageURL}
-                                                alt="Autor"
-                                                className="img-fluid rounded-circle"
-                                                style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                                            />
-                                        </Link>
-                                    </div>
-                                    <div className="col p-0 ps-md-2">
-                                        <h3>
-                                            <Link className="text-decoration-none text-black" to={`/channels/${watchedVideo.author.id}`}>{watchedVideo.author.login}</Link>
-                                        </h3>
-                                    </div>
-                                    <div className="col-auto offset-3 p-0">
+                    <>
+                        <VideoPlayer url={api + watchedVideo.videoPath} />
+                        <div className="mt-3">
+                            <h1 className="mb-0">{watchedVideo.title}</h1>
+                        </div>
+                        {/* Sekcja informacji o filmie */}
+                        <div className="container mt-3">
+                            <div className="row align-items-center">
+                                <div className="col-auto p-0 d-none d-md-block">
+                                    <Link to={`/channels/${watchedVideo.author.login}`}>
+                                        <img
+                                            src={api + watchedVideo.author.imageUrl}
+                                            alt="Autor"
+                                            className="img-fluid rounded-circle"
+                                            style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                                        />
+                                    </Link>
+                                </div>
+                                <div className="col p-0 ps-md-2">
+                                    <h3>
+                                        <Link className="text-decoration-none text-black" to={`/channels/${watchedVideo.author.login}`}>{watchedVideo.author.login}</Link>
+                                    </h3>
+                                </div>
+                                <div className="col-auto offset-3 p-0">
+                                    {user ? (
                                         <button 
                                             type="button" 
                                             className="btn btn-danger me-2"
                                             title={liked ? "Anuluj polubienie" : "Polub ten film"}
                                             onClick={handleLike}
+                                            disabled={pressedLike}
                                         >
                                             <i className={`fa-${liked ? "solid" : "regular"} fa-heart`}></i>
-                                            <span className="ms-1">{likesCount.toLocaleString("pl-PL")}</span>
+                                            <span className="ms-1">{watchedVideo.likesCount.toLocaleString("pl-PL")}</span>
                                         </button>
-                                        <button 
-                                            type="button" 
-                                            className="btn btn-primary me-2" 
-                                            onClick={handleCopyLink}
-                                            title={copied ? "Skopiowano" : "Skopiuj link"}
-                                        >
-                                            <i className={`bi bi-${copied ? 'check-lg' : 'clipboard'}`}></i>
-                                        </button>
-                                        <button
+                                    ) : (
+                                        <Link
+                                            to="/login"
                                             type="button"
-                                            className="btn btn-success"
-                                            onClick={handleSaveVideo}
-                                            title={saved ? "Anuluj zapisanie filmu" : "Zapisz film"}
+                                            className="btn btn-danger me-2"
+                                            title="Polub ten film"
                                         >
-                                            <i className={`fa-${saved ? "solid" : "regular"} fa-bookmark`}></i>
-                                        </button>
-                                    </div>
+                                            <i className="fa-regular fa-heart"></i>
+                                            <span className="ms-1">{watchedVideo.likesCount.toLocaleString("pl-PL")}</span>
+                                        </Link>
+                                    )}
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-primary me-2" 
+                                        onClick={handleCopyLink}
+                                        title={copied ? "Skopiowano" : "Skopiuj link"}
+                                    >
+                                        <i className={`bi bi-${copied ? 'check-lg' : 'clipboard'}`}></i>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn-success"
+                                        onClick={handleSaveVideo}
+                                        title={saved ? "Anuluj zapisanie filmu" : "Zapisz film"}
+                                    >
+                                        <i className={`fa-${saved ? "solid" : "regular"} fa-bookmark`}></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div className="mt-2">
-                                {watchedVideo.views.toLocaleString("pl-PL")} wyświetleń, {formatDate(watchedVideo.date)}
+                        </div>
+                        <div className="mt-2">
+                            {watchedVideo.viewsCount.toLocaleString("pl-PL")} wyświetleń, {formatDatetime(watchedVideo.uploadDate)}
+                        </div>
+                        {errors.like && (
+                            <div className="alert alert-danger mt-3" role="alert">
+                                {errors.like}
                             </div>
-                            <div className="description">
+                        )}
+                        <div className="description">
+                            <div>
+                                {descriptionSliced && (watchedVideo.description.length > maxDescriptionLength)
+                                    ? watchedVideo.description.slice(0, maxDescriptionLength) + "..."
+                                    : watchedVideo.description}
+                            </div>
+                            {watchedVideo.description.length > maxDescriptionLength && (
                                 <div>
-                                    {descriptionSliced && watchedVideo.description.length > maxDescriptionLength
-                                        ? watchedVideo.description.slice(0, maxDescriptionLength) + "..."
-                                        : watchedVideo.description}
+                                    <button className="btn btn-link p-0 text-decoration-none" style={{fontSize: "15px"}} onClick={handleDescriptionSlice}>
+                                        {descriptionSliced ? "Pokaż więcej" : "Pokaż mniej"}
+                                    </button>
                                 </div>
-                                {watchedVideo.description.length > maxDescriptionLength && (
-                                    <div>
-                                        <button className="btn btn-link p-0 text-decoration-none" style={{fontSize: "15px"}} onClick={handleDescriptionSlice}>
-                                            {descriptionSliced ? "Pokaż więcej" : "Pokaż mniej"}
-                                        </button>
-                                    </div>
-                                )}
+                            )}
+                            <div className="mt-2">
+                                Kategoria: {watchedVideo.category.charAt(0).toUpperCase() + watchedVideo.category.slice(1).toLowerCase()}
                             </div>
-                        </>
-                    ) : (
-                        <p>Ładowanie...</p>
-                    )}
+                            {watchedVideo.tags.length > 0 && (
+                                <div>
+                                    Tagi: {watchedVideo.tags.join(", ")}
+                                </div>
+                            )}
+                        </div>
+                        {user && user.id === watchedVideo.author.id && (
+                            <div className="mt-3">
+                                <Link to={`/videos-manager/${watchedVideo.id}`} role="button" className="btn btn-primary">Edytuj film</Link>
+                            </div>
+                        )}
+                    </>
                     
                     {/* Sekcja komentarzy */}
                     <div className="mt-3">
-                        {comments && watchedVideo ? (
+                        {errors.comments && (
+                            errors.comments
+                        )}
+                        {comments && !errors.comments && (
                             <>
                                 <div className="comments-title mb-3">
-                                    <h3>Komentarze ({commentsCount.toLocaleString("pl-PL")}):</h3>
+                                    <h3>Komentarze ({watchedVideo.commentsCount.toLocaleString("pl-PL")}):</h3>
                                 </div>
-                                <div className="comments-input mb-3">
-                                    <form onSubmit={handleCommentSubmit}>
-                                        <div className="mb-2">
-                                            <textarea
-                                                placeholder="Dodaj komentarz"
-                                                className="form-control"
-                                                maxLength={500}
-                                                style={{resize: "none"}}
-                                                rows={4}
-                                                value={newComment}
-                                                onChange={(e) => setNewComment(e.target.value)}
-                                            >
-                                            </textarea>
-                                        </div>
-                                        <button className="btn btn-primary" type="submit">Dodaj</button>
-                                    </form>
-                                </div>
-                                <div className="comments-tab container p-0">
+                                {user && (
+                                    <div className="comments-input mb-3">
+                                        <form onSubmit={handleCommentSubmit}>
+                                            <div className="mb-2">
+                                                <textarea
+                                                    placeholder="Dodaj komentarz"
+                                                    className={`form-control ${errors.newCommentSubmit ? 'is-invalid' : ''}`}
+                                                    maxLength={500}
+                                                    style={{resize: "none"}}
+                                                    rows={4}
+                                                    value={newComment}
+                                                    onChange={handleNewCommentChange}
+                                                >
+                                                </textarea>
+                                                {errors.newCommentSubmit && (
+                                                    <div className="invalid-feedback">
+                                                        {errors.newCommentSubmit}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <button className="btn btn-primary" type="submit" disabled={newCommentSubmitLoading || !newComment.trim()}>Dodaj</button>
+                                            </div>
+                                            {newCommentSubmitLoading && (
+                                                <div className="spinner-border mt-3" role="status">
+                                                    <span className="visually-hidden">Loading...</span>
+                                                </div>
+                                            )}
+                                            {newCommentSubmitSuccess && (
+                                                <div className="alert alert-success mt-3" role="alert">
+                                                    {newCommentSubmitSuccess}
+                                                </div>
+                                            )}
+                                            {errors.commentRemove && (
+                                                <div className="alert alert-danger mt-3" role="alert">
+                                                    {errors.commentRemove}
+                                                </div>
+                                            )}
+                                        </form>
+                                    </div>
+                                )}
+                                <div ref={commentsRef} className="comments-tab container p-0">
                                     {comments.map(comment => (
                                         <div className="m-0 pt-2 pb-2 row mb-2" key={comment.id}>
                                             <div className="col-auto d-none d-md-block">
-                                                <img
-                                                    src={comment.author.imageURL}
-                                                    alt="Autor"
-                                                    className="img-fluid rounded-circle"
-                                                    style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                                                    loading="lazy"
-                                                />
+                                                <Link to={`/channels/${comment.author.login}`}>
+                                                    <img
+                                                        src={api + comment.author.imageUrl}
+                                                        alt="Autor"
+                                                        className="img-fluid rounded-circle"
+                                                        style={{ width: "50px", height: "50px", objectFit: "cover" }}
+                                                        loading="lazy"
+                                                    />
+                                                </Link>
                                             </div>
                                             <div className="col">
                                                 <div>
                                                     <span className="fw-bold">
-                                                        <Link className="text-decoration-none text-black" to={`/channels/${comment.author.id}`}>{comment.author.login}</Link>
+                                                        <Link className="text-decoration-none text-black" to={`/channels/${comment.author.login}`}>{comment.author.login}</Link>
                                                     </span>
-                                                    <span style={{fontSize: "14px"}}> ({formatDatetime(comment.date)})</span>
+                                                    <span className="ms-1" style={{fontSize: "14px"}}>{formatDatetime(comment.uploadDate)}</span>
+                                                    {user && user.id === comment.author.id && (
+                                                        <span
+                                                            className="ms-2 fw-bold"
+                                                            style={{fontSize: "15px", color: "#0d6efd", cursor: "pointer"}}
+                                                            onClick={() => handleCommentRemove(comment.id)}
+                                                        >
+                                                            Usuń
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <div>
                                                     {comment.content}
@@ -350,14 +614,25 @@ const Video = () => {
                                             </div>
                                         </div>
                                     ))}
+                                    {commentsLoading && (
+                                        <div className="text-center">
+                                            <div className="spinner-border" role="status">
+                                                <span className="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>  
                             </>
-                        ) : (
-                            <p>Ładowanie...</p>
+                        )}
+                        {!comments && !errors.comments && (
+                            <div className="text-center">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
                         )}
                     </div>
                 </div>
-
                 {/* Sekcja polecanych filmów */}
                 <div className="col-12 mt-4 mt-xxl-0 col-xxl-4">
                     <h2 className="fw-bold">Podobne filmy</h2>
