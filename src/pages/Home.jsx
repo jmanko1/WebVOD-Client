@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
 import "../styles/Home.css";
+import { useEffect } from "react";
 
 const Home = () => {
+
+    useEffect(() => {
+        document.title = "WebVOD";
+    }, []);
 
     const recommendedVideos = [
         {

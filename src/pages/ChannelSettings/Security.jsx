@@ -14,6 +14,8 @@ const Security = () => {
             navigate("/login");
             return;
         }
+
+        document.title = "Ustawienia - WebVOD";
     }, []);
     
     if(!user)

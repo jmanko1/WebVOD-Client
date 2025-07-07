@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { validateCode, validateConfirmPassword, validatePassword } from "../utils/validator";
 
@@ -15,6 +15,10 @@ const ResetPassword = () => {
     const [mainError, setMainError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        document.title = "Zresetuj hasło - WebVOD";
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

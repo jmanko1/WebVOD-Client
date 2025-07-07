@@ -44,6 +44,7 @@ const VideoUpload = () => {
 
         setCategory(fetchedCategories[0]);
         setCategories(fetchedCategories);
+        document.title = "Nowy film - WebVOD";
     }, []);
 
     useEffect(() => {

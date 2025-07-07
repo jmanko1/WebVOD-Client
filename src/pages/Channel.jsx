@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 import "../styles/Channel.css";
 import { useUser } from "../contexts/UserContext";
+import { formatDate, formatDuration } from "../utils/datetime";
 
 const Channel = () => {
     const { id } = useParams();
@@ -10,7 +11,7 @@ const Channel = () => {
     const { user } = useUser();
 
     const [userData, setUserData] = useState(null);
-    const [userVideos, setUserVideos] = useState(null);
+    const [userVideos, setUserVideos] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -23,7 +24,7 @@ const Channel = () => {
             setLoading(true);
             setError(null);
             setUserData(null);
-            setUserVideos(null);
+            setUserVideos([]);
             setDescriptionSliced(true);
 
             try {
@@ -35,100 +36,81 @@ const Channel = () => {
                         status: response.status,
                         message: errorData.message
                     });
+                    document.title = "Brak użytkownika - WebVOD";
                     return;
                 }
 
                 const data = await response.json();
                 data.description = data.description || "";
                 data.imageUrl = data.imageUrl ? api + data.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg";
-                data.videosCount = 25;
 
+                document.title = `${data.login} - WebVOD`;
                 setUserData(data);
             } catch {
                 setError({
                     status: 500,
                     message: "Wystąpił niespodziewany błąd. Spróbuj ponownie później."
                 });
+                document.title = "Brak użytkownika - WebVOD";
             } finally {
                 setLoading(false);
             }
         };
         
-        const videos = [
-            {
-                id: 1,
-                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-                title: "Fajny film",
-                views: 72062,
-                date: "2024-06-24T12:32:25Z",
-                duration: 1162
-            },
-            {
-                id: 2,
-                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-                title: "Fajny film",
-                views: 72062,
-                date: "2024-06-24T12:32:25Z",
-                duration: 1162
-            },
-            {
-                id: 3,
-                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-                title: "Fajny film",
-                views: 72062,
-                date: "2024-06-24T12:32:25Z",
-                duration: 1162
-            },
-            {
-                id: 4,
-                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-                title: "Fajny film",
-                views: 72062,
-                date: "2024-06-24T12:32:25Z",
-                duration: 1162
-            },
-            {
-                id: 5,
-                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-                title: "Fajny film",
-                views: 72062,
-                date: "2024-06-24T12:32:25Z",
-                duration: 1162
-            },
-            {
-                id: 6,
-                thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-                title: "Fajny film",
-                views: 72062,
-                date: "2024-06-24T12:32:25Z",
-                duration: 1162
-            }
-        ]
+        // const videos = [
+        //     {
+        //         id: 1,
+        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+        //         title: "Fajny film",
+        //         views: 72062,
+        //         date: "2024-06-24T12:32:25Z",
+        //         duration: 1162
+        //     },
+        //     {
+        //         id: 2,
+        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+        //         title: "Fajny film",
+        //         views: 72062,
+        //         date: "2024-06-24T12:32:25Z",
+        //         duration: 1162
+        //     },
+        //     {
+        //         id: 3,
+        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+        //         title: "Fajny film",
+        //         views: 72062,
+        //         date: "2024-06-24T12:32:25Z",
+        //         duration: 1162
+        //     },
+        //     {
+        //         id: 4,
+        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+        //         title: "Fajny film",
+        //         views: 72062,
+        //         date: "2024-06-24T12:32:25Z",
+        //         duration: 1162
+        //     },
+        //     {
+        //         id: 5,
+        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+        //         title: "Fajny film",
+        //         views: 72062,
+        //         date: "2024-06-24T12:32:25Z",
+        //         duration: 1162
+        //     },
+        //     {
+        //         id: 6,
+        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
+        //         title: "Fajny film",
+        //         views: 72062,
+        //         date: "2024-06-24T12:32:25Z",
+        //         duration: 1162
+        //     }
+        // ]
 
         getProfile();
-        setUserVideos(videos);
+        // setUserVideos(videos);
     }, [id]);
-
-    const formatDuration = (seconds) => {
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = seconds % 60;
-    
-        if (h > 0) 
-            return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-
-        return `${m}:${s.toString().padStart(2, "0")}`;
-    };
-
-    const formatDate = (utcDateTimeString) => {
-        const localDateTime = new Date(utcDateTimeString);
-
-        const day = String(localDateTime.getDate()).padStart(2, '0');
-        const month = String(localDateTime.getMonth() + 1).padStart(2, '0');
-        const year = localDateTime.getFullYear();
-
-        return `${day}.${month}.${year}`;
-    };
 
     if (error) {
         return (

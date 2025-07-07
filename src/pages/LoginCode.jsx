@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateCode } from "../utils/validator";
 import { Link } from "react-router-dom";
 
@@ -7,6 +7,10 @@ const LoginCode = () => {
     const [codeError, setCodeError] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        document.title = "Podaj kod - WebVOD";
+    }, []);
 
     const handleCodeChange = (e) => {
         setCode(e.target.value);

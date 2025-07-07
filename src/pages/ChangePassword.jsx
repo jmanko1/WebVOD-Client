@@ -27,6 +27,8 @@ const ChangePassword = () => {
             navigate("/login");
             return;
         }
+
+        document.title = "Zmiana hasła - WebVOD";
     }, []);
 
     const handleChange = (e) => {

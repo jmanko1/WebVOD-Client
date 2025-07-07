@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateLogin, validatePassword } from "../utils/validator";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -14,6 +14,10 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.title = "Zaloguj się - WebVOD";
+    }, []);
 
     const handleChange = (e) => {
         const { name, type, value, checked } = e.target;

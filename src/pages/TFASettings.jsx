@@ -34,6 +34,7 @@ const TFASettings = () => {
             }
 
             setLoading(true);
+            document.title = "Uwierzytelnianie dwuskładnikowe - WebVOD";
             
             try {
                 const response = await fetch(`${api}/user/my-profile/tfa-qr-code`, {

@@ -42,6 +42,7 @@ const VideosManager = () => {
             }
         ];
 
+        document.title = "Menedżer filmów - WebVOD";
         setVideos(fetchedVideos);
     }, []);
 

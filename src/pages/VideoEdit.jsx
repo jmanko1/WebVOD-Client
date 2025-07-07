@@ -52,6 +52,8 @@ const VideoEdit = () => {
             thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png"
         };
 
+        document.title = "Zaktualizuj film - WebVOD";
+
         // setVideo(videoData);
         setTitle(videoData.title);
         setDescription(videoData.description);

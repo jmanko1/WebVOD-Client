@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateConfirmPassword, validateEmail, validateLogin, validatePassword } from "../utils/validator";
 import { Link } from "react-router-dom";
 
@@ -14,6 +14,10 @@ const Register = () => {
     const [mainError, setMainError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        document.title = "Zarejestruj się - WebVOD";
+    }, [])
 
     const handleChange = (e) => {
         const { name, value } = e.target;

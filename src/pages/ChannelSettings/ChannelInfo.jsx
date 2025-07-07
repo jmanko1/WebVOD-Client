@@ -42,6 +42,8 @@ const ChannelInfo = () => {
         if (user) {
             setViewedImage(user.imageUrl);
         }
+
+        document.title = "Ustawienia - WebVOD";
     }, [user]);
 
     const hideDescriptionModal = () => {

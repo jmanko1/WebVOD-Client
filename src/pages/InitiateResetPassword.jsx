@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validateEmail } from "../utils/validator";
 import { Link } from "react-router-dom";
 
@@ -8,6 +8,10 @@ const InitiateResetPassword = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(null);
+
+    useEffect(() => {
+        document.title = "Zresetuj hasło - WebVOD";
+    }, []);
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
