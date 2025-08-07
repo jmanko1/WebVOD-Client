@@ -11,32 +11,47 @@ const Channel = () => {
     const { user } = useUser();
 
     const [userData, setUserData] = useState(null);
+
     const [userVideos, setUserVideos] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const size = 12;
+    const [userVideosLoading, setUserVideosLoading] = useState(false);
+    const [isScrollEnd, setIsScrollEnd] = useState(false);
+
+    const [errors, setErrors] = useState({});
+    const [userDataLoading, setUserDataLoading] = useState(false);
 
     const [descriptionSliced, setDescriptionSliced] = useState(true);
     const maxDescriptionLength = 100;
+    const maxTitleLength = 50;
     const api = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
         const getProfile = async () => {
-            setLoading(true);
-            setError(null);
+            setUserDataLoading(true);
+            setErrors({});
             setUserData(null);
             setUserVideos([]);
             setDescriptionSliced(true);
+
+            setPage(1);
+            setUserVideosLoading(false);
+            setIsScrollEnd(false);
 
             try {
                 const response = await fetch(`${api}/user/${id}`);
 
                 if(!response.ok) {
                     const errorData = await response.json();
-                    setError({
-                        status: response.status,
-                        message: errorData.message
-                    });
+                    setErrors((prev) => ({
+                        ...prev,
+                        userData: {
+                            status: response.status,
+                            message: errorData.message
+                        }
+                    }));
                     document.title = "Brak użytkownika - WebVOD";
+
                     return;
                 }
 
@@ -47,75 +62,74 @@ const Channel = () => {
                 document.title = `${data.login} - WebVOD`;
                 setUserData(data);
             } catch {
-                setError({
-                    status: 500,
-                    message: "Wystąpił niespodziewany błąd. Spróbuj ponownie później."
-                });
+                setErrors((prev) => ({
+                    ...prev,
+                    userData: {
+                        status: 500,
+                        message: "Wystąpił niespodziewany błąd. Spróbuj ponownie później."
+                    }
+                }));
                 document.title = "Brak użytkownika - WebVOD";
             } finally {
-                setLoading(false);
+                setUserDataLoading(false);
             }
         };
         
-        // const videos = [
-        //     {
-        //         id: 1,
-        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-        //         title: "Fajny film",
-        //         views: 72062,
-        //         date: "2024-06-24T12:32:25Z",
-        //         duration: 1162
-        //     },
-        //     {
-        //         id: 2,
-        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-        //         title: "Fajny film",
-        //         views: 72062,
-        //         date: "2024-06-24T12:32:25Z",
-        //         duration: 1162
-        //     },
-        //     {
-        //         id: 3,
-        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-        //         title: "Fajny film",
-        //         views: 72062,
-        //         date: "2024-06-24T12:32:25Z",
-        //         duration: 1162
-        //     },
-        //     {
-        //         id: 4,
-        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-        //         title: "Fajny film",
-        //         views: 72062,
-        //         date: "2024-06-24T12:32:25Z",
-        //         duration: 1162
-        //     },
-        //     {
-        //         id: 5,
-        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-        //         title: "Fajny film",
-        //         views: 72062,
-        //         date: "2024-06-24T12:32:25Z",
-        //         duration: 1162
-        //     },
-        //     {
-        //         id: 6,
-        //         thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-        //         title: "Fajny film",
-        //         views: 72062,
-        //         date: "2024-06-24T12:32:25Z",
-        //         duration: 1162
-        //     }
-        // ]
-
         getProfile();
-        // setUserVideos(videos);
     }, [id]);
 
-    if (error) {
+    useEffect(() => {
+        const fetchUserVideos = async () => {
+            if(isScrollEnd)
+                return;
+
+            setUserVideosLoading(true);
+    
+            try {
+                const response = await fetch(`${api}/user/${id}/videos?page=${page}&size=${size}`);
+                if(response.ok) {
+                    const data = await response.json();
+
+                    if(data.length < size)
+                        setIsScrollEnd(true);
+                    
+                    setUserVideos((prev) => [...prev, ...data]);
+                }
+            } catch {
+                setErrors((prev) => ({
+                    ...prev,
+                    userVideos: "Wystąpił niespodziewany błąd w trakcie pobierania filmów użytkownika. Spróbuj ponownie później."
+                }));
+            } finally {
+                setUserVideosLoading(false);
+            }
+        };
+
+        fetchUserVideos();
+    }, [page, isScrollEnd]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+        if (userVideosLoading || isScrollEnd) return;
+
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const clientHeight = document.documentElement.clientHeight;
+            const scrollHeight = document.documentElement.scrollHeight;
+
+            if (scrollTop + clientHeight >= scrollHeight - 10) {
+                setPage(prev => prev + 1);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [userVideosLoading, isScrollEnd]);
+
+    if (errors.userData) {
         return (
             <div className="mt-4 text-center">
-                {error.status === 404 ? (
+                {errors.userData.status === 404 ? (
                     <figure className="inline-block w-full">
                         <img
                             src="https://img.freepik.com/free-vector/404-error-with-tired-person-concept-illustration_114360-7899.jpg"
@@ -123,16 +137,16 @@ const Channel = () => {
                             alt="404"
                             style={{ maxWidth: "450px" }}
                         />
-                        <figcaption className="mt-2">{error.message}</figcaption>
+                        <figcaption className="mt-2">{errors.userData.message}</figcaption>
                     </figure>
                 ) : (
-                    error.message
+                    errors.userData.message
                 )}
             </div>
         );
     }
 
-    if(loading) {
+    if(userDataLoading) {
         return (
             <div className="mt-4 text-center">
                 <div className="spinner-border" role="status">
@@ -193,38 +207,54 @@ const Channel = () => {
                 </div> 
             )}
             <div className="row mt-4 border-top border-2">
-                {userVideos.map(video => (
-                    <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mt-4 d-flex justify-content-center" key={video.id}>
-                        <div className="channel-video-card">
-                            <div className="row">
-                                <div className="col">
-                                    <div className="ratio ratio-16x9">
-                                        <Link to={`/videos/${video.id}`}>
-                                            <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnail} alt="Miniatura" />
-                                            <span style={{fontSize: "13px"}} className="channel-video-thumbnail-duration">{formatDuration(video.duration)}</span>
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row mt-2">
-                                <div className="col">
-                                    <div className="container p-0">
-                                        <div className="row">
-                                            <div className="col channel-video-title">
+                {errors.userVideos && (
+                    <div className="mt-4 text-center">
+                        {errors.userVideos}
+                    </div>
+                )}
+                {userVideos && !errors.userVideos && (
+                    <>
+                        {userVideos.map(video => (
+                            <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mt-4 d-flex justify-content-center" key={video.id}>
+                                <div className="channel-video-card">
+                                    <div className="row">
+                                        <div className="col">
+                                            <div className="ratio ratio-16x9">
                                                 <Link to={`/videos/${video.id}`}>
-                                                    {video.title.length > 70 ? video.title.slice(0, 70) + "..." : video.title}
+                                                    <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={api + video.thumbnailPath} alt="Miniatura" />
+                                                    <span style={{fontSize: "13px"}} className="channel-video-thumbnail-duration">{formatDuration(video.duration)}</span>
                                                 </Link>
                                             </div>
                                         </div>
-                                        <div className="row mt-1">
-                                            <div className="col channel-video-details">{`${video.views.toLocaleString("pl-PL")} wyświetleń, ${formatDate(video.date)}`}</div>
+                                    </div>
+                                    <div className="row mt-2">
+                                        <div className="col">
+                                            <div className="container p-0">
+                                                <div className="row">
+                                                    <div className="col channel-video-title">
+                                                        <Link to={`/videos/${video.id}`}>
+                                                            {video.title.length > maxTitleLength ? video.title.slice(0, maxTitleLength) + "..." : video.title}
+                                                        </Link>
+                                                    </div>
+                                                </div>
+                                                <div className="row mt-1">
+                                                    <div className="col channel-video-details">{`${video.viewsCount.toLocaleString("pl-PL")} wyświetleń, ${formatDate(video.uploadDate)}`}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div> 
+                        ))}
+                        {userVideosLoading && (
+                            <div className="text-center mt-4">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
                             </div>
-                        </div>
-                    </div> 
-                ))}
+                        )}   
+                    </>
+                )}
             </div>
         </div>
     );
