@@ -63,6 +63,10 @@ const Video = () => {
 
                     if(data.length < size)
                         setIsScrollEnd(true);
+
+                    data.forEach(comment => {
+                        comment.author.imageUrl = comment.author.imageUrl ? api + comment.author.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg"
+                    });
                     
                     setComments((prev) => [...prev, ...data]);
                 }
@@ -104,6 +108,10 @@ const Video = () => {
         setRecommendedVideos([]);
         setDescriptionSliced(true);
 
+        setPage(1);
+        setCommentsLoading(false);
+        setIsScrollEnd(false);
+
         try {
             const response = await fetch(`${api}/video/${id}`);
 
@@ -120,6 +128,8 @@ const Video = () => {
 
             const data = await response.json();
             document.title = `${data.title} - WebVOD`;
+
+            data.author.imageUrl = data.author.imageUrl ? api + data.author.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg";
 
             setWatchedVideo(data);
         } catch {
@@ -297,7 +307,7 @@ const Video = () => {
                     author: {
                         id: user.id,
                         login: user.login,
-                        imageUrl: user.imageUrl.replace(api, "")
+                        imageUrl: user.imageUrl
                     }, 
                     content: newComment, 
                     uploadDate: new Date().toISOString() 
@@ -436,7 +446,7 @@ const Video = () => {
                                 <div className="col-auto p-0 d-none d-md-block">
                                     <Link to={`/channels/${watchedVideo.author.login}`}>
                                         <img
-                                            src={api + watchedVideo.author.imageUrl}
+                                            src={watchedVideo.author.imageUrl}
                                             alt="Autor"
                                             className="img-fluid rounded-circle"
                                             style={{ width: "50px", height: "50px", objectFit: "cover" }}
@@ -516,7 +526,10 @@ const Video = () => {
                             </div>
                             {watchedVideo.tags.length > 0 && (
                                 <div>
-                                    Tagi: {watchedVideo.tags.join(", ")}
+                                    <span>Tagi:</span>
+                                    {watchedVideo.tags.map((tag) => (
+                                        <Link to={`/tags/${tag}`} style={{textDecoration: "none"}} className="ms-1">#{tag}</Link>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -528,7 +541,7 @@ const Video = () => {
                     </>
                     
                     {/* Sekcja komentarzy */}
-                    <div className="mt-3">
+                    <div className="mt-4">
                         {errors.comments && (
                             errors.comments
                         )}
@@ -584,7 +597,7 @@ const Video = () => {
                                             <div className="col-auto d-none d-md-block">
                                                 <Link to={`/channels/${comment.author.login}`}>
                                                     <img
-                                                        src={api + comment.author.imageUrl}
+                                                        src={comment.author.imageUrl}
                                                         alt="Autor"
                                                         className="img-fluid rounded-circle"
                                                         style={{ width: "50px", height: "50px", objectFit: "cover" }}
