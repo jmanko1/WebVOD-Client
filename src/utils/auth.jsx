@@ -17,7 +17,9 @@ export const scheduleTokenRefresh = (expiresInSeconds) => {
                 sessionStorage.setItem("dontRefresh", "1");
                 clearTokenRefresh();
                 localStorage.removeItem("jwt");
-                window.location.reload();
+                if(!sessionStorage.getItem("isUploading"))
+                    window.location.reload();
+                
                 return;
             }
 
@@ -28,7 +30,8 @@ export const scheduleTokenRefresh = (expiresInSeconds) => {
             sessionStorage.setItem("dontRefresh", "1");
             clearTokenRefresh();
             localStorage.removeItem("jwt");
-            window.location.reload();
+            if(!sessionStorage.getItem("isUploading"))
+                window.location.reload();
         }
     }, refreshTime);
 };
