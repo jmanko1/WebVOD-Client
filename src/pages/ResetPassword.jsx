@@ -79,10 +79,8 @@ const ResetPassword = () => {
                 return;
             }
 
-            if (response.ok) {
-                setSuccess("Hasło zostało zresetowane."); 
-                setForm({ token: token, password: "", confirmPassword: "" });
-            }
+            setSuccess("Hasło zostało zresetowane."); 
+            setForm({ token: token, password: "", confirmPassword: "" });
         } catch {
             setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
         } finally {

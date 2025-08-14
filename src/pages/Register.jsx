@@ -84,10 +84,8 @@ const Register = () => {
                 return;
             }
 
-            if (response.ok) {
-                setSuccess("Rejestracja zakończona sukcesem. Możesz teraz się zalogować."); 
-                setForm({ login: "", email: "", password: "", confirmPassword: "" });
-            }
+            setSuccess("Rejestracja zakończona sukcesem. Możesz teraz się zalogować."); 
+            setForm({ login: "", email: "", password: "", confirmPassword: "" });
         } catch {
             setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
         } finally {

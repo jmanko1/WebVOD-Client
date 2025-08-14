@@ -55,12 +55,10 @@ const LoginCode = () => {
                 return;
             }
 
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem("jwt", data.token);
-                sessionStorage.removeItem("dontRefresh");
-                window.location.href = "/";
-            }
+            const data = await response.json();
+            localStorage.setItem("jwt", data.token);
+            sessionStorage.removeItem("dontRefresh");
+            window.location.href = "/";
         } catch {
             setError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
         } finally {

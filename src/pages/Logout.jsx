@@ -30,19 +30,17 @@ const Logout = () => {
                     }
                 });
 
-                if(response.status == 401) {
+                if(!response.ok) {
                     localStorage.removeItem("jwt");
                     setUser(null);
                     navigate("/login");
                     return;
                 }
 
-                if(response.ok) {
-                    setUser(null);
-                    sessionStorage.setItem("dontRefresh", "1");
-                    localStorage.removeItem("jwt");
-                    navigate("/");
-                }
+                setUser(null);
+                sessionStorage.setItem("dontRefresh", "1");
+                localStorage.removeItem("jwt");
+                navigate("/");
             } catch {
                 setError("Wystąpił niespodziewany błąd. Spróbuj ponownie później.");
             } finally {
