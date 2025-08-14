@@ -3,6 +3,7 @@ import "../styles/Home.css";
 import { useEffect } from "react";
 
 const Home = () => {
+    const maxTitleLength = 50;
 
     useEffect(() => {
         document.title = "WebVOD";
@@ -115,7 +116,7 @@ const Home = () => {
                                     <div className="ratio ratio-16x9">
                                         <Link to={`/videos/${video.id}`}>
                                             <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnail} alt="Miniatura" />
-                                            <span style={{fontSize: "13px"}} className="home-video-thumbnail-duration">{formatDuration(video.duration)}</span>
+                                            <span className="home-video-thumbnail-duration">{formatDuration(video.duration)}</span>
                                         </Link>
                                     </div>
                                 </div>
@@ -126,7 +127,7 @@ const Home = () => {
                                         <div className="row mt-1">
                                             <div className="col home-video-title">
                                                 <Link to={`/videos/${video.id}`}>
-                                                    {video.title.length > 70 ? video.title.slice(0, 70) + "..." : video.title}
+                                                    {video.title.length > maxTitleLength ? video.title.slice(0, maxTitleLength) + "..." : video.title}
                                                 </Link>
                                             </div>
                                         </div>

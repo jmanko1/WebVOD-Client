@@ -222,7 +222,7 @@ const Channel = () => {
                                             <div className="ratio ratio-16x9">
                                                 <Link to={`/videos/${video.id}`}>
                                                     <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={api + video.thumbnailPath} alt="Miniatura" />
-                                                    <span style={{fontSize: "13px"}} className="channel-video-thumbnail-duration">{formatDuration(video.duration)}</span>
+                                                    <span className="channel-video-thumbnail-duration">{formatDuration(video.duration)}</span>
                                                 </Link>
                                             </div>
                                         </div>
