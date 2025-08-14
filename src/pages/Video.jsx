@@ -509,11 +509,13 @@ const Video = () => {
                             </div>
                         )}
                         <div className="description">
-                            <div>
-                                {descriptionSliced && (watchedVideo.description.length > maxDescriptionLength)
-                                    ? watchedVideo.description.slice(0, maxDescriptionLength) + "..."
-                                    : watchedVideo.description}
-                            </div>
+                            {watchedVideo.description.length > 0 && (
+                                <div>
+                                    {descriptionSliced && (watchedVideo.description.length > maxDescriptionLength)
+                                        ? watchedVideo.description.slice(0, maxDescriptionLength) + "..."
+                                        : watchedVideo.description}
+                                </div>
+                            )}
                             {watchedVideo.description.length > maxDescriptionLength && (
                                 <div>
                                     <button className="btn btn-link p-0 text-decoration-none" style={{fontSize: "15px"}} onClick={handleDescriptionSlice}>
@@ -521,14 +523,14 @@ const Video = () => {
                                     </button>
                                 </div>
                             )}
-                            <div className="mt-2">
+                            <div className={watchedVideo.description.length > 0 ? "mt-2" : ""}>
                                 Kategoria: {watchedVideo.category.charAt(0).toUpperCase() + watchedVideo.category.slice(1).toLowerCase()}
                             </div>
                             {watchedVideo.tags.length > 0 && (
                                 <div>
                                     <span>Tagi:</span>
                                     {watchedVideo.tags.map((tag) => (
-                                        <Link to={`/tags/${tag}`} style={{textDecoration: "none"}} className="ms-1">#{tag}</Link>
+                                        <Link to={`/tags/${tag}`} key={tag} style={{textDecoration: "none"}} className="ms-1">#{tag}</Link>
                                     ))}
                                 </div>
                             )}
