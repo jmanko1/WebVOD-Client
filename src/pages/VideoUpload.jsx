@@ -35,6 +35,7 @@ const VideoUpload = () => {
 
     const [errors, setErrors] = useState({});
     const [mainError, setMainError] = useState(null);
+    const [submitMetaDataLoading, setSubmitMetaDataLoading] = useState(false);
     const thumbnailInputRef = useRef();
 
     const [isUploading, setIsUploading] = useState(false);
@@ -78,6 +79,7 @@ const VideoUpload = () => {
         document.title = "Nowy film - WebVOD";
 
         return () => {
+            // Warto jeszcze sprawdzić, czy nie jest przesyłany film. Jeśli tak, to poprosić użytkownika o potwierdzenie wyjścia.
             sessionStorage.removeItem("isUploading");
         };
     }, []);
@@ -267,6 +269,7 @@ const VideoUpload = () => {
         e.preventDefault();
 
         setMainError(null);
+        setSubmitMetaDataLoading(true);
 
         const isValid =
             validateVideo(video) &
@@ -283,7 +286,7 @@ const VideoUpload = () => {
         const token = localStorage.getItem("jwt");
         if(!token) {
             navigate("/login");
-            return false;
+            return;
         }
 
         const getVideoDuration = (videoFile) => {
@@ -302,6 +305,7 @@ const VideoUpload = () => {
         };
 
         const submitMetaData = async () => {
+            
             const duration = await getVideoDuration(video);
             
             const videoMetaData = {
@@ -319,6 +323,7 @@ const VideoUpload = () => {
                         "Content-Type": "application/json"
                     },
                     method: "POST",
+                    credentials: "include",
                     body: JSON.stringify(videoMetaData)
                 });
 
@@ -358,6 +363,7 @@ const VideoUpload = () => {
         }
 
         const videoId = await submitMetaData();
+        setSubmitMetaDataLoading(false);
         if (!videoId) return;
 
         const uploadThumbnail = () => {
@@ -466,6 +472,7 @@ const VideoUpload = () => {
                                 "Chunk-Index": i,
                                 "Total-Chunks": totalChunks
                             },
+                            credentials: "include",
                             body: formData
                         });
 
@@ -599,7 +606,7 @@ const VideoUpload = () => {
                             className={`form-control mx-auto ${errors.thumbnailError ? "is-invalid" : ""}`}
                             style={{ maxWidth: "500px" }}
                         />
-                        <div className="form-text">Dopuszczalne typy: jpg/jpeg/png. Zalecany format 16:9. Maksymalny rozmiar: 1 MB.</div>
+                        <div className="form-text">Dopuszczalne typy: jpg/jpeg. Zalecany format 16:9. Maksymalny rozmiar: 1 MB.</div>
                         {errors.thumbnailError && <div className="invalid-feedback">{errors.thumbnailError}</div>}
                         {userThumbnailSrc && (
                             <>
@@ -657,8 +664,14 @@ const VideoUpload = () => {
                     </div>
 
                     {/* Submit */}
-                    <button type="submit" className="btn btn-primary">Prześlij</button>
-
+                    <div>
+                        <button type="submit" className="btn btn-primary" disabled={submitMetaDataLoading}>Prześlij</button>
+                    </div>
+                    {submitMetaDataLoading && (
+                        <div className="spinner-border mt-3" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    )}
                     {mainError && (
                         <div className="text-danger mt-3">{mainError}</div>
                     )}
