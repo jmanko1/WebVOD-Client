@@ -16,8 +16,8 @@ const ChannelInfo = () => {
     
     const maxNewDescriptionLength = 1000;
     const maxImageSize = 1048576; // 1 MB
-    const allowedImageExts = ["jpg", "jpeg", "png"];
-    const allowedImageMimes = ["image/jpeg", "image/png"];
+    const allowedImageExts = ["jpg", "jpeg"];
+    const allowedImageMimes = ["image/jpeg"];
     const api = import.meta.env.VITE_API_URL;
 
     const [errors, setErrors] = useState({});
@@ -407,12 +407,12 @@ const ChannelInfo = () => {
                                     <input
                                         type="file"
                                         id="video"
-                                        accept="image/png, image/jpeg"
+                                        accept="image/jpeg"
                                         onChange={handleImageChange}
                                         className={`form-control mx-auto ${errors.imageError ? "is-invalid" : ""}`}
                                         ref={imageRef}
                                     />
-                                    <div className="form-text">Dopuszczalne typy: jpg/jpeg/png. Maksymalny rozmiar: {maxImageSize / 1024 / 1024} MB. Zalecany format 1:1.</div>
+                                    <div className="form-text">Dopuszczalne typy: jpg/jpeg. Maksymalny rozmiar: {maxImageSize / 1024 / 1024} MB. Zalecany format 1:1.</div>
                                     {errors.imageError && <div className="invalid-feedback">{errors.imageError}</div>}
                                 </div>
                                 {loading && (
