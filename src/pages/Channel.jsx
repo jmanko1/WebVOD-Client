@@ -25,6 +25,7 @@ const Channel = () => {
     const maxDescriptionLength = 100;
     const maxTitleLength = 50;
     const api = import.meta.env.VITE_API_URL;
+    const tmdb = "https://image.tmdb.org/t/p/original"
 
     useEffect(() => {
         const getProfile = async () => {
@@ -221,7 +222,7 @@ const Channel = () => {
                                         <div className="col">
                                             <div className="ratio ratio-16x9">
                                                 <Link to={`/videos/${video.id}`}>
-                                                    <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={api + video.thumbnailPath} alt="Miniatura" />
+                                                    <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnailPath.includes("/uploads") ? api + video.thumbnailPath : tmdb + video.thumbnailPath} alt="Miniatura" />
                                                     <span className="channel-video-thumbnail-duration">{formatDuration(video.duration)}</span>
                                                 </Link>
                                             </div>

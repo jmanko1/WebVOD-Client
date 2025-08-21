@@ -25,6 +25,7 @@ const VideosManager = () => {
 
     const maxTitleLength = 50;
     const api = import.meta.env.VITE_API_URL;
+    const tmdb = "https://image.tmdb.org/t/p/original"
 
     useEffect(() => {
          const token = localStorage.getItem("jwt");
@@ -81,7 +82,7 @@ const VideosManager = () => {
         };
 
         fetchUserVideos();
-    }, [page, isScrollEnd]);
+    }, [page, isScrollEnd, titlePattern]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -156,10 +157,16 @@ const VideosManager = () => {
         setUserVideos([]);
         setPage(1);
         setIsScrollEnd(false);
+        setUserVideosLoading(false)
     }
 
     return (
         <div className="container mt-4">
+            <div className="row mb-3">
+                <div className="col">
+                    <h1 style={{fontSize: "28px"}}>Menedżer filmów</h1>
+                </div>
+            </div>
             <div className="row mb-3">
                 <div className="col">
                     <form onSubmit={handleSearch} className="d-flex" role="search">
@@ -178,27 +185,41 @@ const VideosManager = () => {
                 </div>
             </div>
             {error ? (
-                <div className="mt-4 text-center alert alert-danger" role="alert">
-                    {error}
+                <div className="mt-3 text-center row">
+                    <div className="col">
+                        <div className="alert alert-danger" role="alert">
+                            {error}
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <>
                     {removeLoading && (
-                        <div className="text-center mb-3">
-                            <div className="spinner-border" role="status">
-                                <span className="visually-hidden">Loading...</span>
+                        <div className="row text-center mb-3">
+                            <div className="col">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
                             </div>
                         </div>
                     )}
                     {removeError && (
-                        <div className="text-center alert alert-danger mb-3" role="alert">
-                            {removeError}
+                        <div className="row text-center mb-3">
+                            <div className="col">
+                                <div className="alert alert-danger" role="alert">
+                                    {removeError}
+                                </div>
+                            </div>
                         </div>
                     )}
                     {removeSuccess && (
-                        <div className="text-center alert alert-success mb-3" role="alert">
-                            {removeSuccess}
-                        </div>                        
+                        <div className="row text-center mb-3">
+                            <div className="col">
+                                <div className="alert alert-success" role="alert">
+                                    {removeSuccess}
+                                </div>  
+                            </div>
+                        </div>
                     )}
                     {userVideos.map((video) => {
                         const isPublished = video.status === "PUBLISHED";
@@ -210,7 +231,7 @@ const VideosManager = () => {
                                             <Link to={`/videos/${video.id}`}>
                                                 <img
                                                     className="img-fluid object-fit-cover w-100 h-100"
-                                                    src={api + video.thumbnailPath}
+                                                    src={video.thumbnailPath.includes("/uploads") ? api + video.thumbnailPath : tmdb + video.thumbnailPath}
                                                     alt="Miniatura"
                                                 />
                                                 <span className="videos-manager-thumbnail-duration">
@@ -258,7 +279,7 @@ const VideosManager = () => {
                                     </>
                                 ) : (
                                     <div className="col-12 col-lg-6 text-lg-center">
-                                        Przesyłanie filmu trwa lub zostało przerwane.
+                                        Przesyłanie/Przetwarzanie filmu trwa lub zostało przerwane.
                                     </div>
                                 )}
 
@@ -295,9 +316,11 @@ const VideosManager = () => {
                         );
                     })}
                     {userVideosLoading && (
-                        <div className="text-center mt-4">
-                            <div className="spinner-border" role="status">
-                                <span className="visually-hidden">Loading...</span>
+                        <div className="row mt-4 text-center">
+                            <div className="col">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
                             </div>
                         </div>
                     )}

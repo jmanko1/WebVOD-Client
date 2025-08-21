@@ -38,6 +38,7 @@ const VideoEdit = () => {
 
     const navigate = useNavigate();
     const api = import.meta.env.VITE_API_URL;
+    const tmdb = "https://image.tmdb.org/t/p/original"
 
     const capitalizeFirstLetter = (text) => {
         if (!text) return "";
@@ -561,7 +562,7 @@ const VideoEdit = () => {
                     )}
                     <div className="mt-3 row justify-content-center">
                         <div className="ratio ratio-16x9 p-0" style={{maxWidth: "350px"}}>
-                            <img src={userThumbnailSrc.startsWith("blob:") ? userThumbnailSrc : api + userThumbnailSrc} alt="Miniatura" className="img-fluid object-fit-cover w-100 h-100" />
+                            <img src={userThumbnailSrc.startsWith("blob:") ? userThumbnailSrc : (userThumbnailSrc.includes("/uploads") ? api + userThumbnailSrc : tmdb + userThumbnailSrc)} alt="Miniatura" className="img-fluid object-fit-cover w-100 h-100" />
                         </div>
                         <div className="form-text">
                             {thumbnail ? "Podgląd nowej miniatury" : "Obecna miniatura"}
