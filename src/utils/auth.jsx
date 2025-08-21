@@ -7,6 +7,11 @@ export const scheduleTokenRefresh = (expiresInSeconds) => {
     const refreshTime = (expiresInSeconds - 10) * 1000;
 
     refreshTimeout = setTimeout(async () => {
+        if(!localStorage.getItem("jwt")) {
+            clearTokenRefresh();
+            return;
+        }
+        
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/refresh`, {
                 method: "POST",
