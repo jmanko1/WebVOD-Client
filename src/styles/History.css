@@ -1,0 +1,62 @@
+/* History.css */
+
+.history-thumbnail-duration {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 3px 6px;
+    font-size: 13px;
+}
+
+.history-thumbnail-container {
+    position: relative;
+    display: inline-block;
+}
+
+h1 {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+h2 {
+    font-size: 19px;
+}
+
+h3 {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.history-thumbnail {
+    max-width: 240px;
+    max-height: 135px;
+    width: 100%;
+    height: auto;
+}
+
+.history-title {
+    font-weight: bold;
+}
+
+.history-title a {
+    text-decoration: none;
+    color: black;
+}
+
+.history-author {
+    font-size: 15px;
+}
+
+.history-details {
+    font-size: 15px;
+}
+
+.history-description {
+    background: rgba(0, 0, 0, 0.07);
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    margin-top: 1rem;
+    font-size: 15px;
+}

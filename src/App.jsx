@@ -20,8 +20,10 @@ import TFASettings from './pages/TFASettings';
 import ChannelInfo from './pages/ChannelSettings/ChannelInfo';
 import Security from './pages/ChannelSettings/Security';
 import Logout from './pages/Logout';
+import History from './pages/History';
 import WatchTogether from './pages/WatchTogether';
 import { UserProvider } from './contexts/UserContext';
+import LikedVideos from './pages/LikedVideos';
 
 const App = () => {
     return (
@@ -47,6 +49,8 @@ const App = () => {
                         <Route path="/channel-settings/password-security" element={<Security />} />
                         <Route path="/channel-settings/password-security/tfa" element={<TFASettings />} />
                         <Route path="/watch-together" element={<WatchTogether />} />
+                        <Route path="/liked-videos" element={<LikedVideos />} />
+                        <Route path="/history" element={<History />} />
                         <Route path="*" element={<NoPage />} />
                     </Route>
                 </Routes>
