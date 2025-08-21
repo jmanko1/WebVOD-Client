@@ -1,121 +1,95 @@
 import { Link } from "react-router-dom";
 import "../styles/Home.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { formatDate, formatDuration } from "../utils/datetime";
 
 const Home = () => {
+    const [recommendedVideos, setRecommendedVideos] = useState([]);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [isLogged, setIsLogged] = useState(false);
+
     const maxTitleLength = 50;
+    const api = import.meta.env.VITE_API_URL;
+    const recommendationsApi = import.meta.env.VITE_RECOMMENDATIONS_API_URL;
+    const tmdb = "https://image.tmdb.org/t/p/original"
 
     useEffect(() => {
+        const fetchRecommendedVideos = async () => {
+            const token = localStorage.getItem("jwt");
+            if(!token)
+                return;
+
+            setLoading(true);
+
+            try {
+                const response = await fetch(`${recommendationsApi}/recommend?n=32`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                if(!response.ok) {
+                    const errorData = await response.json();
+
+                    if(errorData.message)
+                        setError(errorData.message)
+
+                    return;
+                }
+
+                setIsLogged(true);
+                const videos = await response.json();
+                setRecommendedVideos(videos);
+            } catch {
+                setError("Wystąpił niespodziewany błąd. Spróbuj ponownie później.")
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchRecommendedVideos()
         document.title = "WebVOD";
     }, []);
 
-    const recommendedVideos = [
-        {
-            id: 1,
-            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-            title: "Fajny film",
-            views: 72062,
-            date: "2024-06-24T08:32:23Z",
-            duration: 1162,
-            author: {
-                id: 1,
-                login: "tomek123"
-            }
-        },
-        {
-            id: 2,
-            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-            title: "Fajny film",
-            views: 72062,
-            date: "2024-06-24T08:32:23Z",
-            duration: 1162,
-            author: {
-                id: 1,
-                login: "tomek123"
-            }
-        },
-        {
-            id: 3,
-            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-            title: "Fajny film",
-            views: 72062,
-            date: "2024-06-24T08:32:23Z",
-            duration: 1162,
-            author: {
-                id: 1,
-                login: "tomek123"
-            }
-        },
-        {
-            id: 4,
-            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-            title: "Fajny film",
-            views: 72062,
-            date: "2024-06-24T08:32:23Z",
-            duration: 1162,
-            author: {
-                id: 1,
-                login: "tomek123"
-            }
-        },
-        {
-            id: 5,
-            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-            title: "Fajny film",
-            views: 72062,
-            date: "2024-06-24T08:32:23Z",
-            duration: 1162,
-            author: {
-                id: 1,
-                login: "tomek123"
-            }
-        },
-        {
-            id: 6,
-            thumbnail: "https://www.techsmith.com/blog/wp-content/uploads/2023/03/how-to-make-a-youtube-video.png",
-            title: "Fajny film",
-            views: 72062,
-            date: "2024-06-24T08:32:23Z",
-            duration: 1162,
-            author: {
-                id: 1,
-                login: "tomek123"
-            }
-        }
-    ];
-
-    const formatDuration = (seconds) => {
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = seconds % 60;
-    
-        if (h > 0) 
-            return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-
-        return `${m}:${s.toString().padStart(2, "0")}`;
-    };
-
-    const formatDate = (utcDateTimeString) => {
-        const localDateTime = new Date(utcDateTimeString);
-
-        const day = String(localDateTime.getDate()).padStart(2, '0');
-        const month = String(localDateTime.getMonth() + 1).padStart(2, '0');
-        const year = localDateTime.getFullYear();
-
-        return `${day}.${month}.${year}`;
-    };
-
     return (
-        <div className="container">
+        <div className="container mt-4">
             <div className="row">
+                <div className="col">
+                    <h1 style={{fontSize: "28px"}}>Polecane filmy</h1>
+                </div>
+            </div>
+            <div className="row mt-3">
+                {loading && (
+                    <div className="text-center col">
+                        <div className="spinner-border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                )}
+                {error && (
+                    <div className="alert alert-danger text-center col" role="alert">
+                        {error}
+                    </div>
+                )}
+                {recommendedVideos.length == 0 && !loading && !error && isLogged && (
+                    <div className="col">
+                        Zacznij oglądać i oznaczać filmy, które Ci się podobają, aby móc na tej podstawie tworzyć kartę polecanych filmów.
+                    </div>
+                )}
+                {!loading && !error && !isLogged && (
+                    <div className="col">
+                        Zaloguj się, aby móc wyświetlać kartę polecanych filmów.
+                    </div>
+                )}
                 {recommendedVideos.map(video => (
-                   <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mt-4 d-flex justify-content-center" key={video.id}>
+                   <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3 d-flex justify-content-center" key={video.id}>
                         <div className="home-video-card">
                             <div className="row">
                                 <div className="col">
                                     <div className="ratio ratio-16x9">
                                         <Link to={`/videos/${video.id}`}>
-                                            <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnail} alt="Miniatura" />
+                                            <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnailPath.includes("/uploads") ? api + video.thumbnailPath : tmdb + video.thumbnailPath} alt="Miniatura" />
                                             <span className="home-video-thumbnail-duration">{formatDuration(video.duration)}</span>
                                         </Link>
                                     </div>
@@ -124,7 +98,7 @@ const Home = () => {
                             <div className="row mt-2">
                                 <div className="col">
                                     <div className="container p-0">
-                                        <div className="row mt-1">
+                                        <div className="row">
                                             <div className="col home-video-title">
                                                 <Link to={`/videos/${video.id}`}>
                                                     {video.title.length > maxTitleLength ? video.title.slice(0, maxTitleLength) + "..." : video.title}
@@ -133,11 +107,11 @@ const Home = () => {
                                         </div>
                                         <div className="row mt-1">
                                             <div className="col home-video-author">
-                                                <Link to={`/channels/${video.author.id}`}>{video.author.login}</Link>
+                                                <Link to={`/channels/${video.authorLogin}`}>{video.authorLogin}</Link>
                                             </div>
                                         </div>
                                         <div className="row">
-                                            <div className="col home-video-details">{`${video.views.toLocaleString("pl-PL")} wyświetleń, ${formatDate(video.date)}`}</div>
+                                            <div className="col home-video-details">{`${video.viewsCount.toLocaleString("pl-PL")} wyświetleń, ${formatDate(video.uploadDate)}`}</div>
                                         </div>
                                     </div>
                                 </div>
