@@ -13,6 +13,7 @@ const Video = () => {
     const [watchedVideo, setWatchedVideo] = useState(null);
     
     const [recommendedVideos, setRecommendedVideos] = useState([]);
+    const [recommendedVideosLoading, setRecommendedVideosLoading] = useState(false);
 
     const [comments, setComments] = useState([]);
     const [page, setPage] = useState(1);
@@ -27,10 +28,10 @@ const Video = () => {
 
     const [liked, setLiked] = useState(false);
     const [copied, setCopied] = useState(false);
-    const [saved, setSaved] = useState(false);
+    // const [saved, setSaved] = useState(false);
 
     const [pressedLike, setPressedLike] = useState(false);
-    const [pressedSave, setPressedSave] = useState(false);
+    // const [pressedSave, setPressedSave] = useState(false);
 
     const [descriptionSliced, setDescriptionSliced] = useState(true);
 
@@ -43,10 +44,13 @@ const Video = () => {
 
     const maxDescriptionLength = 150;
     const api = import.meta.env.VITE_API_URL;
+    const recommendationsApi = import.meta.env.VITE_RECOMMENDATIONS_API_URL;
+    const tmdb = "https://image.tmdb.org/t/p/original"
 
     useEffect(() => {
         fetchVideoData();
         isVideoLiked();
+        fetchRecommendedVideos();
     }, [id]);
 
     useEffect(() => {
@@ -81,8 +85,8 @@ const Video = () => {
         };
 
         fetchComments();
-    }, [page, isScrollEnd]);
-
+    }, [watchedVideo, id, page, isScrollEnd]);
+ 
     useEffect(() => {
         const container = commentsRef.current;
         if (!container) return;
@@ -97,7 +101,7 @@ const Video = () => {
         container.addEventListener('scroll', handleScroll);
 
         return () => container.removeEventListener('scroll', handleScroll);
-    }, [watchedVideo, commentsLoading, isScrollEnd]);
+    }, [watchedVideo, id, commentsLoading, isScrollEnd]);
 
     const fetchVideoData = async () => {
         setVideoLoading(true);
@@ -105,15 +109,30 @@ const Video = () => {
         setErrors({});
         setWatchedVideo(null);
         setComments([]);
-        setRecommendedVideos([]);
         setDescriptionSliced(true);
 
         setPage(1);
         setCommentsLoading(false);
         setIsScrollEnd(false);
 
+        setNewCommentSubmitSuccess(null)
+        setPressedLike(false);
+        setCopied(false);
+        setNewCommentSubmitLoading(false);
+
         try {
-            const response = await fetch(`${api}/video/${id}`);
+            const token = localStorage.getItem("jwt");
+            let response;
+            
+            if(!token) {
+                response = await fetch(`${api}/video/${id}`);
+            } else {
+                response = await fetch(`${api}/video/${id}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+            }
 
             if(!response.ok) {
                 const errorData = await response.json();
@@ -164,6 +183,38 @@ const Video = () => {
             ;
         }
     };
+
+    const fetchRecommendedVideos = async () => {
+        setRecommendedVideos([]);
+        setRecommendedVideosLoading(true);
+
+        try {
+            const response = await fetch(`${recommendationsApi}/similar-videos?id=${id}&n=10`)
+
+            if(!response.ok) {
+                const errorData = await response.json();
+                
+                if(errorData.message) {
+                    setErrors((prev) => ({
+                        ...prev,
+                        recommendedVideos: errorData.message
+                    }));
+                }
+
+                return;
+            }
+
+            const recommendedVideos = await response.json();
+            setRecommendedVideos(recommendedVideos);
+        } catch {
+            setErrors((prev) => ({
+                ...prev,
+                recommendedVideos: `Wystąpił niespodziewany błąd w trakcie próby pobrania podobnych filmów. Spróbuj ponownie później.`
+            }));
+        } finally {
+            setRecommendedVideosLoading(false);
+        }
+    }
 
     const handleLike = async () => {
         if(pressedLike) return;
@@ -379,13 +430,13 @@ const Video = () => {
         }
     }
 
-    const handleSaveVideo = () => {
-        if(pressedSave) return;
+    // const handleSaveVideo = () => {
+    //     if(pressedSave) return;
 
-        setSaved(!saved);
-        setPressedSave(true);
-        setTimeout(() => setPressedSave(false), 3000);
-    }
+    //     setSaved(!saved);
+    //     setPressedSave(true);
+    //     setTimeout(() => setPressedSave(false), 3000);
+    // }
 
     const formatDuration = (seconds) => {
         const h = Math.floor(seconds / 3600);
@@ -434,7 +485,7 @@ const Video = () => {
         <div className="container mt-4">
             <div className="row">
                 {/* Sekcja wideo */}
-                <div className="col-12 col-xxl">
+                <div className="col-12 col-xl-8">
                     <>
                         <VideoPlayer url={api + watchedVideo.videoPath} />
                         <div className="mt-3">
@@ -489,14 +540,14 @@ const Video = () => {
                                     >
                                         <i className={`bi bi-${copied ? 'check-lg' : 'clipboard'}`}></i>
                                     </button>
-                                    <button
+                                    {/* <button
                                         type="button"
                                         className="btn btn-success"
                                         onClick={handleSaveVideo}
                                         title={saved ? "Anuluj zapisanie filmu" : "Zapisz film"}
                                     >
                                         <i className={`fa-${saved ? "solid" : "regular"} fa-bookmark`}></i>
-                                    </button>
+                                    </button> */}
                                 </div>
                             </div>
                         </div>
@@ -527,7 +578,7 @@ const Video = () => {
                                 Kategoria: {watchedVideo.category.charAt(0).toUpperCase() + watchedVideo.category.slice(1).toLowerCase()}
                             </div>
                             {watchedVideo.tags.length > 0 && (
-                                <div>
+                                <div style={{display: "flex", flexWrap: "wrap"}}>
                                     <span>Tagi:</span>
                                     {watchedVideo.tags.map((tag) => (
                                         <Link to={`/tags/${tag}`} key={tag} style={{textDecoration: "none"}} className="ms-1">#{tag}</Link>
@@ -593,7 +644,7 @@ const Video = () => {
                                         </form>
                                     </div>
                                 )}
-                                <div ref={commentsRef} className="comments-tab container p-0">
+                                <div ref={commentsRef} className="comments-tab container p-0" style={comments.length > 0 ? {border: "1px solid #ddd"} : {}}>
                                     {comments.map(comment => (
                                         <div className="m-0 pt-2 pb-2 row mb-2" key={comment.id}>
                                             <div className="col-auto d-none d-md-block">
@@ -649,16 +700,30 @@ const Video = () => {
                     </div>
                 </div>
                 {/* Sekcja polecanych filmów */}
-                <div className="col-12 mt-4 mt-xxl-0 col-xxl-4">
-                    <h2 className="fw-bold">Podobne filmy</h2>
-                    {recommendedVideos ? (
+                <div className="col-12 mt-4 mt-xl-0 col-xl-4">
+                    <div className="mb-3">
+                        <h2 className="fw-bold">Podobne filmy</h2>
+                    </div>
+                    {recommendedVideosLoading && (
+                        <div className="text-center">
+                            <div className="spinner-border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    )}
+                    {errors.recommendedVideos && (
+                        <div className="alert alert-danger" role="alert">
+                            {errors.recommendedVideos}
+                        </div>
+                    )}
+                    {recommendedVideos && recommendedVideos.length > 0 && (
                         <div className="container p-0">
                             {recommendedVideos.map(video => (
                                 <div className="row mb-3" key={video.id}>
                                     <div className="col pe-0">
                                         <div className="thumbnail-container ratio ratio-16x9">
                                             <Link to={`/videos/${video.id}`}>
-                                                <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnail} alt="Miniatura" />
+                                                <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnailPath.includes("/uploads") ? api + video.thumbnailPath : tmdb + video.thumbnailPath} alt="Miniatura" />
                                                 <span className="thumbnail-duration">{formatDuration(video.duration)}</span>
                                             </Link>
                                         </div>
@@ -668,25 +733,23 @@ const Video = () => {
                                             <div className="row">
                                                 <div className="col title">
                                                     <Link to={`/videos/${video.id}`}>
-                                                        {video.title.length > 70 ? video.title.slice(0, 70) + "..." : video.title}
+                                                        {video.title.length > 50 ? video.title.slice(0, 50) + "..." : video.title}
                                                     </Link>
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className="col author">
-                                                    <Link className="text-decoration-none text-black" to={`/channels/${video.author.id}`}>{video.author.login}</Link>
+                                                    <Link className="text-decoration-none text-black" to={`/channels/${video.authorLogin}`}>{video.authorLogin}</Link>
                                                 </div>
                                             </div>
                                             <div className="row">
-                                                <div className="col details">{video.views.toLocaleString("pl-PL")}, {formatDate(video.date)}</div>
+                                                <div className="col details">{video.viewsCount.toLocaleString("pl-PL")} <i className="fa-solid fa-eye"></i>, {formatDate(video.uploadDate)}</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    ) : (
-                        <p>Ładowanie...</p>
                     )}
                 </div>
             </div>
@@ -702,7 +765,7 @@ const Video = () => {
                     <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
-            <div className={`toast position-fixed end-0 bottom-0 align-items-center ${pressedSave && 'fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
+            {/* <div className={`toast position-fixed end-0 bottom-0 align-items-center ${pressedSave && 'fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
                 <div className="d-flex">
                     <div className="toast-body">
                         {saved ?
@@ -713,7 +776,7 @@ const Video = () => {
                     </div>
                     <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
-            </div>
+            </div> */}
             <div className={`toast position-fixed end-0 bottom-0 align-items-center ${copied && 'fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
                 <div className="d-flex">
                     <div className="toast-body">Skopiowano link do schowka.</div>
