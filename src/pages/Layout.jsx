@@ -1,6 +1,6 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar/Sidebar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { scheduleTokenRefresh } from "../utils/auth";
 import { useUser } from "../contexts/UserContext";
@@ -8,6 +8,9 @@ import { useUser } from "../contexts/UserContext";
 const Layout = () => {
     const { user, setUser } = useUser();
 
+    const [query, setQuery] = useState("");
+
+    const navigate = useNavigate();
     const api = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
@@ -105,6 +108,15 @@ const Layout = () => {
         })();
     }, []);
 
+    const handleSearch = (e) => {
+        e.preventDefault();
+
+        if(query.trim() && query.length > 0) {
+            navigate(`/search-videos/${query}`);
+            setQuery("");
+        }
+    }
+
     return (
         <>
             <nav className="navbar bg-body sticky-top navbar-expand-lg border-bottom">
@@ -118,13 +130,14 @@ const Layout = () => {
                     </button>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0"></ul>
-                        <form className="d-flex" role="search">
+                        <form className="d-flex" role="search" onSubmit={handleSearch}>
                             <input
                                 className="form-control rounded-end-0 border border-end-0 border-secondary"
                                 style={{width: "300px"}}
                                 type="search"
                                 placeholder="Wyszukaj..."
-                                aria-label="Search" 
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
                             />
                             <button className="btn btn-outline-secondary rounded-start-0" type="submit">
                                 <i className="fas fa-search"></i>

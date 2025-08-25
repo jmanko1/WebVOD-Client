@@ -1,0 +1,28 @@
+/* SearchUsers.css */
+
+h1 {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+h2 {
+    font-size: 19px;
+}
+
+h3 {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.search-users-login {
+    font-weight: bold;
+}
+
+.search-users-login a {
+    text-decoration: none;
+    color: black;
+}
+
+.search-users-description {
+    font-size: 15px;
+}

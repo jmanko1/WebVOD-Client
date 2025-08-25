@@ -24,6 +24,8 @@ import History from './pages/History';
 import WatchTogether from './pages/WatchTogether';
 import { UserProvider } from './contexts/UserContext';
 import LikedVideos from './pages/LikedVideos';
+import SearchVideos from './pages/Search/SearchVideos';
+import SearchUsers from './pages/Search/SearchUsers';
 
 const App = () => {
     return (
@@ -51,6 +53,8 @@ const App = () => {
                         <Route path="/watch-together" element={<WatchTogether />} />
                         <Route path="/liked-videos" element={<LikedVideos />} />
                         <Route path="/history" element={<History />} />
+                        <Route path="/search-videos/:query" element={<SearchVideos />} />
+                        <Route path="/search-channels/:query" element={<SearchUsers />} />
                         <Route path="*" element={<NoPage />} />
                     </Route>
                 </Routes>
