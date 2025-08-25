@@ -124,7 +124,7 @@ const LikedVideos = () => {
                                     </Link>
                                 </div>
                             </div>
-                            <div className="col ps-0">
+                            <div className="col ps-2">
                                 <div className="container">
                                     <div className="row">
                                         <div className="col liked-videos-title">

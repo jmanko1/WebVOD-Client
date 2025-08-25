@@ -74,7 +74,7 @@ const Home = () => {
                 )}
                 {recommendedVideos.length == 0 && !loading && !error && isLogged && (
                     <div className="col">
-                        Zacznij oglądać i oznaczać filmy, które Ci się podobają, aby móc na tej podstawie tworzyć kartę polecanych filmów.
+                        Zacznij oglądać i oznaczać filmy, które Ci się podobają, aby móc tworzyć kartę polecanych filmów.
                     </div>
                 )}
                 {!loading && !error && !isLogged && (
@@ -105,7 +105,7 @@ const Home = () => {
                                                 </Link>
                                             </div>
                                         </div>
-                                        <div className="row mt-1">
+                                        <div className="row">
                                             <div className="col home-video-author">
                                                 <Link to={`/channels/${video.authorLogin}`}>{video.authorLogin}</Link>
                                             </div>
