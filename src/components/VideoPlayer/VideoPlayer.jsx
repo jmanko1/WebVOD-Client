@@ -70,7 +70,7 @@ const VideoPlayer = ({ url }) => {
 
     return (
         <>
-            <div>
+            <div className="ratio ratio-16x9">
                 <video ref={videoRef} controls style={{backgroundColor: "black"}}></video>
             </div>
             <div className="mt-2">

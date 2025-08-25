@@ -6,8 +6,8 @@ h1 {
 }
 
 video {
-    max-width: 854px;
-    max-height: 480px;
+    /* max-width: 854px;
+    max-height: 480px; */
     width: 100%;
     height: auto;
 }
