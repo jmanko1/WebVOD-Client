@@ -28,10 +28,8 @@ const Video = () => {
 
     const [liked, setLiked] = useState(false);
     const [copied, setCopied] = useState(false);
-    // const [saved, setSaved] = useState(false);
 
     const [pressedLike, setPressedLike] = useState(false);
-    // const [pressedSave, setPressedSave] = useState(false);
 
     const [descriptionSliced, setDescriptionSliced] = useState(true);
 
@@ -85,7 +83,7 @@ const Video = () => {
         };
 
         fetchComments();
-    }, [watchedVideo, id, page, isScrollEnd]);
+    }, [id, page, isScrollEnd]);
  
     useEffect(() => {
         const container = commentsRef.current;
@@ -101,7 +99,7 @@ const Video = () => {
         container.addEventListener('scroll', handleScroll);
 
         return () => container.removeEventListener('scroll', handleScroll);
-    }, [watchedVideo, id, commentsLoading, isScrollEnd]);
+    }, [id, commentsLoading, isScrollEnd]);
 
     const fetchVideoData = async () => {
         setVideoLoading(true);
@@ -189,7 +187,7 @@ const Video = () => {
         setRecommendedVideosLoading(true);
 
         try {
-            const response = await fetch(`${recommendationsApi}/similar-videos?id=${id}&n=10`)
+            const response = await fetch(`${recommendationsApi}/similar-videos?id=${id}&n=12`)
 
             if(!response.ok) {
                 const errorData = await response.json();
@@ -429,14 +427,6 @@ const Video = () => {
             }, 4000);
         }
     }
-
-    // const handleSaveVideo = () => {
-    //     if(pressedSave) return;
-
-    //     setSaved(!saved);
-    //     setPressedSave(true);
-    //     setTimeout(() => setPressedSave(false), 3000);
-    // }
 
     const formatDuration = (seconds) => {
         const h = Math.floor(seconds / 3600);
