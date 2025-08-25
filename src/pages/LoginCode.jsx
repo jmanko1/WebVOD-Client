@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { validateCode } from "../utils/validator";
 import { Link } from "react-router-dom";
+import OtpInput from "react-otp-input";
 
 const LoginCode = () => {
     const [code, setCode] = useState("");
@@ -12,8 +13,8 @@ const LoginCode = () => {
         document.title = "Podaj kod - WebVOD";
     }, []);
 
-    const handleCodeChange = (e) => {
-        setCode(e.target.value);
+    const handleCodeChange = (code) => {
+        setCode(code);
         setError(null);
     }
 
@@ -72,7 +73,7 @@ const LoginCode = () => {
             <form className="mt-4 mb-4" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="code" className="form-label">6-cyfrowy kod</label>
-                    <input
+                    {/* <input
                         type="text"
                         maxLength={6}
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
@@ -81,6 +82,29 @@ const LoginCode = () => {
                         className={`form-control mx-auto ${codeError ? 'is-invalid' : ''}`}
                         id="code"
                         autoFocus
+                    /> */}
+                    <OtpInput
+                        value={code}
+                        onChange={handleCodeChange}
+                        numInputs={6}
+                        renderSeparator={<span style={{ width: "5px" }}></span>}
+                        inputType="tel"
+                        shouldAutoFocus={true}
+                        renderInput={(props) => <input {...props} />}
+                        containerStyle={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                        }}                        
+                        inputStyle={{
+                            border: "1px solid #dee2e6",
+                            backgroundColor: "#f4f1f7",
+                            borderRadius: "50%",
+                            width: "50px",
+                            height: "50px",
+                        }}
+                        focusStyle={{
+                            outline: "none"
+                        }}
                     />
                     {codeError && (
                         <div className="invalid-feedback">

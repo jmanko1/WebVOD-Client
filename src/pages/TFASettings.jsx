@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import { validateCode, validatePassword } from "../utils/validator";
+import OtpInput from "react-otp-input";
 
 const TFASettings = () => {
     const { user, setUser } = useUser();
@@ -68,6 +69,11 @@ const TFASettings = () => {
         setForm((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: null }));
     };
+
+    const handleCodeChange = (codeInput) => {
+        setForm((prev) => ({ ...prev, code: codeInput }));
+        setErrors((prev) => ({ ...prev, code: null }));
+    }
 
     const validateForm = () => {
         const newErrors = {};
@@ -199,7 +205,7 @@ const TFASettings = () => {
                     </div>
                     <div className="mb-3">
                         <label htmlFor="code" className="form-label">Kod z aplikacji</label>
-                        <input
+                        {/* <input
                             type="text"
                             id="code"
                             name="code"
@@ -209,6 +215,28 @@ const TFASettings = () => {
                             value={form.code}
                             onChange={handleChange}
                             maxLength="6"
+                        /> */}
+                        <OtpInput
+                            value={form.code}
+                            onChange={handleCodeChange}
+                            numInputs={6}
+                            renderSeparator={<span style={{ width: "5px" }}></span>}
+                            inputType="tel"
+                            renderInput={(props) => <input {...props} />}
+                            containerStyle={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}                        
+                            inputStyle={{
+                                border: "1px solid #dee2e6",
+                                backgroundColor: "#f4f1f7",
+                                borderRadius: "50%",
+                                width: "50px",
+                                height: "50px",
+                            }}
+                            focusStyle={{
+                                outline: "none"
+                            }}
                         />
                         {errors.code && (
                             <div className="invalid-feedback">
