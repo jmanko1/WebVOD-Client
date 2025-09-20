@@ -38,7 +38,9 @@ const VideoUpload = () => {
     const [submitMetaDataLoading, setSubmitMetaDataLoading] = useState(false);
     const thumbnailInputRef = useRef();
 
+    const [uploadStarted, setUploadStarted] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [videoId, setVideoId] = useState(null);
     const [uploadSuccess, setUploadSuccess] = useState(false);
     const [uploadedMB, setUploadedMB] = useState(0);
 
@@ -77,27 +79,37 @@ const VideoUpload = () => {
 
         fetchCategories();
         document.title = "Nowy film - WebVOD";
-
-        return () => {
-            // Warto jeszcze sprawdzić, czy nie jest przesyłany film. Jeśli tak, to poprosić użytkownika o potwierdzenie wyjścia.
-            sessionStorage.removeItem("isUploading");
-        };
     }, []);
 
     useEffect(() => {
-        const handleBeforeUnload = (event) => {
-            if (sessionStorage.getItem("isUploading")) {
-                event.preventDefault();
-                event.returnValue = "Przesyłanie filmu trwa! Jeśli zamkniesz okno, przesyłanie zostanie przerwane i będziesz musiał rozpocząć przesyłanie od nowa.";
+        const handleClick = (event) => {
+            const anchor = event.target.closest("a");
+            if (anchor && isUploading && videoId) {
+                const targetPath = new URL(anchor.href, window.location.origin).pathname;
+
+                if (targetPath !== "/upload") {
+                    navigator.sendBeacon(`${api}/video/${videoId}/cancel-upload`);
+                    sessionStorage.removeItem("isUploading");
+                    setIsUploading(false);
+                }
             }
         };
 
+        const handleBeforeUnload = () => {
+            if (isUploading && videoId) {
+                navigator.sendBeacon(`${api}/video/${videoId}/cancel-upload`)
+                sessionStorage.removeItem("isUploading");
+            }
+        };
+
+        document.addEventListener("click", handleClick);
         window.addEventListener("beforeunload", handleBeforeUnload);
 
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
+            document.removeEventListener("click", handleClick);
         };
-    }, [isUploading]);
+    }, [isUploading, videoId]);
 
     useEffect(() => {
         return () => {
@@ -280,6 +292,7 @@ const VideoUpload = () => {
 
         if (!isValid) {
             setMainError("Popraw błędy w danych.");
+            setSubmitMetaDataLoading(false);
             return;
         }
 
@@ -354,17 +367,19 @@ const VideoUpload = () => {
                     return null;
                 }
 
-                const videoId = await metaDataResponse.text();
-                return videoId;
+                const newVideoId = await metaDataResponse.text();
+                return newVideoId;
             } catch {
                 setMainError("Wystąpił niespodziewany błąd w trakcie przesyłania filmu. Spróbuj ponownie później.");
                 return null;
             }
         }
 
-        const videoId = await submitMetaData();
+        const newVideoId = await submitMetaData();
         setSubmitMetaDataLoading(false);
-        if (!videoId) return;
+        if (!newVideoId) return;
+
+        setVideoId(newVideoId);
 
         const uploadThumbnail = () => {
             return new Promise((resolve, reject) => {
@@ -410,7 +425,7 @@ const VideoUpload = () => {
                             formData.append("thumbnail", blob, "image.webp");
 
                             try {
-                                const thumbnailResponse = await fetch(`${api}/video/${videoId}/thumbnail`, {
+                                const thumbnailResponse = await fetch(`${api}/video/${newVideoId}/thumbnail`, {
                                     method: "PUT",
                                     headers: {
                                         "Authorization": `Bearer ${token}`
@@ -419,6 +434,8 @@ const VideoUpload = () => {
                                 });
 
                                 if (thumbnailResponse.status === 401) {
+                                    setIsUploading(false);
+                                    sessionStorage.removeItem("isUploading");
                                     navigate("/logout");
                                     reject("Brak autoryzacji.");
                                     return;
@@ -450,6 +467,7 @@ const VideoUpload = () => {
         
         try {
             setIsUploading(true);
+            setUploadStarted(true);
             sessionStorage.setItem("isUploading", "1");
             
             await uploadThumbnail();
@@ -468,7 +486,7 @@ const VideoUpload = () => {
                         const chunkResponse = await fetch(`${api}/video/chunk`, {
                             method: "POST",
                             headers: {
-                                "Video-Id": videoId,
+                                "Video-Id": newVideoId,
                                 "Chunk-Index": i,
                                 "Total-Chunks": totalChunks
                             },
@@ -500,13 +518,14 @@ const VideoUpload = () => {
             setMainError(error.message || error);
         } finally {
             sessionStorage.removeItem("isUploading");
+            setIsUploading(false);
             setVideo(null);
             setThumbnail(null);
         }
     };
 
     return (
-        isUploading ? (
+        uploadStarted ? (
             <div className="mt-5 mx-auto text-center" style={{maxWidth: "700px"}}>
                 <div>
                     {mainError ? (
@@ -530,7 +549,7 @@ const VideoUpload = () => {
                                 <div className="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style={{width: `${uploadedMB / (video.size / 1048576) * 100}%`}}>{Math.round(uploadedMB / (video.size / 1048576) * 100)}%</div>
                             </div>
                             <div className="mt-4">
-                                <div>Trwa przesyłanie filmu. Nie zamykaj okna przeglądarki.</div>
+                                <div>Trwa przesyłanie filmu. Nie zamykaj i nie odświeżaj strony.</div>
                                 <div>Przesłano: {uploadedMB} MB / {Math.round(video.size / 1048576)} MB</div>
                             </div>
                         </>
@@ -647,7 +666,7 @@ const VideoUpload = () => {
 
                     {/* Tagi */}
                     <div className="mb-3" id="tags">
-                        <label className="form-label">Tagi</label>
+                        <label className="form-label">Tagi ({tags.length})</label>
                         <ReactTags
                             tags={tags}
                             delimiters={delimiters}
