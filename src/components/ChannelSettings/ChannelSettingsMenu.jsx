@@ -8,7 +8,7 @@ const ChannelSettingsMenu = ({ element }) => {
                 <h2>Ustawienia konta</h2>
             </div>
             <div className="account-settings">
-                <ul>
+                <ul className="d-flex d-lg-inline">
                     <Link to="/channel-settings/channel-info">
                         <li className={element == 0 ? "active" : ""}>
                             <i className="fa-solid fa-user"></i>

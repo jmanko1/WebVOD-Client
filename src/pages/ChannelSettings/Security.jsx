@@ -24,10 +24,10 @@ const Security = () => {
     return (
         <div className="container mt-5">
             <div className="row">
-                <div className="col-3 offset-1 border-end border-secondary">
+                <div className="col-12 mb-3 mb-lg-0 col-lg-3 col-xxl-3 offset-xxl-1">
                     <ChannelSettingsMenu element={1} />
                 </div>
-                <div className="col-7">
+                <div className="col-12 col-lg-9 col-xxl-7">
                     <div className="box-title">
                         <h1>Hasło i zabezpieczenia</h1>
                     </div>
