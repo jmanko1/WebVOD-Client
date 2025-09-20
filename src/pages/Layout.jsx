@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar/Sidebar";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
@@ -11,7 +11,12 @@ const Layout = () => {
     const [query, setQuery] = useState("");
 
     const navigate = useNavigate();
+    const location = useLocation();
     const api = import.meta.env.VITE_API_URL;
+
+    useEffect(() => {
+        document.getElementById("navbarSupportedContent").classList.remove("show");
+    }, [location]);
 
     useEffect(() => {
         const getProfile = async () => {
@@ -186,16 +191,28 @@ const Layout = () => {
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
-                                            <Link to={`/channels/${user.login}`} className="dropdown-item">Strona kanału</Link>
+                                            <Link to={`/channels/${user.login}`} className="dropdown-item">
+                                                <i className="fa-solid fa-user"></i>
+                                                <span className="ms-2">Strona kanału</span>
+                                            </Link>
                                         </li>
                                         <li>
-                                            <Link to="/videos-manager" className="dropdown-item">Menedżer filmów</Link>
+                                           <Link to="/videos-manager" className="dropdown-item">
+                                                <i className="fa-solid fa-video"></i>
+                                                <span className="ms-2">Menedżer filmów</span>
+                                            </Link>
                                         </li>
                                         <li>
-                                            <Link to="/channel-settings" className="dropdown-item">Ustawienia</Link>
+                                            <Link to="/channel-settings" className="dropdown-item">
+                                                <i className="fa-solid fa-gear"></i>
+                                                <span className="ms-2">Ustawienia</span>
+                                            </Link>
                                         </li>
                                         <li>
-                                            <Link to="/logout" className="dropdown-item">Wyloguj się</Link>
+                                            <Link to="/logout" className="dropdown-item">
+                                                <i className="fa-solid fa-right-from-bracket"></i>
+                                                <span className="ms-2">Wyloguj się</span>
+                                            </Link>
                                         </li>
                                     </ul>
                                 </div>
