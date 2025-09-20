@@ -107,14 +107,14 @@ const Channel = () => {
         };
 
         fetchUserVideos();
-    }, [page, isScrollEnd]);
+    }, [id, page, isScrollEnd]);
 
     useEffect(() => {
         const handleScroll = () => {
-        if (userVideosLoading || isScrollEnd) return;
-
-            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            const clientHeight = document.documentElement.clientHeight;
+            if (userVideosLoading || isScrollEnd) return;
+            
+            const scrollTop = window.scrollY || window.pageYOffset;
+            const clientHeight = window.innerHeight;
             const scrollHeight = document.documentElement.scrollHeight;
 
             if (scrollTop + clientHeight >= scrollHeight - 10) {

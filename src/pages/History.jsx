@@ -81,10 +81,10 @@ const History = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-        if (videosLoading || isScrollEnd) return;
-
-            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            const clientHeight = document.documentElement.clientHeight;
+            if (videosLoading || isScrollEnd) return;
+            
+            const scrollTop = window.scrollY || window.pageYOffset;
+            const clientHeight = window.innerHeight;
             const scrollHeight = document.documentElement.scrollHeight;
 
             if (scrollTop + clientHeight >= scrollHeight - 10) {
@@ -160,7 +160,7 @@ const History = () => {
                 <>
                     {videos.map((video) => (
                         <div className="row mb-3" key={video.id}>
-                            <div className="col-2 pe-0">
+                            <div className="col-12 col-sm-4 col-lg-3 pe-sm-0">
                                 <div className="history-thumbnail-container ratio ratio-16x9">
                                     <Link to={`/videos/${video.id}`}>
                                         <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnailPath.includes("/uploads") ? api + video.thumbnailPath : tmdb + video.thumbnailPath} alt="Miniatura" />
@@ -168,7 +168,7 @@ const History = () => {
                                     </Link>
                                 </div>
                             </div>
-                            <div className="col ps-2">
+                            <div className="col-12 col-sm-8 col-lg-9 ps-0 ps-sm-2">
                                 <div className="container">
                                     <div className="row">
                                         <div className="col history-title">

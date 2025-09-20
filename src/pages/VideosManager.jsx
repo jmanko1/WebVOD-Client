@@ -86,10 +86,10 @@ const VideosManager = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-        if (userVideosLoading || isScrollEnd) return;
+            if (userVideosLoading || isScrollEnd) return;
 
-            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            const clientHeight = document.documentElement.clientHeight;
+            const scrollTop = window.scrollY || window.pageYOffset;
+            const clientHeight = window.innerHeight;
             const scrollHeight = document.documentElement.scrollHeight;
 
             if (scrollTop + clientHeight >= scrollHeight - 10) {
@@ -276,41 +276,78 @@ const VideosManager = () => {
                                                 <span className="ms-1">Edytuj</span>
                                             </Link>
                                         </div>
+                                        <div className={`d-none d-lg-inline col-lg-2 text-lg-center mt-2 mt-lg-0`}>
+                                            <button
+                                                className="btn btn-danger"
+                                                onClick={() => setIdToRemove(video.id)}
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteConfirmModal"
+                                            >
+                                                <i className="fa-solid fa-trash-can"></i>
+                                                <span className="ms-1">Usuń</span>
+                                            </button>
+                                        </div>
                                     </>
                                 ) : (
-                                    <div className="col-12 col-lg-6 text-lg-center">
-                                        Przesyłanie/Przetwarzanie filmu trwa lub zostało przerwane.
-                                    </div>
+                                    video.status === "FAILED" ? (
+                                        <>
+                                            <div className="col-12 col-lg-6 text-lg-center">
+                                                Przesyłanie/Przetwarzanie filmu zakończyło się niepowodzeniem.
+                                            </div>
+                                            <div className={`d-none d-lg-inline col-lg-2 text-lg-center mt-2 mt-lg-0`}>
+                                                <button
+                                                    className="btn btn-danger"
+                                                    onClick={() => setIdToRemove(video.id)}
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteConfirmModal"
+                                                >
+                                                    <i className="fa-solid fa-trash-can"></i>
+                                                    <span className="ms-1">Usuń</span>
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        video.status === "UPLOADING" ? (
+                                            <div className="col-12 col-lg-6 text-lg-center">
+                                                Film jest w trakcie przesyłania.
+                                            </div>
+                                        ) : (
+                                            <div className="col-12 col-lg-6 text-lg-center">
+                                                Film jest w trakcie przetwarzania.
+                                            </div>
+                                        )
+                                    )
                                 )}
 
-                                <div className={`d-none d-lg-inline col-lg-2 text-lg-center mt-2 mt-lg-0`}>
-                                    <button
-                                        className="btn btn-danger"
-                                        onClick={() => setIdToRemove(video.id)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteConfirmModal"
-                                    >
-                                        <i className="fa-solid fa-trash-can"></i>
-                                        <span className="ms-1">Usuń</span>
-                                    </button>
-                                </div>
-
                                 <div className="col-12 mt-2 d-inline d-lg-none">
-                                    {isPublished && (
-                                        <Link className="btn btn-primary" role="button" to={`/videos-manager/${video.id}`}>
-                                            <i className="fa-solid fa-pen-to-square"></i>
-                                            <span className="ms-1">Edytuj</span>
-                                        </Link>
+                                    {isPublished ? (
+                                        <>
+                                            <Link className="btn btn-primary" role="button" to={`/videos-manager/${video.id}`}>
+                                                <i className="fa-solid fa-pen-to-square"></i>
+                                                <span className="ms-1">Edytuj</span>
+                                            </Link>
+                                            <button
+                                                className={`btn btn-danger ${isPublished ? "ms-2" : ""}`}
+                                                onClick={() => setIdToRemove(video.id)}
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteConfirmModal"
+                                            >
+                                                <i className="fa-solid fa-trash-can"></i>
+                                                <span className="ms-1">Usuń</span>
+                                            </button>
+                                        </>
+                                    ) : (
+                                        video.status === "FAILED" && 
+                                        <button
+                                            className={`btn btn-danger ${isPublished ? "ms-2" : ""}`}
+                                            onClick={() => setIdToRemove(video.id)}
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteConfirmModal"
+                                        >
+                                            <i className="fa-solid fa-trash-can"></i>
+                                            <span className="ms-1">Usuń</span>
+                                        </button>
                                     )}
-                                    <button
-                                        className={`btn btn-danger ${isPublished ? "ms-2" : ""}`}
-                                        onClick={() => setIdToRemove(video.id)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteConfirmModal"
-                                    >
-                                        <i className="fa-solid fa-trash-can"></i>
-                                        <span className="ms-1">Usuń</span>
-                                    </button>
                                 </div>
                             </div>
                         );

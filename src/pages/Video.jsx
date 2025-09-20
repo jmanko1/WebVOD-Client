@@ -46,6 +46,21 @@ const Video = () => {
     const tmdb = "https://image.tmdb.org/t/p/original"
 
     useEffect(() => {
+        setMainError(null);
+        setErrors({});
+        setWatchedVideo(null);
+        setComments([]);
+        setDescriptionSliced(true);
+
+        setPage(1);
+        setCommentsLoading(false);
+        setIsScrollEnd(false);
+
+        setNewCommentSubmitSuccess(null)
+        setPressedLike(false);
+        setCopied(false);
+        setNewCommentSubmitLoading(false);
+
         fetchVideoData();
         isVideoLiked();
         fetchRecommendedVideos();
@@ -95,28 +110,14 @@ const Video = () => {
             if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10)
                 setPage(prev => prev + 1);
         };
-
+        
         container.addEventListener('scroll', handleScroll);
 
         return () => container.removeEventListener('scroll', handleScroll);
-    }, [id, commentsLoading, isScrollEnd]);
+    }, [id, watchedVideo, commentsLoading, isScrollEnd]);
 
     const fetchVideoData = async () => {
         setVideoLoading(true);
-        setMainError(null);
-        setErrors({});
-        setWatchedVideo(null);
-        setComments([]);
-        setDescriptionSliced(true);
-
-        setPage(1);
-        setCommentsLoading(false);
-        setIsScrollEnd(false);
-
-        setNewCommentSubmitSuccess(null)
-        setPressedLike(false);
-        setCopied(false);
-        setNewCommentSubmitLoading(false);
 
         try {
             const token = localStorage.getItem("jwt");
@@ -710,7 +711,7 @@ const Video = () => {
                         <div className="container p-0">
                             {recommendedVideos.map(video => (
                                 <div className="row mb-3" key={video.id}>
-                                    <div className="col pe-0">
+                                    <div className="col-12 col-md-6 pe-md-0">
                                         <div className="thumbnail-container ratio ratio-16x9">
                                             <Link to={`/videos/${video.id}`}>
                                                 <img className="img-fluid object-fit-cover w-100 h-100" loading="lazy" src={video.thumbnailPath.includes("/uploads") ? api + video.thumbnailPath : tmdb + video.thumbnailPath} alt="Miniatura" />
@@ -718,7 +719,7 @@ const Video = () => {
                                             </Link>
                                         </div>
                                     </div>
-                                    <div className="col ps-0">
+                                    <div className="col-12 col-md-6 ps-0 ps-md-2 ps-xl-0">
                                         <div className="container">
                                             <div className="row">
                                                 <div className="col title">
