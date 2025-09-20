@@ -83,8 +83,7 @@ const Home = () => {
                     </div>
                 )}
                 {recommendedVideos.map(video => (
-                   <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3 d-flex justify-content-center" key={video.id}>
-                        <div className="home-video-card">
+                   <div className="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3" key={video.id}>
                             <div className="row">
                                 <div className="col">
                                     <div className="ratio ratio-16x9">
@@ -116,7 +115,6 @@ const Home = () => {
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     </div> 
                 ))}
             </div>
