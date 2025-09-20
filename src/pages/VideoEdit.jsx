@@ -587,7 +587,7 @@ const VideoEdit = () => {
 
                 {/* Tagi */}
                 <div className="mb-3" id="tags">
-                    <label className="form-label">Tagi</label>
+                    <label className="form-label">Tagi ({tags.length})</label>
                     <ReactTags
                         tags={tags}
                         delimiters={delimiters}
