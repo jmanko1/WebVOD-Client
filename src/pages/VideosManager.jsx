@@ -250,7 +250,7 @@ const VideosManager = () => {
 
                                 <div className="col-12 col-lg-2 videos-manager-title mt-2 mt-lg-0">
                                     {isPublished ? (
-                                        <Link to={`/videos/${video.id}`}>
+                                        <Link to={`/videos/${video.id}`} title={video.title}>
                                             {video.title.length > maxTitleLength
                                                 ? video.title.slice(0, maxTitleLength) + "..."
                                                 : video.title}

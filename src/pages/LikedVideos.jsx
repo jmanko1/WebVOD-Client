@@ -127,7 +127,7 @@ const LikedVideos = () => {
                                 <div className="container">
                                     <div className="row">
                                         <div className="col liked-videos-title">
-                                            <Link to={`/videos/${video.id}`}>
+                                            <Link to={`/videos/${video.id}`} title={video.title}>
                                                 {video.title.length > maxTitleLength ? video.title.slice(0, maxTitleLength) + "..." : video.title}
                                             </Link>
                                         </div>

@@ -723,7 +723,7 @@ const Video = () => {
                                         <div className="container">
                                             <div className="row">
                                                 <div className="col title">
-                                                    <Link to={`/videos/${video.id}`}>
+                                                    <Link to={`/videos/${video.id}`} title={video.title}>
                                                         {video.title.length > 50 ? video.title.slice(0, 50) + "..." : video.title}
                                                     </Link>
                                                 </div>
