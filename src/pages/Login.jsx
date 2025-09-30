@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { validateLogin, validatePassword } from "../utils/validator";
 import { Link, useNavigate } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
     const [form, setForm] = useState({
@@ -8,6 +9,8 @@ const Login = () => {
         password: "",
         checkedSave: false
     })
+    const [captchaToken, setCaptchaToken] = useState("");
+    const captchaRef = useRef();
 
     const [errors, setErrors] = useState({});
     const [mainError, setMainError] = useState(null);
@@ -30,10 +33,17 @@ const Login = () => {
         setErrors((prev) => ({ ...prev, [name]: null }));
     };
 
+    const handleCaptchaTokenChange = (token) => {
+        setCaptchaToken(token);
+        setErrors(prev => ({ ...prev, captchaToken: null }));
+    }
+
     const validateForm = () => {
         const newErrors = {};
-        if (!validateLogin(form.login, (e) => (newErrors.login = e))) {}
-        if (!validatePassword(form.password, (e) => (newErrors.password = e))) {}
+        if (!validateLogin(form.login, (e) => (newErrors.login = e))) {;}
+        if (!validatePassword(form.password, (e) => (newErrors.password = e))) {;}
+
+        if (!captchaToken.trim()) newErrors.captchaToken = "Potwierdź, że nie jesteś robotem.";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -59,7 +69,7 @@ const Login = () => {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify(form),
+                body: JSON.stringify({ ...form, captchaToken }),
             });
 
             if (!response.ok) {
@@ -75,23 +85,24 @@ const Login = () => {
                 if (errorData.errors?.Password) {
                     newErrors.password = errorData.errors.Password[0];
                 } 
+                if (errorData.errors?.CaptchaToken) {
+                    newErrors.captchaToken = errorData.errors.CaptchaToken[0];
+                }
 
                 setErrors((prev) => ({ ...prev, ...newErrors }));
                 return;
             }
 
-            if (response.ok) {
-                const data = await response.json();
+            const data = await response.json();
 
-                if(data.tfaRequired) {
-                    navigate("/login/code");
-                    return;
-                }
-
-                localStorage.setItem("jwt", data.token);
-                sessionStorage.removeItem("dontRefresh");
-                window.location.href = "/";
+            if(data.tfaRequired) {
+                navigate("/login/code");
+                return;
             }
+
+            localStorage.setItem("jwt", data.token);
+            sessionStorage.removeItem("dontRefresh");
+            window.location.href = "/";
         } catch {
             setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
         } finally {
@@ -149,7 +160,21 @@ const Login = () => {
                     />
                     <label htmlFor="checkedSave" className="form-check-label ms-2">Zapamiętaj konto</label>
                 </div>
-                <div>
+                <div className="d-flex justify-content-center">
+                    <ReCAPTCHA
+                        ref={captchaRef}
+                        className={errors.captchaToken ? "border border-danger" : ""}
+                        sitekey="6LfpVtUrAAAAADUqygar0I8-Ig1-_HmDdZohel0N"
+                        onChange={(token) => handleCaptchaTokenChange(token)}
+                        onExpired={() => setCaptchaToken("")}
+                    />
+                </div>
+                {errors.captchaToken && (
+                    <div className="text-danger mt-1" style={{fontSize: "0.875em"}}>
+                        {errors.captchaToken}
+                    </div>
+                )}
+                <div className="mt-3">
                     <button type="submit" className="btn btn-primary" disabled={loading}>Zaloguj się</button>
                 </div>
                 {loading && (

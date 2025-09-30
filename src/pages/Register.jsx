@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { validateConfirmPassword, validateEmail, validateLogin, validatePassword } from "../utils/validator";
 import { Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Register = () => {
     const [form, setForm] = useState({
@@ -8,7 +9,9 @@ const Register = () => {
         email: "",
         password: "",
         confirmPassword: ""
-    })
+    });
+    const [captchaToken, setCaptchaToken] = useState("");
+    const captchaRef = useRef();
 
     const [errors, setErrors] = useState({});
     const [mainError, setMainError] = useState(null);
@@ -23,14 +26,21 @@ const Register = () => {
         const { name, value } = e.target;
         setForm((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: null }));
-    }; 
+    };
+
+    const handleCaptchaTokenChange = (token) => {
+        setCaptchaToken(token);
+        setErrors(prev => ({ ...prev, captchaToken: null }));
+    }
 
     const validateForm = () => {
         const newErrors = {};
-        if (!validateLogin(form.login, (e) => (newErrors.login = e))) {}
-        if (!validateEmail(form.email, (e) => (newErrors.email = e))) {}
-        if (!validatePassword(form.password, (e) => (newErrors.password = e))) {}
-        if (!validateConfirmPassword(form.password, form.confirmPassword, (e) => (newErrors.confirmPassword = e))) {}
+        if (!validateLogin(form.login, (e) => (newErrors.login = e))) {;}
+        if (!validateEmail(form.email, (e) => (newErrors.email = e))) {;}
+        if (!validatePassword(form.password, (e) => (newErrors.password = e))) {;}
+        if (!validateConfirmPassword(form.password, form.confirmPassword, (e) => (newErrors.confirmPassword = e))) {;}
+
+        if (!captchaToken.trim()) newErrors.captchaToken = "Potwierdź, że nie jesteś robotem.";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -57,7 +67,7 @@ const Register = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(form),
+                body: JSON.stringify({ ...form, captchaToken }),
             });
 
             if (!response.ok) {
@@ -79,6 +89,9 @@ const Register = () => {
                 if (errorData.errors?.ConfirmPassword) {
                     newErrors.confirmPassword = errorData.errors.ConfirmPassword[0];
                 }
+                if (errorData.errors?.CaptchaToken) {
+                    newErrors.captchaToken = errorData.errors.CaptchaToken[0];
+                }
 
                 setErrors((prev) => ({ ...prev, ...newErrors }));
                 return;
@@ -86,6 +99,8 @@ const Register = () => {
 
             setSuccess("Rejestracja zakończona sukcesem. Możesz teraz się zalogować."); 
             setForm({ login: "", email: "", password: "", confirmPassword: "" });
+            setCaptchaToken("");
+            captchaRef.current?.reset();
         } catch {
             setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
         } finally {
@@ -166,7 +181,21 @@ const Register = () => {
                         </div>
                     )}
                 </div>
-                <div>
+                <div className="d-flex justify-content-center">
+                    <ReCAPTCHA
+                        ref={captchaRef}
+                        className={errors.captchaToken ? "border border-danger" : ""}
+                        sitekey="6LfpVtUrAAAAADUqygar0I8-Ig1-_HmDdZohel0N"
+                        onChange={(token) => handleCaptchaTokenChange(token)}
+                        onExpired={() => setCaptchaToken("")}
+                    />
+                </div>
+                {errors.captchaToken && (
+                    <div className="text-danger mt-1" style={{fontSize: "0.875em"}}>
+                        {errors.captchaToken}
+                    </div>
+                )}
+                <div className="mt-3">
                     <button type="submit" className="btn btn-primary" disabled={loading}>Zarejestruj się</button>
                 </div>
                 {loading && (

@@ -1,11 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { validateEmail } from "../utils/validator";
 import { Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const InitiateResetPassword = () => {
     const [email, setEmail] = useState("");
-    const [emailError, setEmailError] = useState(null);
-    const [error, setError] = useState(null);
+    
+    const [captchaToken, setCaptchaToken] = useState("");
+    const captchaRef = useRef();
+
+    const [errors, setErrors] = useState({});
+    const [mainError, setMainError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(null);
 
@@ -15,19 +20,33 @@ const InitiateResetPassword = () => {
 
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
-        setEmailError(null);
+        setErrors(prev => ({ ...prev, email: null }));
+    }
+
+    const handleCaptchaTokenChange = (token) => {
+        setCaptchaToken(token);
+        setErrors(prev => ({ ...prev, captchaToken: null }));
+    }
+
+    const validateForm = () => {
+        const newErrors = {};
+        
+        if (!validateEmail(email, (e) => (newErrors.email = e))) {;}
+
+        if (!captchaToken.trim()) newErrors.captchaToken = "Potwierdź, że nie jesteś robotem.";
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        setEmailError(null);
-        setError(null);
+        setMainError(null);
         setLoading(true);
         setSuccess(null);
 
-        const isEmailValid = validateEmail(email, setEmailError);
-        if(!isEmailValid) {
+        if(!validateForm()) {
             setLoading(false);
             return;
         }
@@ -40,29 +59,35 @@ const InitiateResetPassword = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(email),
+                body: JSON.stringify({ email, captchaToken }),
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
+                const newErrors = {};
 
                 if (errorData.message) {
-                    setError(errorData.message);
+                    setMainError(errorData.message);
                 }
-                else if (errorData.errors?.email) {
-                    setEmailError(errorData.errors.email[0]);
-                } 
+                if (errorData.errors?.Email) {
+                    newErrors.email = errorData.errors.Email[0];
+                }
+                if (errorData.errors?.CaptchaToken) {
+                    newErrors.captchaToken = errorData.errors.CaptchaToken[0];
+                }
 
+                setErrors((prev) => ({ ...prev, ...newErrors }));
                 return;
             }
 
-            if (response.ok) {
-                const success = await response.text();
-                setSuccess(success);
-                setEmail("");
-            }
+            const success = await response.text();
+            setSuccess(success);
+
+            setEmail("");
+            setCaptchaToken("");
+            captchaRef.current?.reset();
         } catch {
-            setError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
+            setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później");
         } finally {
             setLoading(false);
         }
@@ -72,26 +97,40 @@ const InitiateResetPassword = () => {
         <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "475px"}}>
             <h1 style={{fontSize: "28px"}}>Zresetuj hasło</h1>
             {/* <p className="mt-4" style={{color: "#66676a", fontSize: "14px"}}>Na podany adres e-mail zostanie wysłana wiadomość z linkiem. Po kliknięciu w link, możliwe będzie ustawienie nowego hasła.</p> */}
-            <form className="mt-4 mb-4" onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <div className="form-text">Na podany adres e-mail zostanie wysłana wiadomość z linkiem. Po kliknięciu w link, możliwe będzie ustawienie nowego hasła.</div>
-                    <label htmlFor="email" className="form-label mt-3">Adres email</label>
+            <div className="form-text mt-3">Na podany adres e-mail zostanie wysłana wiadomość z linkiem. Po kliknięciu w link, możliwe będzie ustawienie nowego hasła.</div>
+            <form className="mt-3 mb-4" onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label htmlFor="email" className="form-label">Adres email</label>
                     <input
                         type="text"
                         style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
                         value={email}
                         onChange={handleEmailChange}
-                        className={`form-control mx-auto ${emailError ? 'is-invalid' : ''}`}
+                        className={`form-control mx-auto ${errors.email ? 'is-invalid' : ''}`}
                         id="email"
                         autoFocus
                     />
-                    {emailError && (
+                    {errors.email && (
                         <div className="invalid-feedback">
-                            {emailError}
+                            {errors.email}
                         </div>
                     )}
                 </div>
-                <div>
+                <div className="d-flex justify-content-center">
+                    <ReCAPTCHA
+                        ref={captchaRef}
+                        className={errors.captchaToken ? "border border-danger" : ""}
+                        sitekey="6LfpVtUrAAAAADUqygar0I8-Ig1-_HmDdZohel0N"
+                        onChange={(token) => handleCaptchaTokenChange(token)}
+                        onExpired={() => setCaptchaToken("")}
+                    />
+                </div>
+                {errors.captchaToken && (
+                    <div className="text-danger mt-1" style={{fontSize: "0.875em"}}>
+                        {errors.captchaToken}
+                    </div>
+                )}
+                <div className="mt-3">
                     <button type="submit" className="btn btn-primary">Wyślij maila</button>
                 </div>
                 {loading && (
@@ -99,9 +138,9 @@ const InitiateResetPassword = () => {
                         <span className="visually-hidden">Loading...</span>
                     </div>
                 )}
-                {error && (
+                {mainError && (
                     <div className="mt-3" style={{color: "red"}}>
-                        {error}
+                        {mainError}
                     </div>
                 )}
                 {success && (
