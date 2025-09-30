@@ -205,17 +205,6 @@ const TFASettings = () => {
                     </div>
                     <div className="mb-3">
                         <label htmlFor="code" className="form-label">Kod z aplikacji</label>
-                        {/* <input
-                            type="text"
-                            id="code"
-                            name="code"
-                            style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                            className={`form-control mx-auto ${errors.code ? 'is-invalid' : ''}`}
-                            placeholder="6-cyfrowy kod"
-                            value={form.code}
-                            onChange={handleChange}
-                            maxLength="6"
-                        /> */}
                         <OtpInput
                             value={form.code}
                             onChange={handleCodeChange}
@@ -228,7 +217,7 @@ const TFASettings = () => {
                                 justifyContent: 'center',
                             }}                        
                             inputStyle={{
-                                border: "1px solid #dee2e6",
+                                border: `1px solid ${errors.code ? "red" : "#dee2e6"}`,
                                 backgroundColor: "#f4f1f7",
                                 borderRadius: "50%",
                                 width: "50px",
@@ -239,7 +228,7 @@ const TFASettings = () => {
                             }}
                         />
                         {errors.code && (
-                            <div className="invalid-feedback">
+                            <div className="text-danger mt-1" style={{fontSize: "0.875em"}}>
                                 {errors.code}
                             </div>
                         )}

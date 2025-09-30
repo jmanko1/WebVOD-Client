@@ -73,16 +73,6 @@ const LoginCode = () => {
             <form className="mt-4 mb-4" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="code" className="form-label">6-cyfrowy kod</label>
-                    {/* <input
-                        type="text"
-                        maxLength={6}
-                        style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                        value={code}
-                        onChange={handleCodeChange}
-                        className={`form-control mx-auto ${codeError ? 'is-invalid' : ''}`}
-                        id="code"
-                        autoFocus
-                    /> */}
                     <OtpInput
                         value={code}
                         onChange={handleCodeChange}
@@ -96,7 +86,7 @@ const LoginCode = () => {
                             justifyContent: 'center',
                         }}                        
                         inputStyle={{
-                            border: "1px solid #dee2e6",
+                            border: `1px solid ${codeError ? "red" : "#dee2e6"}`,
                             backgroundColor: "#f4f1f7",
                             borderRadius: "50%",
                             width: "50px",
@@ -107,7 +97,7 @@ const LoginCode = () => {
                         }}
                     />
                     {codeError && (
-                        <div className="invalid-feedback">
+                        <div className="text-danger mt-1" style={{fontSize: "0.875em"}}>
                             {codeError}
                         </div>
                     )}

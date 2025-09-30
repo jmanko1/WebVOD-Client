@@ -179,17 +179,6 @@ const ChangePassword = () => {
                 {user.tfaEnabled && (
                     <div className="mb-3">
                         <label htmlFor="code" className="form-label">Kod z aplikacji</label>
-                        {/* <input
-                            type="text"
-                            maxLength={6}
-                            style={{maxWidth: "300px", backgroundColor: "#f4f1f7"}}
-                            value={form.code}
-                            onChange={handleChange}
-                            className={`form-control mx-auto ${errors.code ? 'is-invalid' : ''}`}
-                            id="code"
-                            name="code"
-                            placeholder="6-cyfrowy kod"
-                        /> */}
                         <OtpInput
                             value={form.code}
                             onChange={handleCodeChange}
@@ -202,7 +191,7 @@ const ChangePassword = () => {
                                 justifyContent: 'center',
                             }}                        
                             inputStyle={{
-                                border: "1px solid #dee2e6",
+                                border: `1px solid ${errors.code ? "red" : "#dee2e6"}`,
                                 backgroundColor: "#f4f1f7",
                                 borderRadius: "50%",
                                 width: "50px",
@@ -213,7 +202,7 @@ const ChangePassword = () => {
                             }}
                         />
                         {errors.code && (
-                            <div className="invalid-feedback">
+                            <div className="text-danger mt-1" style={{fontSize: "0.875em"}}>
                                 {errors.code}
                             </div>
                         )}
