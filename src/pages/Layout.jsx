@@ -50,7 +50,7 @@ const Layout = () => {
                     tfaRes.json()
                 ]);
 
-                profileData.description = profileData.description || "Brak opisu.";
+                // profileData.description = profileData.description || "Brak opisu.";
                 profileData.imageUrl = profileData.imageUrl ? api + profileData.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg";
 
                 const fullProfile = {

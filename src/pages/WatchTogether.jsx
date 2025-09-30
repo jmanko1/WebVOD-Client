@@ -12,6 +12,7 @@ const WatchTogether = () => {
 
     const [room, setRoom] = useState(null);
 
+    const [videoId, setVideoId] = useState(null);
     const [videoUrl, setVideoUrl] = useState("");
     const [videoTitle, setVideoTitle] = useState("");
     const [isPlaying, setIsPlaying] = useState(false);
@@ -96,6 +97,7 @@ const WatchTogether = () => {
                 connection.on("VideoChanged", (video) => {
                     setVideoUrl(video.videoUrl);
                     setVideoTitle(video.title);
+                    setVideoId(video.id);
                     setIsPlaying(false);
                     if (videoRef.current) {
                         videoRef.current.seekTo(0.0, "seconds");
@@ -141,6 +143,8 @@ const WatchTogether = () => {
 
     const createNewRoom = async () => {
         setError(null);
+        setMessages([]);
+
         if(!connection) return;
 
         try {
@@ -162,11 +166,12 @@ const WatchTogether = () => {
         e.preventDefault();
         
         setError(null);
+        setMessages([]);
 
         if(!connection) return;
 
-        const guidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-        if(!guidRegex.test(roomId)) return;
+        const roomIdRegex = /^[A-Za-z0-9]{12}$/;
+        if(!roomIdRegex.test(roomId)) return;
 
         const accessCodeRegex = /^[A-Za-z0-9]{6}$/;
         if(!accessCodeRegex.test(accessCode)) return;
@@ -333,9 +338,17 @@ const WatchTogether = () => {
                                 </div>
                             )}
                         </div>
-                        {videoTitle && (
+                        {videoTitle && videoId && (
                             <div className="mt-3">
-                                <h1 className="mb-0">{videoTitle}</h1>
+                                <a
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="text-black" 
+                                    style={{ textDecoration: "none" }} 
+                                    href={`/videos/${videoId}`}
+                                >
+                                    <h1 className="mb-0">{videoTitle}</h1>
+                                </a>
                             </div>
                         )}
                     </div>

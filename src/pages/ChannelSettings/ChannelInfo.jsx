@@ -113,20 +113,18 @@ const ChannelInfo = () => {
                 return;
             }
 
-            if(response.ok) {
-                setUser((prev) => ({
-                    ...prev,
-                    "description": newDescription
-                }));
+            setUser((prev) => ({
+                ...prev,
+                "description": newDescription
+            }));
 
-                setNewDescription("");
-                hideDescriptionModal();
-                
-                setSuccess("Opis kanału został zaktualizowany.");
-                setTimeout(() => {
-                    setSuccess(null);
-                }, 4000);
-            }
+            setNewDescription("");
+            hideDescriptionModal();
+            
+            setSuccess("Opis kanału został zaktualizowany.");
+            setTimeout(() => {
+                setSuccess(null);
+            }, 4000);
         } catch {
             setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później.");
         } finally {
@@ -279,6 +277,116 @@ const ChannelInfo = () => {
         reader.readAsDataURL(newImage);
     }
 
+    const deleteDescription = async () => {
+        setSuccess(null);
+        setMainError(null);
+
+        const token = localStorage.getItem("jwt");
+        if(!token) {
+            hideDescriptionModal();
+            navigate("/logout");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await fetch(`${api}/user/my-profile/description`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                }
+            });
+
+            if(response.status == 401) {
+                hideDescriptionModal();
+                navigate("/logout");
+                return;
+            }
+
+            if(!response.ok) {
+                const errorData = await response.json();
+
+                if (errorData.message) {
+                    setMainError(errorData.message);
+                }
+
+                return;
+            }
+
+            setUser((prev) => ({
+                ...prev,
+                description: ""
+            }));
+
+            hideDescriptionModal();
+            
+            setSuccess("Opis kanału został usunięty.");
+            setTimeout(() => {
+                setSuccess(null);
+            }, 4000);
+        } catch {
+            setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const deleteImage = async () => {
+        setSuccess(null);
+        setMainError(null);
+
+        const token = localStorage.getItem("jwt");
+        if(!token) {
+            hideImageModal();
+            navigate("/logout");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            const response = await fetch(`${api}/user/my-profile/image`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                }
+            });
+
+            if(response.status == 401) {
+                hideImageModal();
+                navigate("/logout");
+                return;
+            }
+
+            if(!response.ok) {
+                const errorData = await response.json();
+
+                if (errorData.message) {
+                    setMainError(errorData.message);
+                }
+
+                return;
+            }
+
+            setUser((prev) => ({
+                ...prev,
+                imageUrl: "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg"
+            }));
+
+            hideImageModal();
+            
+            setSuccess("Zdjęcie profilowe zostało usunięte.");
+            setTimeout(() => {
+                setSuccess(null);
+            }, 4000);
+        } catch {
+            setMainError("Wystąpił niespodziewany błąd. Spróbuj ponownie później.");
+        } finally {
+            setLoading(false);
+        }
+    }
+
     if(!user) {
         return;
     }
@@ -319,10 +427,12 @@ const ChannelInfo = () => {
                                 <div>
                                     <div className="label">Opis kanału</div>
                                     <div className="subtext">
-                                        {user.description.length > maxVisibleDescriptionLength ? (
-                                            user.description.slice(0, maxVisibleDescriptionLength) + "..."
-                                        ) : (
-                                            user.description
+                                        {user.description && (
+                                            user.description.length > maxVisibleDescriptionLength ? (
+                                                user.description.slice(0, maxVisibleDescriptionLength) + "..."
+                                            ) : (
+                                                user.description
+                                            )
                                         )}
                                     </div>
                                 </div>
@@ -379,7 +489,10 @@ const ChannelInfo = () => {
                             </form>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                            {user.description && (
+                                <button type="button" className="btn btn-danger" onClick={deleteDescription} disabled={loading}>Usuń opis</button>
+                            )}
                             <button onClick={submitDescription} disabled={loading} type="button" className="btn btn-primary">Zapisz</button>
                         </div>
                     </div>
@@ -430,7 +543,10 @@ const ChannelInfo = () => {
                             </form>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Zamknij</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                            {user.imageUrl.startsWith(`${api}/uploads`) && (
+                                <button type="button" className="btn btn-danger" onClick={deleteImage} disabled={loading}>Usuń zdjęcie</button>
+                            )}
                             <button onClick={submitImage} disabled={loading} type="button" className="btn btn-primary">Zapisz</button>
                         </div>
                     </div>
