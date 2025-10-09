@@ -23,7 +23,7 @@ const Home = () => {
             setLoading(true);
 
             try {
-                const response = await fetch(`${recommendationsApi}/recommend?n=32`, {
+                const response = await fetch(`${recommendationsApi}/recommend?n=24`, {
                     headers: {
                         "Authorization": `Bearer ${token}`
                     }

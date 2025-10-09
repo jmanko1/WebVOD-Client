@@ -21,7 +21,7 @@ const SearchVideos = () => {
             setLoading(true);
 
             try {
-                const response = await fetch(`${recommendationsApi}/search-videos?query=${query}&n=30`);
+                const response = await fetch(`${recommendationsApi}/search-videos?query=${query}&n=16`);
 
                 if(!response.ok) {
                     const errorData = await response.json();

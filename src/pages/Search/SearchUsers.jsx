@@ -25,7 +25,7 @@ const SearchUsers = () => {
             setLoading(true);
     
             try {
-                const response = await fetch(`${recommendationsApi}/search-channels?query=${query}`);
+                const response = await fetch(`${recommendationsApi}/search-channels?query=${query}&n=8`);
 
                 if(!response.ok) {
                     const errorData = await response.json();
