@@ -89,8 +89,9 @@ const ResetPassword = () => {
     }
 
     return (
-        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "475px"}}>
-            <h1 style={{fontSize: "28px"}}>Zresetuj hasło</h1>
+        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "600px"}}>
+            <img src="/android-chrome-512x512.png" style={{maxWidth: "75px", height: "auto"}} />
+            <h1 className="mt-4" style={{fontSize: "28px"}}>Zresetuj hasło</h1>
             <form className="mt-4 mb-4" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Nowe hasło</label>

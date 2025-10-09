@@ -94,10 +94,10 @@ const InitiateResetPassword = () => {
     }
 
     return (
-        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "475px"}}>
-            <h1 style={{fontSize: "28px"}}>Zresetuj hasło</h1>
-            {/* <p className="mt-4" style={{color: "#66676a", fontSize: "14px"}}>Na podany adres e-mail zostanie wysłana wiadomość z linkiem. Po kliknięciu w link, możliwe będzie ustawienie nowego hasła.</p> */}
-            <div className="form-text mt-3">Na podany adres e-mail zostanie wysłana wiadomość z linkiem. Po kliknięciu w link, możliwe będzie ustawienie nowego hasła.</div>
+        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "600px"}}>
+            <img src="/android-chrome-512x512.png" style={{maxWidth: "75px", height: "auto"}} />
+            <h1 className="mt-4" style={{fontSize: "28px"}}>Zresetuj hasło</h1>
+            <div className="form-text mt-3 ps-3 pe-3">Podaj adres email przypisany do Twojego konta, a wyślemy Tobie link, który umożliwi Ci ustawienie nowego hasła.</div>
             <form className="mt-3 mb-4" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Adres email</label>

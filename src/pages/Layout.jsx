@@ -50,7 +50,6 @@ const Layout = () => {
                     tfaRes.json()
                 ]);
 
-                // profileData.description = profileData.description || "Brak opisu.";
                 profileData.imageUrl = profileData.imageUrl ? api + profileData.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg";
 
                 const fullProfile = {
@@ -97,7 +96,6 @@ const Layout = () => {
                         const data = await res.json();
                         localStorage.setItem("jwt", data.token);
                         sessionStorage.removeItem("dontRefresh");
-                        // window.location.reload();
                     } else {
                         sessionStorage.setItem("dontRefresh", "1");
                     }
@@ -129,7 +127,10 @@ const Layout = () => {
                     <button className="navbar-toggler navbar-toggler-left ps-0 pe-0 border-0 d-inline" style={{boxShadow: "none"}} type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                         <span className="navbar-toggler-icon"></span>
                     </button>
-                    <Link className="navbar-brand" to="/">WebVOD</Link>
+                    <Link className="navbar-brand" to="/">
+                        <img src="/android-chrome-512x512.png" alt="Logo" style={{maxWidth: "26px", height: "auto"}} className="d-inline-block align-text-top me-1"></img>
+                        WebVOD
+                    </Link>
                     <button className="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>

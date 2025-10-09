@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { validateLogin, validatePassword } from "../utils/validator";
 import { Link, useNavigate } from "react-router-dom";
-import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
     const [form, setForm] = useState({
@@ -9,8 +8,6 @@ const Login = () => {
         password: "",
         checkedSave: false
     })
-    const [captchaToken, setCaptchaToken] = useState("");
-    const captchaRef = useRef();
 
     const [errors, setErrors] = useState({});
     const [mainError, setMainError] = useState(null);
@@ -33,17 +30,10 @@ const Login = () => {
         setErrors((prev) => ({ ...prev, [name]: null }));
     };
 
-    const handleCaptchaTokenChange = (token) => {
-        setCaptchaToken(token);
-        setErrors(prev => ({ ...prev, captchaToken: null }));
-    }
-
     const validateForm = () => {
         const newErrors = {};
         if (!validateLogin(form.login, (e) => (newErrors.login = e))) {;}
         if (!validatePassword(form.password, (e) => (newErrors.password = e))) {;}
-
-        if (!captchaToken.trim()) newErrors.captchaToken = "Potwierdź, że nie jesteś robotem.";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -69,7 +59,7 @@ const Login = () => {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify({ ...form, captchaToken }),
+                body: JSON.stringify(form),
             });
 
             if (!response.ok) {
@@ -85,9 +75,6 @@ const Login = () => {
                 if (errorData.errors?.Password) {
                     newErrors.password = errorData.errors.Password[0];
                 } 
-                if (errorData.errors?.CaptchaToken) {
-                    newErrors.captchaToken = errorData.errors.CaptchaToken[0];
-                }
 
                 setErrors((prev) => ({ ...prev, ...newErrors }));
                 return;
@@ -111,8 +98,9 @@ const Login = () => {
     }
 
     return (
-        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "475px"}}>
-            <h1 style={{fontSize: "28px"}}>Zaloguj się</h1>
+        <div className="mt-5 mx-auto bg-body border border-secondary rounded-5 p-1 pt-5 pb-5 text-center" style={{maxWidth: "600px"}}>
+            <img src="/android-chrome-512x512.png" style={{maxWidth: "75px", height: "auto"}} />
+            <h1 className="mt-4" style={{fontSize: "28px"}}>Zaloguj się</h1>
             <form className="mt-4 mb-3" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="login" className="form-label">Login</label>
@@ -160,21 +148,7 @@ const Login = () => {
                     />
                     <label htmlFor="checkedSave" className="form-check-label ms-2">Zapamiętaj konto</label>
                 </div>
-                <div className="d-flex justify-content-center">
-                    <ReCAPTCHA
-                        ref={captchaRef}
-                        className={errors.captchaToken ? "border border-danger" : ""}
-                        sitekey="6LfpVtUrAAAAADUqygar0I8-Ig1-_HmDdZohel0N"
-                        onChange={(token) => handleCaptchaTokenChange(token)}
-                        onExpired={() => setCaptchaToken("")}
-                    />
-                </div>
-                {errors.captchaToken && (
-                    <div className="text-danger mt-1" style={{fontSize: "0.875em"}}>
-                        {errors.captchaToken}
-                    </div>
-                )}
-                <div className="mt-3">
+                <div>
                     <button type="submit" className="btn btn-primary" disabled={loading}>Zaloguj się</button>
                 </div>
                 {loading && (
@@ -189,7 +163,7 @@ const Login = () => {
                 )}
             </form>
             <div className="mb-4">
-                <Link to="/reset-password" className="text-decoration-none">Zresetuj hasło</Link>
+                Nie pamiętasz hasła? <Link to="/reset-password" className="text-decoration-none">Zresetuj hasło</Link>
             </div>
             <div>
                 Nie masz jeszcze konta? <Link to="/register" className="text-decoration-none">Zarejestruj się</Link>
