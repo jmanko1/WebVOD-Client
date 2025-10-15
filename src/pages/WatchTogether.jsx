@@ -12,7 +12,7 @@ const WatchTogether = () => {
 
     const [room, setRoom] = useState(null);
 
-    const [videoId, setVideoId] = useState(null);
+    const [videoId, setVideoId] = useState("");
     const [videoUrl, setVideoUrl] = useState("");
     const [videoTitle, setVideoTitle] = useState("");
     const [isPlaying, setIsPlaying] = useState(false);
@@ -58,6 +58,7 @@ const WatchTogether = () => {
                     setIsPlaying(initialParams.isPlaying);
                     setParticipants(initialParams.participants);
                     setVideoTitle(initialParams.videoTitle);
+                    setVideoId(initialParams.videoId);
 
                     if(initialParams.countdown) {
                         let counter = Math.ceil(initialParams.countdown);
@@ -199,7 +200,10 @@ const WatchTogether = () => {
         try {
             await connection.invoke("SendMessage", newMessage);
             setMessages((prev) => [...prev, { 
-                login: user.login,
+                sender: {
+                    login: user.login,
+                    imageUrl: user.imageUrl
+                },
                 message: newMessage,
                 messageType: "USER"
             }]);
@@ -380,29 +384,26 @@ const WatchTogether = () => {
                                 onClick={handleAccessCodeCopy}
                             />
                         </div>
-                        <div className="mb-2">
-                            Liczba uczestników: {participants.length}
-                        </div>
                         <div className="mb-3">
-                            Uczestnicy:
+                            Uczestnicy ({participants.length}):
                             {participants.map((p, i) => {
                                 const isLast = i === participants.length - 1;
                                 const isFirst = i === 0;
 
                                 return (
-                                    <React.Fragment key={p}>
+                                    <div key={p.login}>
                                         <a 
                                             target="_blank" 
                                             rel="noopener noreferrer" 
-                                            className={`fw-bold text-black ${isFirst ? "ms-1" : ""}`} 
+                                            className="fw-bold text-black" 
                                             style={{ textDecoration: "none" }} 
-                                            href={`/channels/${p}`}
+                                            href={`/channels/${p.login}`}
                                         >
-                                            {p}
+                                            <img src={p.imageUrl ? api + p.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg"} alt="Awatar" width="25px" height="25px" className="object-fit-cover rounded-circle me-1" />
+                                            {p.login}
                                         </a>
-                                        {!isLast && ", "}
-                                    </React.Fragment>
-                                );         
+                                    </div>
+                                );     
                             })}
                         </div>
                         {error && (
@@ -416,11 +417,23 @@ const WatchTogether = () => {
                                 {messages.map((msg, index) => (
                                     <div 
                                         key={index} 
-                                        className={`d-flex mb-1 ${(msg.login === user.login && msg.messageType === "USER") ? "justify-content-end" : "justify-content-start"}`}
+                                        className={`d-flex mb-1 ${(msg.sender.login === user.login && msg.messageType === "USER") ? "justify-content-end" : "justify-content-start"}`}
                                     >
                                         {msg.messageType === "USER" ? (
-                                            <div className={`p-2 rounded ${msg.login === user.login ? "bg-primary text-white" : "bg-light"}`} style={{ maxWidth: "70%" }}>
-                                                <strong>{msg.login}:</strong> {msg.message}
+                                            <div className={`p-2 rounded ${msg.sender.login === user.login ? "bg-primary text-white" : "bg-light"}`} style={{ maxWidth: "70%" }}>
+                                                {msg.sender.login != user.login && 
+                                                    <a 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer" 
+                                                        className="fw-bold text-black me-1" 
+                                                        style={{ textDecoration: "none" }} 
+                                                        href={`/channels/${msg.sender.login}`}
+                                                        title={msg.sender.login}
+                                                    >
+                                                        <img src={msg.sender.imageUrl ? api + msg.sender.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg"} alt="Awatar" width="25px" height="25px" className="object-fit-cover rounded-circle me-1" />
+                                                    </a>
+                                                }
+                                                {msg.message}
                                             </div>
                                         ): (
                                             <div className="p-2 rounded bg-light" style={{ maxWidth: "70%" }}>
