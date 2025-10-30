@@ -5,6 +5,8 @@ import { useUser } from "../contexts/UserContext";
 import { formatDate, formatDatetime } from "../utils/datetime";
 
 import "../styles/Video.css";
+import TagProposalsModal from "../components/TagProposalsModal/TagProposalsModal";
+import TagProposalFormModal from "../components/TagProposalFormModal/TagProposalFormModal";
 
 const Video = () => {
     const { id } = useParams();
@@ -17,7 +19,7 @@ const Video = () => {
 
     const [comments, setComments] = useState([]);
     const [page, setPage] = useState(1);
-    const size = 10;
+    const size = 20;
     const [commentsLoading, setCommentsLoading] = useState(false);
     const [isScrollEnd, setIsScrollEnd] = useState(false);
     const commentsRef = useRef();
@@ -28,6 +30,7 @@ const Video = () => {
 
     const [liked, setLiked] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [tagsProposed, setTagsProposed] = useState(false);
 
     const [pressedLike, setPressedLike] = useState(false);
 
@@ -49,9 +52,9 @@ const Video = () => {
         setMainError(null);
         setErrors({});
         setWatchedVideo(null);
-        setComments([]);
         setDescriptionSliced(true);
 
+        setComments([]);
         setPage(1);
         setCommentsLoading(false);
         setIsScrollEnd(false);
@@ -63,6 +66,7 @@ const Video = () => {
 
         fetchVideoData();
         isVideoLiked();
+        areTagsProposed();
         fetchRecommendedVideos();
     }, [id]);
 
@@ -182,6 +186,28 @@ const Video = () => {
             ;
         }
     };
+
+    const areTagsProposed = async () => {
+        const token = localStorage.getItem("jwt");
+        if(!token)
+            return;
+
+        try {
+            const response = await fetch(`${api}/video/${id}/tag-proposals/user-status`, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if(!response.ok)
+                return;
+
+            const data = await response.json();
+            setTagsProposed(data);
+        } catch {
+            ;
+        }
+    }
 
     const fetchRecommendedVideos = async () => {
         setRecommendedVideos([]);
@@ -440,6 +466,13 @@ const Video = () => {
         return `${m}:${s.toString().padStart(2, "0")}`;
     };
 
+    const decrementTagsPropositionsCount = () => {
+        setWatchedVideo((prev) => ({
+            ...prev,
+            tagsPropositionsCount : prev.tagsPropositionsCount - 1
+        }));
+    }
+
     if (mainError) {
         return (
             <div className="mt-4 text-center">
@@ -531,14 +564,6 @@ const Video = () => {
                                     >
                                         <i className={`bi bi-${copied ? 'check-lg' : 'clipboard'}`}></i>
                                     </button>
-                                    {/* <button
-                                        type="button"
-                                        className="btn btn-success"
-                                        onClick={handleSaveVideo}
-                                        title={saved ? "Anuluj zapisanie filmu" : "Zapisz film"}
-                                    >
-                                        <i className={`fa-${saved ? "solid" : "regular"} fa-bookmark`}></i>
-                                    </button> */}
                                 </div>
                             </div>
                         </div>
@@ -580,6 +605,14 @@ const Video = () => {
                         {user && user.id === watchedVideo.author.id && (
                             <div className="mt-3">
                                 <Link to={`/videos-manager/${watchedVideo.id}`} role="button" className="btn btn-primary">Edytuj film</Link>
+                                {watchedVideo.tagsProposalsEnabled && (
+                                    <button data-bs-toggle="modal" data-bs-target="#tagProposalsModal" className="btn btn-primary ms-2">Propozycje tagów{watchedVideo?.tagsPropositionsCount > 0 && ` (${watchedVideo.tagsPropositionsCount})`}</button>
+                                )}
+                            </div>
+                        )}
+                        {user && user.id !== watchedVideo.author.id && watchedVideo.tagsProposalsEnabled && !tagsProposed && (
+                            <div className="mt-3">
+                                <button className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tagProposalFormModal">Zaproponuj tagi</button>
                             </div>
                         )}
                     </>
@@ -744,6 +777,7 @@ const Video = () => {
                     )}
                 </div>
             </div>
+
             <div className={`toast position-fixed end-0 bottom-0 align-items-center ${pressedLike && 'fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
                 <div className="d-flex">
                     <div className="toast-body">
@@ -756,24 +790,19 @@ const Video = () => {
                     <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
-            {/* <div className={`toast position-fixed end-0 bottom-0 align-items-center ${pressedSave && 'fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
-                <div className="d-flex">
-                    <div className="toast-body">
-                        {saved ?
-                            "Zapisano film."
-                            :
-                            "Anulowano zapis filmu."
-                        }
-                    </div>
-                    <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div> */}
+
             <div className={`toast position-fixed end-0 bottom-0 align-items-center ${copied && 'fade show'}`} role="alert" aria-live="assertive" aria-atomic="true">
                 <div className="d-flex">
                     <div className="toast-body">Skopiowano link do schowka.</div>
                     <button type="button" className="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
+            {user && user.id === watchedVideo.author.id && (
+                <TagProposalsModal videoId={id} onAcceptReject={decrementTagsPropositionsCount} />
+            )}
+            {user && user.id !== watchedVideo.author.id && watchedVideo.tagsProposalsEnabled && (
+                <TagProposalFormModal videoId={id} setTagsProposed={setTagsProposed}/>
+            )}
         </div>
     );
 };

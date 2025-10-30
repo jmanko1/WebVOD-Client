@@ -143,7 +143,7 @@ const Login = () => {
                         type="checkbox"
                         checked={form.checkedSave}
                         onChange={handleChange}
-                        className="form-check-input text-dark"
+                        className="form-check-input text-dark border border-dark"
                         id="checkedSave"
                     />
                     <label htmlFor="checkedSave" className="form-check-label ms-2">Zapamiętaj konto</label>

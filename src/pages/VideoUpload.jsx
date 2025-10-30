@@ -25,6 +25,7 @@ const VideoUpload = () => {
     const [description, setDescription] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
     const [tags, setTags] = useState([]);
+    const [tagsProposalsEnabled, setTagsProposalsEnabled] = useState(false);
 
     const [availableCategories, setAvailableCategories] = useState([]);
 
@@ -260,14 +261,18 @@ const VideoUpload = () => {
     const handleTagAddition = (tag) => {
         clearError("tagError");
 
-        if (tags.length >= 10)
-            return setError("tagError", "Możesz dodać maksymalnie 10 tagów.");
+        if (tags.length >= 20)
+            return setError("tagError", "Możesz dodać maksymalnie 20 tagów.");
 
-        if (tag.text.includes(" "))
-            return setError("tagError", "Tag nie może zawierać spacji.");
+        const tagRegex = /^[a-zA-Z0-9]*$/
+        if(typeof tag.text !== "string" || !tagRegex.test(tag.text)) {
+            return setError("tagError", "Tag może zawierać tylko cyfry i litery.");
+        }
 
-        if (tag.text.length > 20)
-            return setError("tagError", "Tag może mieć maks. 20 znaków.");
+        if (tag.text.length > 25)
+            return setError("tagError", "Tag może mieć maks. 25 znaków.");
+
+        tag.text = tag.text.toLowerCase();
 
         setTags([...tags, tag]);
     };
@@ -326,6 +331,7 @@ const VideoUpload = () => {
                 description,
                 category: availableCategories.indexOf(selectedCategory),
                 tags: tags.map(tag => tag.text),
+                tagsProposalsEnabled,
                 duration
             };
             
@@ -680,6 +686,17 @@ const VideoUpload = () => {
                         />
                         <div className="form-text">Umieść przecinek, enter lub spację po każdym tagu.</div>
                         {errors.tagError && <div className="invalid-feedback d-inline">{errors.tagError}</div>}
+                    </div>
+
+                    <div className="mb-3">
+                        <input
+                            type="checkbox"
+                            checked={tagsProposalsEnabled}
+                            onChange={(e) => setTagsProposalsEnabled(e.target.checked)}
+                            className="form-check-input text-dark border border-dark"
+                            id="tagsProposalsEnabled"
+                        />
+                        <label htmlFor="tagsProposalsEnabled" className="form-label ms-2">Pozwól użytkownikom proponować tagi</label>
                     </div>
 
                     {/* Submit */}
