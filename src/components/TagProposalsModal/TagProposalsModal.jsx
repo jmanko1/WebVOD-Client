@@ -40,6 +40,9 @@ const TagProposalsModal = ({videoId, onAcceptReject}) => {
                     if(data.length < pageSize)
                         setHasMore(false);
                     
+                    data.forEach(proposal => {
+                        proposal.author.imageUrl = proposal.author.imageUrl ? api + proposal.author.imageUrl : "https://agrinavia.pl/wp-content/uploads/2022/03/zdjecie-profilowe-1.jpg"
+                    })
                     setProposals((prev) => [...prev, ...data]);
                 }
             } catch {
@@ -181,7 +184,7 @@ const TagProposalsModal = ({videoId, onAcceptReject}) => {
                                                     className="text-black"
                                                 >
                                                     <img
-                                                        src={api + p.author.imageUrl}
+                                                        src={p.author.imageUrl}
                                                         alt={p.author.login}
                                                         className="rounded-circle me-2"
                                                         width="36"
