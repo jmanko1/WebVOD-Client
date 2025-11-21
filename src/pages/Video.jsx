@@ -214,7 +214,7 @@ const Video = () => {
         setRecommendedVideosLoading(true);
 
         try {
-            const response = await fetch(`${recommendationsApi}/similar-videos?id=${id}&n=12`)
+            const response = await fetch(`${recommendationsApi}/similar-videos?id=${id}&n=14`)
 
             if(!response.ok) {
                 const errorData = await response.json();
