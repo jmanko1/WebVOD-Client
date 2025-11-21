@@ -215,6 +215,9 @@ const WatchTogether = () => {
     }
 
     const handleSetVideo = async () => {
+        if (!newUrl.trim())
+            return;
+        
         setError(null);
 
         setIsPlaying(false);
