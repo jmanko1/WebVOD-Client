@@ -168,9 +168,9 @@ const TFASettings = () => {
                         <div className="mb-3" id="qr">
                             <QRCodeCanvas
                                 value={qrCodeText}
-                                size={160}
-                                bgColor={"#ffffff"}
-                                fgColor={"#000000"}
+                                size={180}
+                                bgColor={"#fff"}
+                                fgColor={"#000"}
                                 level={"H"}
                             />
                         </div>
